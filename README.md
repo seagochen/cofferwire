@@ -2,7 +2,7 @@
 
 Cofferwire is an open, transport-independent protocol for private asynchronous messaging and encrypted object delivery through replaceable, untrusted relays.
 
-> **Project status:** design phase with an executable in-memory queue state model. No implementation is production-ready, and no security guarantees should be inferred yet.
+> **Project status:** design phase with executable in-memory and transactional queue models. No implementation is production-ready, and no security guarantees should be inferred yet.
 
 ## Goals
 
@@ -37,10 +37,10 @@ The specification lives in `spec/`. The first Rust crate, `cofferwire-relay`, ma
 
 ## Current implementation
 
-- [`crates/cofferwire-relay`](crates/cofferwire-relay) — transport-independent, in-memory reference state machine;
+- [`crates/cofferwire-relay`](crates/cofferwire-relay) — transport-independent in-memory reference state machine and SQLite transactional store;
 - [`spec/06-queues.md`](spec/06-queues.md) — the draft requirements exercised by its tests.
 
-Networking, durable storage and cryptographic authentication are intentionally not implemented yet.
+Networking and cryptographic authentication are intentionally not implemented yet. The durable queue layer is local-only and is not yet a complete relay service.
 
 ## Documents
 

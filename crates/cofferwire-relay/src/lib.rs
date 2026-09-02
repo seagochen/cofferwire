@@ -1,13 +1,16 @@
 //! Transport-independent queue semantics for a Cofferwire relay.
 //!
 //! This crate intentionally operates on authenticated principals and opaque
-//! payloads. Networking, durable transactions and cryptographic verification
-//! are separate layers and are not yet implemented.
+//! payloads. Networking and cryptographic verification are separate layers.
 
 #![forbid(unsafe_code)]
 
 use std::collections::{HashMap, VecDeque};
 use std::num::NonZeroUsize;
+
+mod durable;
+
+pub use durable::{DurableRelay, DurableRelayError};
 
 macro_rules! opaque_id {
     ($name:ident, $description:literal) => {

@@ -29,7 +29,15 @@ Relay ACK authorizes deletion of the queued transport message. It does not prove
 
 ## Persistence requirement
 
-The in-memory Rust state model defines observable semantics only. A durable relay implementation must make message acceptance and ACK deletion atomic across crashes. A successful acceptance response must not be emitted before the relay reaches its documented durability boundary.
+The in-memory Rust state model defines observable semantics. A durable relay implementation must additionally satisfy:
+
+- **CW-STORE-001:** A successful `SEND` result MUST NOT be returned until the complete message insertion has crossed the storage engine's documented durability boundary. The message MUST be recoverable after restart.
+- **CW-STORE-002:** A `SEND` interrupted before that durability boundary MUST NOT expose a partial message after recovery.
+- **CW-STORE-003:** ACK validation and deletion MUST be one atomic transaction. After a successful ACK and restart, the acknowledged message MUST remain absent.
+- **CW-STORE-004:** Delivery state MUST survive restart so a message fetched before a crash can subsequently be acknowledged. Until ACK commits, the message itself MUST remain recoverable for redelivery.
+- **CW-STORE-005:** A persistent database MUST carry an explicit schema version. An implementation MUST reject a newer unknown version without modifying it.
+
+The current durable Rust implementation uses a SQLite rollback-journal transaction per command with `synchronous=FULL`. Method success is the response boundary: no successful `SEND`, `FETCH`, ACK or queue mutation result is produced before its transaction commits. SQLite recovery supplies the all-before or all-after state when execution stops during a transaction. Schema version 1 is stored in SQLite's `user_version`; newer values are rejected before connection settings or schema statements are applied.
 
 ## Open decisions
 
@@ -38,5 +46,4 @@ The in-memory Rust state model defines observable semantics only. A durable rela
 - maximum and minimum TTL values;
 - queue rotation and suspension states;
 - error-code privacy and authorization-oracle behavior;
-- persistent transaction and recovery format.
-
+- schema migration and long-term database compatibility policy.
