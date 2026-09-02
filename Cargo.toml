@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["crates/cofferwire-relay"]
+
+[workspace.package]
+edition = "2021"
+license = "Apache-2.0"
+rust-version = "1.84"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"

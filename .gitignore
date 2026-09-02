@@ -1,0 +1,57 @@
+# Rust build output
+target/
+**/*.rs.bk
+
+# Coverage and profiling
+coverage/
+*.profraw
+*.profdata
+*.lcov
+lcov.info
+
+# Fuzzing output (seed corpora and regression cases stay tracked)
+fuzz/target/
+fuzz/artifacts/
+
+# Local state and test artifacts
+/.cache/
+/.tmp/
+/artifacts/
+*.log
+*.pid
+core
+core.*
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+/.direnv/
+.envrc
+/secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# Intentionally tracked:
+# - Cargo.lock, because this workspace ships runnable applications
+# - README/PLAN/TESTING/SECURITY/CONTRIBUTING and LICENSE
+# - spec documents, conformance vectors and regression fixtures

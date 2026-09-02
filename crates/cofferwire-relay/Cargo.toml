@@ -1,0 +1,11 @@
+[package]
+name = "cofferwire-relay"
+version = "0.1.0"
+description = "Transport-independent queue state machine for Cofferwire relays"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
