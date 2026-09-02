@@ -49,6 +49,9 @@ Networking and cryptographic authentication are intentionally not implemented ye
 - [SECURITY.md](SECURITY.md) — vulnerability reporting and security status
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution rules
 - [spec/README.md](spec/README.md) — specification structure
+- [spec/01-terminology.md](spec/01-terminology.md) — protocol roles and objects
+- [spec/02-threat-model.md](spec/02-threat-model.md) — attackers, trust boundaries and security limits
+- [spec/03-architecture.md](spec/03-architecture.md) — component responsibilities and message flows
 
 ## License
 

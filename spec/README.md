@@ -2,16 +2,16 @@
 
 This directory will contain the normative, implementation-independent protocol specification.
 
-Planned documents (the queue draft already exists):
+Specification documents:
 
 ```text
 00-overview.md
-01-terminology.md
-02-threat-model.md
-03-architecture.md
+01-terminology.md          protocol roles and objects
+02-threat-model.md         attackers, trust boundaries and security limits
+03-architecture.md         component responsibilities and message flows
 04-cryptographic-profile.md
 05-wire-format.md
-06-queues.md             initial executable queue semantics
+06-queues.md               executable queue and persistence semantics
 07-blobs.md
 08-receipts.md
 09-transport-bindings.md
