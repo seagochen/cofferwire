@@ -10,7 +10,7 @@ Specification documents:
 02-threat-model.md         attackers, trust boundaries and security limits
 03-architecture.md         component responsibilities and message flows
 04-cryptographic-profile.md
-05-wire-format.md
+05-wire-format.md          canonical envelope, framing and version negotiation
 06-queues.md               executable queue and persistence semantics
 07-blobs.md
 08-receipts.md

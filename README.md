@@ -52,6 +52,7 @@ Networking and cryptographic authentication are intentionally not implemented ye
 - [spec/01-terminology.md](spec/01-terminology.md) — protocol roles and objects
 - [spec/02-threat-model.md](spec/02-threat-model.md) — attackers, trust boundaries and security limits
 - [spec/03-architecture.md](spec/03-architecture.md) — component responsibilities and message flows
+- [spec/05-wire-format.md](spec/05-wire-format.md) — canonical envelope, framing and version negotiation
 
 ## License
 
