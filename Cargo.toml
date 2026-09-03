@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/cofferwire-relay"]
+members = ["crates/cofferwire-relay", "crates/cofferwire-test"]
 
 [workspace.package]
 edition = "2021"

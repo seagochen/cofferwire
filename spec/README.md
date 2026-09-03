@@ -9,7 +9,7 @@ Specification documents:
 01-terminology.md          protocol roles and objects
 02-threat-model.md         attackers, trust boundaries and security limits
 03-architecture.md         component responsibilities and message flows
-04-cryptographic-profile.md
+04-cryptographic-profile.md relay-command authentication boundary and cryptographic responsibilities
 05-wire-format.md          canonical envelope, framing and version negotiation
 06-queues.md               executable queue and persistence semantics
 07-blobs.md

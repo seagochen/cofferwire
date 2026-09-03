@@ -1,0 +1,22 @@
+[package]
+name = "cofferwire-test"
+version = "0.1.0"
+description = "Cofferwire specification conformance tests and public vectors"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dev-dependencies]
+cddl = "=0.10.2"
+
+# cddl 0.10.2 permits newer transitive releases whose MSRV exceeds the
+# workspace Rust 1.84 baseline. Exact direct constraints keep this test
+# harness reproducible on the documented toolchain.
+base45 = "=3.1.0"
+clap = "=4.5.31"
+time = "=0.3.36"
+unicode-segmentation = "=1.12.0"
+
+[lints]
+workspace = true

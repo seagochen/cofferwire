@@ -1,0 +1,40 @@
+; Cofferwire v1 payload schema (RFC 8610 CDDL).
+; The raw 17-byte preamble and canonical byte-level checks are specified in
+; 05-wire-format.md and are intentionally outside this structural schema.
+
+frame-payload =
+    [direction: 0, command: 1,
+         body: [queue: queue-id, sender: principal, recipient: principal,
+         max-messages: uint .ge 1, max-message-bytes: 1..64374]]
+  / [direction: 0, command: 2,
+         body: [queue: queue-id, sender: principal, message: message-id,
+         payload: bstr .size (0..64374), lifetime: ttl]]
+  / [direction: 0, command: 3,
+         body: [queue: queue-id, recipient: principal]]
+  / [direction: 0, command: 4,
+         body: [queue: queue-id, recipient: principal,
+                         message: message-id]]
+  / [direction: 0, command: 5,
+         body: [queue: queue-id, recipient: principal]]
+  / [direction: 1, command: 1, status: 0, body: [outcome: 0..1]]
+  / [direction: 1, command: 2, status: 0, body: [outcome: 0..1]]
+  / [direction: 1, command: 3, status: 0, body: [availability: 0]]
+  / [direction: 1, command: 3, status: 0,
+         body: [availability: 1, message: message-id,
+         payload: bstr .size (0..64374),
+         expires-at: timestamp]]
+  / [direction: 1, command: 4, status: 0, body: []]
+  / [direction: 1, command: 5, status: 0, body: []]
+  / [direction: 1, command: response-command,
+         status: error-status, body: []]
+
+error-status = 1..16
+response-command = 0..5
+
+request-auth = bstr .size (0..1024)
+
+queue-id   = bstr .size 32
+principal  = bstr .size 32
+message-id = bstr .size 32
+timestamp  = uint
+ttl        = uint .ge 1

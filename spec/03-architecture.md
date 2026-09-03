@@ -21,7 +21,19 @@ The client state machine coordinates identifiers, end-to-end protection, retries
 
 ### Cryptographic profile
 
-The cryptographic profile transforms application messages into authenticated opaque payloads and verifies received payloads. It defines keys, algorithms, domain separation and associated data.
+The cryptographic profile has two distinct jobs. It authenticates relay
+commands against the exact wire bytes exposed by the codec, and it
+transforms application messages into end-to-end authenticated opaque
+payloads. These operations use separate keys, algorithms, domain
+separation and associated data; successful relay-command authentication
+does not authenticate or decrypt an application message.
+
+- **CW-ARCH-012:** A transport MUST pass the complete frame to the codec,
+  and the codec MUST expose the exact authenticated request bytes and
+  opaque `auth` value to the relay-command authenticator. The relay queue
+  service MUST receive a queue-scoped principal only after that
+  authenticator succeeds. Transport identity, headers or connection state
+  MUST NOT substitute for this boundary.
 
 ### Codec
 
@@ -51,6 +63,7 @@ application message
   -> end-to-end protect for target device
   -> deterministic protocol encoding
   -> transport SEND
+  -> verify relay-command authentication and replay state
   -> relay authorization and limits
   -> relay durable commit
   -> successful SEND response
@@ -65,6 +78,7 @@ Sending to multiple devices produces one independently protected queue message p
 
 ```text
 transport FETCH
+  -> verify relay-command authentication and replay state
   -> relay delivery of opaque payload
   -> strict protocol decode
   -> end-to-end authenticate and decrypt
@@ -113,7 +127,7 @@ Public Rust APIs are implementation details. Normative behavior is defined by sp
 
 ## Open decisions
 
-- queue invitation, authentication and rotation representation;
+- queue invitation and concrete authentication/key-rotation suite;
 - canonical wire encoding, framing and version negotiation;
 - cryptographic profile and key lifecycle;
 - application-message identity and local deduplication representation;

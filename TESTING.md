@@ -32,6 +32,11 @@ Vectors contain fixed test-only keys and must never be accepted as production cr
 
 Rust components test parsers, encoders, cryptographic wrappers, storage transactions and state transitions. Coverage targets are useful diagnostics, not proof of protocol correctness. Security-critical branches and every error code require explicit tests.
 
+`cofferwire-test` validates the v1 structural CDDL against positive and
+negative CBOR examples, including command/body discrimination, response
+body selection, forbidden data-model types, authentication size and the
+maximum message boundary. Run it with `cargo test -p cofferwire-test`.
+
 ## 4. Reference-model and property testing
 
 A small executable model defines queue and blob state independently from the production server. Property tests generate command sequences and compare the implementation with the model.
@@ -159,4 +164,3 @@ A release candidate cannot become version 1.0 unless:
 10. release artifacts and test results are reproducible and publicly archived.
 
 These gates verify conformance to the documented protocol. They do not prove universal security; claims must remain limited to the threat model and evidence actually tested.
-

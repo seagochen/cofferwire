@@ -55,6 +55,8 @@ why.
   argument, the shortest form for values 24–255). The alternative
   `0x59 0x00 0x20` (2-byte length argument, also representing 32) encodes
   the same value non-canonically and MUST be rejected.
+  Likewise, a 16-byte byte string uses `0x50` directly; the alternative
+  `0x59 0x00 0x10` length form is non-canonical and MUST be rejected.
 - **CW-WIRE-003:** A relay or client MUST decode `payload` as exactly one
   canonical CBOR array immediately following `preamble`, and — for a
   request — MUST decode `auth` as exactly one canonical CBOR byte string
@@ -91,12 +93,12 @@ non-canonical and MUST be rejected, not repaired or reinterpreted.
   principle.
 - **CW-WIRE-007:** Within a request or response `payload`, the `body`
   element MUST be an array containing exactly the number of elements
-  defined for the command (request) or status (response) in "Commands"
-  below. A `body` with extra, missing or reordered elements MUST be
-  rejected as malformed. Version 1 has no mechanism for a decoder to skip
-  an unknown trailing field. ("Authenticated command envelope" below fixes
-  the array `payload` itself carries: `[command, body]` for a request,
-  `[status, body]` for a response.)
+  defined for the request command or the response's command/status pair in
+  "Commands" below. A `body` with extra, missing or reordered elements
+  MUST be rejected as malformed. Version 1 has no mechanism for a decoder
+  to skip an unknown trailing field. ("Authenticated command envelope"
+  below fixes the array `payload` itself carries: `[0, command, body]` for a request,
+  `[1, command, status, body]` for a response.)
 
 If the received bytes are fewer than 17, no `request-id` can be extracted
 and no response frame can be constructed; signaling this case (for example,
@@ -110,9 +112,11 @@ and is out of scope for this document.
 - **CW-WIRE-009:** If a relay does not support the request's `version`, it
   MUST respond using its own highest supported version's `payload` and
   `auth` encoding — for a relay that speaks only v1, this means a v1
-  response payload `[status, body]` with `status = UNSUPPORTED_VERSION` and
-  `body = []`, under a `preamble` whose `version` is that highest supported
-  version and whose `request-id` is copied from the request per
+  response payload `[1, 0, status, body]` with
+  `status = UNSUPPORTED_VERSION` and `body = []`; command `0` means the
+  request command was not decoded. The response uses a `preamble` whose
+  `version` is the relay's highest supported version and whose
+  `request-id` is copied from the request per
   CW-WIRE-006. Because CW-WIRE-005 guarantees `preamble` is readable
   regardless of the request's version, the relay reaches this response
   without decoding anything past byte 17 of an unsupported request — it
@@ -144,12 +148,22 @@ define the signature, MAC or capability scheme that fills it — that is
 `04-cryptographic-profile.md`'s responsibility.
 
 - **CW-WIRE-012:** For protocol version 1, a request's `payload` MUST be
-  the canonical CBOR array `[command, body]` (exactly 2 elements).
+  the canonical CBOR array `[0, command, body]` (exactly 3 elements). The
+  leading `0` is the request direction discriminator.
 - **CW-WIRE-013:** For protocol version 1, a response's `payload` MUST be
-  the canonical CBOR array `[status, body]` (exactly 2 elements).
+  the canonical CBOR array `[1, command, status, body]` (exactly 4
+  elements). The leading `1` is the response direction discriminator.
+  For a recognized command, `command` MUST echo the request command; it is
+  `0` only when no supported command is available, such as an unknown
+  version, an unknown command or a structurally malformed payload. A
+  decoder MUST reject any other discriminator and MUST NOT reinterpret a
+  payload in the opposite direction. The echoed command also makes every
+  success response body machine-checkable without out-of-band request context.
 - **CW-WIRE-014:** Every request frame MUST carry `auth` as the canonical
   CBOR byte string immediately following `payload` (CW-WIRE-003,
-  CW-WIRE-012). `auth` MAY be zero-length. A response frame carries no
+  CW-WIRE-012). The byte string's content length MUST be between 0 and
+  `MAX_AUTH_BYTES` (1024) inclusive; zero length is permitted because no
+  cryptographic profile has yet been adopted. A response frame carries no
   `auth` in version 1. `auth` is part of the frame itself, not a
   transport-level header, cookie or connection property: verifying it
   MUST NOT depend on HTTPS, a WebSocket handshake or any other
@@ -169,9 +183,12 @@ define the signature, MAC or capability scheme that fills it — that is
 - **CW-WIRE-016:** The authenticated byte range for a request is the exact
   concatenation `preamble || payload` as received on the wire — the 17
   raw preamble bytes followed by the canonical CBOR encoding of
-  `[command, body]`, verbatim, excluding `auth` itself. A cryptographic
+  `[0, command, body]`, verbatim, excluding `auth` itself. A cryptographic
   profile that defines how to verify `auth` MUST verify it against exactly
-  this byte range and no other derived or reserialized form.
+  this byte range without using a derived or reserialized form. A profile
+  MAY also bind fixed domain-separation and authenticated profile metadata
+  as specified by CW-CRYPTO-002, but those additions never replace or
+  transform `preamble || payload`.
 - **CW-WIRE-017:** Because `command` and `body` are themselves inside the
   authenticated byte range, they cannot be altered independently of
   `auth` once a profile defines verification: a signature or MAC computed
@@ -192,16 +209,12 @@ define the signature, MAC or capability scheme that fills it — that is
   "Status codes"), distinct from `UNAUTHORIZED`, which remains for a
   request that authenticates correctly but names a principal the queue
   does not authorize for that role.
-- **CW-WIRE-019:** Replay of a captured, previously valid `(frame, auth)`
-  pair is not addressed by this document; freshness and replay-window
-  policy are the cryptographic profile's responsibility. Independently of
-  that policy, replaying a `SEND` request is already bounded by the
-  idempotency rules `CW-QUEUE-002` and `CW-QUEUE-003` in `06-queues.md`,
-  and replaying an already-processed `FETCH`, `ACK` or `DELETE_QUEUE`
-  produces the same state-dependent outcome the original request would
-  produce if repeated, not a distinct effect — it does not gain an
-  attacker anything beyond what the underlying command already permits an
-  authorized caller to repeat.
+- **CW-WIRE-019:** Replay handling is part of command authentication, not
+  transport state. It MUST follow CW-CRYPTO-007: an exact authenticated
+  retry returns the durably recorded response without applying the command
+  again, while conflicting reuse or a profile-rejected stale request fails
+  with `AUTH_REPLAY`. Queue-command idempotency remains an independent
+  safeguard and does not replace replay verification.
 
 ## Framing and size limits
 
@@ -220,8 +233,45 @@ define the signature, MAC or capability scheme that fills it — that is
   `CW-QUEUE-007` in `06-queues.md`. The frame bound protects parsing
   itself and applies before any queue is identified; the per-queue limit
   is a relay-operator policy applied afterward, once the queue is known,
-  and MAY be tighter but MUST NOT exceed the frame bound minus the other
-  fixed preamble, envelope and `auth` bytes in a `SEND` request.
+  and MAY be tighter but MUST NOT exceed `MAX_MESSAGE_BYTES` (64374).
+- **CW-WIRE-029:** Version 1 defines the following protocol constants and
+  exact worst-case `SEND` calculation. The calculation reserves the
+  largest permitted `auth`, a maximum-width `ttl`, all three identifiers,
+  and every CBOR argument byte, including the opaque payload's own length
+  argument:
+
+  ```text
+  MAX_FRAME_BYTES   = 65536
+  MAX_AUTH_BYTES    = 1024
+  MAX_MESSAGE_BYTES = 64374
+
+  send-frame-bytes =
+      17                    preamble
+    + 1                     payload array(3)
+    + 1                     request direction discriminator
+    + 1                     SEND command
+    + 1                     send-req body array(5)
+    + 3 * (2 + 32)          queue-id, sender, message-id
+    + 3 + message-bytes     opaque payload header and content
+    + 9                     maximum-width ttl
+    + 3 + 1024              maximum auth header and content
+    = 1162 + message-bytes
+
+  MAX_MESSAGE_BYTES = MAX_FRAME_BYTES - 1162 = 64374
+  ```
+
+  The 3-byte byte-string headers are the canonical `0x59` plus a 2-byte
+  argument; both 1024 and 64374 are in the 256–65535 range. Consequently a
+  64374-byte opaque payload produces a frame of exactly 65536 bytes even
+  with `ttl = 2^64 - 1` and a 1024-byte `auth`; adding one payload byte
+  produces 65537 bytes and MUST fail with `FRAME_TOO_LARGE`.
+- **CW-WIRE-030:** `CREATE_QUEUE` MUST reject
+  `max-message-bytes = 0` or a value greater than
+  `MAX_MESSAGE_BYTES` with `status = LIMIT_OUT_OF_RANGE`. Thus every
+  accepted queue configuration can carry a `SEND` whose opaque payload is
+  exactly its declared `max-message-bytes`, for every valid v1 `ttl` and
+  `auth`. This validation occurs before queue creation or idempotency
+  comparison. A queue MAY advertise a smaller operator-selected limit.
 
 How a transport binding delimits one frame within a connection or request
 (one WebSocket message, a length-prefixed HTTP body, or another mechanism)
@@ -261,9 +311,9 @@ constrains the bytes once a frame boundary is known.
   this table with `status = UNKNOWN_COMMAND`, without attempting to decode
   `body`.
 
-Each `body` below is the second element of the `[command, body]` or
-`[status, body]` payload array (CW-WIRE-012, CW-WIRE-013); it is unchanged
-by, and does not itself carry, `auth`.
+Each `body` below is the third element of `[0, command, body]` or the
+fourth element of `[1, command, status, body]` (CW-WIRE-012,
+CW-WIRE-013); it is unchanged by, and does not itself carry, `auth`.
 
 ### `CREATE_QUEUE` (1)
 
@@ -315,8 +365,9 @@ response body = []
 
 ## Status codes
 
-- **CW-WIRE-027:** `status = 0` means success; `body` has the shape defined
-  for the request's command above. A nonzero `status` MUST carry
+- **CW-WIRE-027:** `status = 0` means success; the response `command` MUST
+  be in the Commands table and `body` has the shape defined for that
+  command above. A nonzero `status` MUST carry
   `body = []` — version 1 carries no structured error detail beyond the
   status code and, for `UNSUPPORTED_VERSION`, the response `preamble`'s
   `version` field.
@@ -341,6 +392,8 @@ response body = []
 |     12 | `ACK_MISMATCH`        | acknowledged `message-id` is not the current message  |
 |     13 | `NOT_DELIVERED`       | current message has not been fetched                  |
 |     14 | `AUTH_INVALID`        | `auth` missing, malformed, or fails verification (see CW-WIRE-018) |
+|     15 | `LIMIT_OUT_OF_RANGE`  | queue limit is zero or exceeds a v1 protocol bound (see CW-WIRE-030) |
+|     16 | `AUTH_REPLAY`         | conflicting or stale authenticated request (see CW-CRYPTO-007) |
 
 ## Worked examples
 
@@ -352,12 +405,13 @@ minimal reference encoder/decoder implementing exactly the rules above.
 `version = 1`, `request-id = 0xAA * 16`, `queue-id = 0x11 * 32`,
 `sender = 0x22 * 32`, `message-id = 0x33 * 32`, opaque `payload = "hi"`,
 `ttl = 60` seconds, and an empty `auth` (no cryptographic profile is
-adopted yet — see CW-WIRE-018) encode to exactly these 128 bytes:
+adopted yet — see CW-WIRE-018) encode to exactly these 129 bytes:
 
 ```text
 01                                                                # preamble: version = 1
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                                  # preamble: request-id (16 bytes)
-82                                                                 # payload: array(2) [command, body]
+83                                                                 # payload: array(3) [direction, command, body]
+  00                                                               # direction = request
   02                                                               # command = SEND
   85                                                                # body: array(5)
     58 20 1111111111111111111111111111111111111111111111111111111111111111  # queue-id (32 bytes)
@@ -370,13 +424,15 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                                  # preamble: re
 
 ### (b) The matching success response
 
-Accepting that message (`status = OK`, `outcome = 0`) is 21 bytes. No
+Accepting that message (`status = OK`, `outcome = 0`) is 23 bytes. No
 `auth` follows the payload in a response.
 
 ```text
 01                                    # preamble: version = 1
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa      # preamble: request-id (echoed)
-82                                    # payload: array(2) [status, body]
+84                                    # payload: array(4) [direction, command, status, body]
+  01                                  # direction = response
+  02                                  # command = SEND (echoed)
   00                                  # status = OK
   81                                  # body: array(1)
     00                                # outcome = 0 (accepted)
@@ -423,7 +479,9 @@ and replies in its own highest supported version, 1, echoing the
 ```text
 01                                    # preamble: version = 1 (relay's max)
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa      # preamble: request-id (echoed)
-82                                    # payload: array(2) [status, body]
+84                                    # payload: array(4) [direction, command, status, body]
+  01                                  # direction = response
+  00                                  # command unavailable (not decoded)
   01                                  # status = UNSUPPORTED_VERSION
   80                                  # body: array(0)
 ```
@@ -433,39 +491,22 @@ contained, and regardless of whether that version even uses CBOR for it.
 
 ## Structural schema
 
-The following CDDL (RFC 8610) restates `payload` and `auth` — the
-CBOR-encoded portion of a frame, following the raw 17-byte `preamble` — in
-a language-neutral, tool-checkable form:
+[`05-wire-format.cddl`](05-wire-format.cddl) is the RFC 8610 structural
+schema for the CBOR `payload` following the raw 17-byte `preamble`. Its
+root rule, `frame-payload`, is an explicit choice over complete request and
+response payloads. Each request alternative fixes the command literal and
+corresponding body; response alternatives distinguish `OK` bodies from
+the empty body required by every error status. The schema therefore does
+not use `any` and rejects command/body mismatches, unknown commands,
+invalid outcomes, nonempty error bodies, wrong identifier sizes, and data
+model types excluded by CW-WIRE-001.
 
-```cddl
-request-payload  = [command: uint, body: any]
-response-payload = [status: uint, body: any]
-request-auth     = bstr                  ; may be zero-length; see CW-WIRE-018
-
-queue-id   = bstr .size 32
-principal  = bstr .size 32
-message-id = bstr .size 32
-timestamp  = uint
-ttl        = uint .ge 1
-
-create-queue-req  = [queue-id, sender: principal, recipient: principal,
-                      max-messages: uint .ge 1, max-message-bytes: uint .ge 1]
-create-queue-resp = [outcome: 0..1]
-
-send-req  = [queue-id, sender: principal, message-id, payload: bstr, ttl]
-send-resp = [outcome: 0..1]
-
-fetch-req  = [queue-id, recipient: principal]
-fetch-resp = [0] / [1, message-id, payload: bstr, expires-at: timestamp]
-
-ack-req  = [queue-id, recipient: principal, message-id]
-ack-resp = []
-
-delete-queue-req  = [queue-id, recipient: principal]
-delete-queue-resp = []
-
-error-resp = []
-```
+`request-auth` is a separate rule because `auth` is a second CBOR data item
+after a request payload rather than part of the payload tree. The raw
+`preamble`, shortest-argument encoding, item ordering and absence of
+trailing bytes are byte-level constraints that RFC 8610 CDDL cannot
+express; CW-WIRE-002–005 remain normative and a conforming codec MUST
+check them in addition to validating the structural schema.
 
 ## Open decisions
 
@@ -476,16 +517,16 @@ error-resp = []
   its agility/versioning within that opaque byte string, and whether it
   becomes mandatory-nonempty once a cryptographic profile is adopted —
   deferred to `04-cryptographic-profile.md`;
-- freshness and replay-window policy for `auth` (CW-WIRE-019);
+- concrete freshness windows beyond CW-CRYPTO-007's mandatory replay
+  record;
 - whether a relay should collapse `QUEUE_NOT_FOUND` and `UNAUTHORIZED`
   (and now `AUTH_INVALID`) into fewer distinguishable statuses for a
   hostile caller to avoid an existence oracle, as already flagged as open
   in `06-queues.md`;
 - whether a future version introduces structured error detail beyond a
   status code;
-- exact numeric values for `max-messages`, `max-message-bytes` and TTL
-  bounds remain a relay/application configuration choice within the
-  64 KiB frame bound, not a wire-format constant;
+- exact numeric values for `max-messages` and TTL bounds remain a
+  relay/application configuration choice within the v1 scalar domain;
 - whether version 1's fixed-length, no-unknown-field arrays remain the
   long-term extension strategy or a later major version adopts a
   self-describing structure for `payload`.
