@@ -1,0 +1,10 @@
+[package]
+name = "cofferwire-types"
+version = "0.1.0"
+description = "Transport-independent protocol types and invariants for Cofferwire"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true

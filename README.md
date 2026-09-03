@@ -37,6 +37,7 @@ The specification lives in `spec/`. The first Rust crate, `cofferwire-relay`, ma
 
 ## Current implementation
 
+- [`crates/cofferwire-types`](crates/cofferwire-types) — transport-independent v1 protocol types (bounded identifiers, ciphertext, TTL, version, commands, responses and errors) fixed by [`spec/05-wire-format.md`](spec/05-wire-format.md);
 - [`crates/cofferwire-relay`](crates/cofferwire-relay) — transport-independent in-memory reference state machine and SQLite transactional store;
 - [`spec/06-queues.md`](spec/06-queues.md) — the draft requirements exercised by its tests.
 
