@@ -17,7 +17,7 @@ or a signature/MAC algorithm. It fixes the exact bytes exchanged once a
 transport connection carries one frame, the byte representation of the
 identifiers already used by `06-queues.md`, and — because a wire contract
 that leaves no room for authentication cannot be implemented safely — the
-position and byte range that a future cryptographic profile authenticates.
+position and byte range that `04-cryptographic-profile.md` authenticates.
 
 A frame has three parts, concatenated with no separator:
 
@@ -162,9 +162,11 @@ define the signature, MAC or capability scheme that fills it — that is
 - **CW-WIRE-014:** Every request frame MUST carry `auth` as the canonical
   CBOR byte string immediately following `payload` (CW-WIRE-003,
   CW-WIRE-012). The byte string's content length MUST be between 0 and
-  `MAX_AUTH_BYTES` (1024) inclusive; zero length is permitted because no
-  cryptographic profile has yet been adopted. A response frame carries no
-  `auth` in version 1. `auth` is part of the frame itself, not a
+  `MAX_AUTH_BYTES` (1024) inclusive at the structural codec layer. The
+  adopted v1 profile requires exactly 68 content bytes; zero remains in the
+  structural range only so a decoder can classify it as `AUTH_INVALID` rather
+  than malformed framing. A response frame carries no `auth` in version 1.
+  `auth` is part of the frame itself, not a
   transport-level header, cookie or connection property: verifying it
   MUST NOT depend on HTTPS, a WebSocket handshake or any other
   transport's authentication or connection state, consistent with this
@@ -173,8 +175,8 @@ define the signature, MAC or capability scheme that fills it — that is
 - **CW-WIRE-015:** This document defines only the on-the-wire *byte
   representation* of a queue-scoped `principal` (CW-WIRE-022); it does not
   by itself define how a principal proves authorization to act, and
-  `auth`'s mere presence does not either until a cryptographic profile
-  defines its verification (CW-WIRE-018). **A relay or client MUST NOT
+  `auth`'s mere presence does not either without the verification defined by
+  the cryptographic profile (CW-WIRE-018). **A relay or client MUST NOT
   treat presentation of a correct `principal` value, by itself, as proof
   of authorization.** Per `CW-THREAT-001`, a relay treats all
   relay-provided input as attacker-controlled, and symmetrically a network
@@ -186,8 +188,8 @@ define the signature, MAC or capability scheme that fills it — that is
   `[0, command, body]`, verbatim, excluding `auth` itself. A cryptographic
   profile that defines how to verify `auth` MUST verify it against exactly
   this byte range without using a derived or reserialized form. A profile
-  MAY also bind fixed domain-separation and authenticated profile metadata
-  as specified by CW-CRYPTO-002, but those additions never replace or
+  also binds fixed domain-separation and authenticated profile metadata as
+  specified by `04-cryptographic-profile.md`, but those additions never replace or
   transform `preamble || payload`.
 - **CW-WIRE-017:** Because `command` and `body` are themselves inside the
   authenticated byte range, they cannot be altered independently of
@@ -197,20 +199,15 @@ define the signature, MAC or capability scheme that fills it — that is
   a signature or MAC computed under one `request-id` MUST NOT verify under
   a different one. This is a structural consequence of authenticating
   `preamble || payload` verbatim, not a separate mechanism to implement.
-- **CW-WIRE-018:** No cryptographic profile exists yet. Until one is
-  adopted, `auth` carries no verifiable meaning: a relay or client MUST
-  NOT treat a nonempty `auth`, or the wire-level acceptance of a request,
-  as evidence that any principal was authenticated. This matches the
-  project's current status (see the repository `README.md`) that no
-  security guarantees should be inferred from the executable relay model
-  yet. Once a profile defining `auth` verification is adopted, a relay
-  operating under it MUST reject a request whose `auth` is missing,
-  malformed or fails verification with `status = AUTH_INVALID` (see
-  "Status codes"), distinct from `UNAUTHORIZED`, which remains for a
-  request that authenticates correctly but names a principal the queue
-  does not authorize for that role.
+- **CW-WIRE-018:** The adopted v1 profile in
+  `04-cryptographic-profile.md` defines the only verifiable meaning of `auth`.
+  A v1 relay MUST reject a request whose proof is missing, malformed, selects
+  another profile or algorithm, or fails verification with
+  `status = AUTH_INVALID` (see "Status codes"). `UNAUTHORIZED` remains distinct:
+  it means the proof was valid but its principal lacks the required queue role.
+  Structural codec acceptance alone is never evidence of authentication.
 - **CW-WIRE-019:** Replay handling is part of command authentication, not
-  transport state. It MUST follow CW-CRYPTO-007: an exact authenticated
+  transport state. It MUST follow CW-CRYPTO-008: an exact authenticated
   retry returns the durably recorded response without applying the command
   again, while conflicting reuse or a profile-rejected stale request fails
   with `AUTH_REPLAY`. Queue-command idempotency remains an independent
@@ -294,8 +291,8 @@ constrains the bytes once a frame boundary is known.
 - **CW-WIRE-024:** `payload` (the opaque message byte string carried by
   `SEND`/`FETCH`, distinct from the frame's `payload` array) is an opaque
   byte string. This document does not constrain its contents;
-  `06-queues.md` and a later cryptographic profile define what it is
-  expected to contain.
+  `06-queues.md` and `04-cryptographic-profile.md` define what it is
+  expected to contain in v1.
 
 ## Commands
 
@@ -404,8 +401,10 @@ minimal reference encoder/decoder implementing exactly the rules above.
 
 `version = 1`, `request-id = 0xAA * 16`, `queue-id = 0x11 * 32`,
 `sender = 0x22 * 32`, `message-id = 0x33 * 32`, opaque `payload = "hi"`,
-`ttl = 60` seconds, and an empty `auth` (no cryptographic profile is
-adopted yet — see CW-WIRE-018) encode to exactly these 129 bytes:
+`ttl = 60` seconds, and an empty structural `auth` encode to exactly these
+129 bytes. This is a codec example and negative authentication fixture: the
+adopted profile requires a 68-byte proof, so a relay MUST return
+`AUTH_INVALID` without applying this request.
 
 ```text
 01                                                                # preamble: version = 1
@@ -513,11 +512,7 @@ check them in addition to validating the structural schema.
 - how a transport binding delimits one frame (length prefix, one WebSocket
   message, or another mechanism) — deferred to a transport-bindings
   document;
-- the algorithm carried by `auth` (signature, MAC, or capability token),
-  its agility/versioning within that opaque byte string, and whether it
-  becomes mandatory-nonempty once a cryptographic profile is adopted —
-  deferred to `04-cryptographic-profile.md`;
-- concrete freshness windows beyond CW-CRYPTO-007's mandatory replay
+- concrete freshness windows beyond CW-CRYPTO-008's mandatory replay
   record;
 - whether a relay should collapse `QUEUE_NOT_FOUND` and `UNAUTHORIZED`
   (and now `AUTH_INVALID`) into fewer distinguishable statuses for a

@@ -3,10 +3,10 @@ use crate::MAX_AUTH_BYTES;
 
 /// The `auth` byte string carried by every request frame (`CW-WIRE-014`).
 ///
-/// Zero length is permitted because no cryptographic profile has yet been
-/// adopted (`CW-WIRE-018`); nonempty `auth` carries no verifiable meaning
-/// until one is. This type fixes only the wire-level bound, not
-/// verification.
+/// Zero length remains representable at the structural wire-codec layer for
+/// negative tests and profile-independent parsing. The adopted v1
+/// cryptographic profile requires exactly 68 bytes and rejects empty auth.
+/// This type fixes only the wire-level bound, not verification.
 ///
 /// `Auth` may carry a signature, MAC or capability token, so its `Debug`
 /// implementation prints only its length, never its bytes.
@@ -31,8 +31,7 @@ impl Auth {
         Ok(Self(bytes))
     }
 
-    /// Constructs the empty `auth` value used before a cryptographic
-    /// profile is adopted (`CW-WIRE-018`).
+    /// Constructs an empty structural `auth` value for codec and negative tests.
     #[must_use]
     pub const fn empty() -> Self {
         Self(Vec::new())

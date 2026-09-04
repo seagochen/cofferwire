@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "crates/cofferwire-codec",
+    "crates/cofferwire-crypto",
     "crates/cofferwire-relay",
     "crates/cofferwire-test",
     "crates/cofferwire-types",

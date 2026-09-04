@@ -1,6 +1,9 @@
 # Queue Semantics (Draft)
 
-This document records the behavior implemented by the first executable queue state model. It is a draft and does not yet define a wire format, authentication proof or persistent-storage schema.
+This document records the behavior implemented by the executable queue state
+model. The wire format and authentication proof are defined separately by
+`05-wire-format.md` and `04-cryptographic-profile.md`; this document does not
+define their byte representation or a persistent-storage schema.
 
 ## Scope
 
@@ -41,7 +44,7 @@ The current durable Rust implementation uses a SQLite rollback-journal transacti
 
 ## Open decisions
 
-- cryptographic representation and verification of queue-scoped principals;
+- integration of cryptographic verification into a deployable relay service;
 - whether delivery remains strictly one-at-a-time on the final wire protocol;
 - maximum and minimum TTL values;
 - queue rotation and suspension states;

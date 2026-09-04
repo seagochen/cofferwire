@@ -41,7 +41,9 @@ A queue identifier selects one relay-local queue. It is opaque to protocol layer
 
 ### Queue-scoped principal
 
-A queue-scoped principal is an authenticated actor authorized for a specific queue role. The wire representation and authentication proof remain to be defined by the cryptographic and wire profiles.
+A queue-scoped principal is an authenticated actor authorized for a specific
+queue role. Version 1 represents it as an Ed25519 public key and proves control
+according to `04-cryptographic-profile.md`.
 
 ### Message identifier
 

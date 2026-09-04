@@ -7,7 +7,7 @@ This document defines the initial security assumptions for the Cofferwire queue-
 The protocol aims to protect:
 
 - application message confidentiality and integrity;
-- application authorship evidence as defined by a later cryptographic profile;
+- application authorship evidence as defined by the v1 cryptographic profile;
 - queue authorization credentials and device private key material;
 - accepted-message availability until relay ACK or expiry;
 - consistent interpretation of protocol bytes across implementations.
@@ -30,7 +30,9 @@ A malicious or compromised relay can:
 - retain ciphertext after ACK or expiry despite the protocol's availability semantics;
 - deny service, lie about capacity or stop operating.
 
-The cryptographic profile is expected to prevent the relay from learning plaintext or forging an authenticated application message without the required end-to-end key material.
+The cryptographic profile prevents a relay without the required end-to-end key
+material from learning plaintext or forging an authenticated application
+message, subject to its documented endpoint-compromise and metadata limits.
 
 - **CW-THREAT-003:** A recipient MUST authenticate an end-to-end message before making its contents available to the application.
 - **CW-THREAT-004:** A recipient MUST NOT send relay ACK for a message that failed end-to-end authentication.
@@ -83,8 +85,7 @@ No protocol can force a malicious relay or network to deliver data. Cofferwire c
 
 ## Open decisions
 
-- exact cryptographic suite, algorithm identifiers and agility boundary;
-- forward secrecy, post-compromise security and queue-rotation mechanism;
+- a future post-quantum or post-compromise-secure profile and recovery mechanism;
 - padding buckets and metadata-reduction targets;
 - rate limits and proof-of-work or other abuse controls;
 - transport authentication and credential presentation;

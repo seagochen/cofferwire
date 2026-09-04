@@ -1,0 +1,35 @@
+{
+  "format": "cofferwire-crypto-v1",
+  "encoding": "lowercase hexadecimal",
+  "warning": "All secret keys and deterministic RNG bytes are test-only and MUST NOT be used in production.",
+  "relay_authenticated_bytes_hex": "01aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa83000382582011111111111111111111111111111111111111111111111111111111111111115820ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+  "relay_signing_seed_hex": "0707070707070707070707070707070707070707070707070707070707070707",
+  "relay_auth_hex": "0001000128f9213d5969b8218837c9a921b6695b0f219d0be5b3342cc86dde5cf92cc2348924efa23be29e5e28c465bcc0b4934ddb850252698f34946b7a2f0633ff2001",
+  "hpke_sender_ikm_hex": "5555555555555555555555555555555555555555555555555555555555555555",
+  "hpke_recipient_ikm_hex": "6666666666666666666666666666666666666666666666666666666666666666",
+  "hpke_ephemeral_rng_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "hpke_plaintext_hex": "66616d696c7920757064617465",
+  "hpke_payload_hex": "0001002000010003b1f1b840de7a3241b02748cf9b05b74dc8c5e8451298738817bd76aa8ebe8c2bb755be1f2d9434321b6b92389e94eeec0c021458e0de9228c4ee5c5585",
+  "negative": [
+    {
+      "name": "relay_authenticated_byte_tamper",
+      "operation": "For every byte offset in relay_authenticated_bytes_hex, xor the byte with 0x01 and require AUTH_INVALID."
+    },
+    {
+      "name": "relay_profile_or_algorithm_downgrade",
+      "operation": "Change either two-byte identifier in relay_auth_hex and require AUTH_INVALID."
+    },
+    {
+      "name": "hpke_envelope_byte_tamper",
+      "operation": "For every byte offset in hpke_payload_hex, xor the byte with 0x01 and require rejection without plaintext."
+    },
+    {
+      "name": "hpke_associated_data_tamper",
+      "operation": "Independently replace queue-id, sender, recipient, and message-id with 32 bytes of 0x09 and require decryption failure."
+    },
+    {
+      "name": "hpke_key_mismatch",
+      "operation": "Replace the expected sender public key or recipient private key and require decryption failure."
+    }
+  ]
+}
