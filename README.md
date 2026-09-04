@@ -33,15 +33,23 @@ Blob layer                encrypted chunks, leases, capabilities
 Transport bindings        WebSocket/HTTPS, files, local transports
 ```
 
-The specification lives in `spec/`. The first Rust crate, `cofferwire-relay`, makes queue delivery, retry, expiry and ACK behavior executable without prematurely choosing a network binding or cryptographic representation.
+The specification lives in `spec/`. The Rust workspace keeps protocol types,
+canonical framing, cryptography, client transitions and relay durability in
+separate transport-independent crates.
 
 ## Current implementation
 
 - [`crates/cofferwire-types`](crates/cofferwire-types) — transport-independent v1 protocol types (bounded identifiers, ciphertext, TTL, version, commands, responses and errors) fixed by [`spec/05-wire-format.md`](spec/05-wire-format.md);
+- [`crates/cofferwire-codec`](crates/cofferwire-codec) — deterministic v1 framing and strict, bounded canonical-CBOR decoding;
+- [`crates/cofferwire-crypto`](crates/cofferwire-crypto) — the fixed Ed25519 and authenticated RFC 9180 HPKE profile with public vectors;
+- [`crates/cofferwire-client`](crates/cofferwire-client) — sender retry and recipient durable-commit-before-ACK state machines over a replaceable transport trait;
 - [`crates/cofferwire-relay`](crates/cofferwire-relay) — transport-independent in-memory reference state machine and SQLite transactional store;
-- [`spec/06-queues.md`](spec/06-queues.md) — the draft requirements exercised by its tests.
+- [`crates/cofferwire-test`](crates/cofferwire-test) — structural conformance tests and public-vector harnesses.
 
-Networking and cryptographic authentication are intentionally not implemented yet. The durable queue layer is local-only and is not yet a complete relay service.
+No network binding or complete relay service exists yet. The cryptographic and
+client crates are reference implementations pending independent
+interoperability testing and external security review; they are not
+production-ready security claims.
 
 ## Documents
 
@@ -53,6 +61,7 @@ Networking and cryptographic authentication are intentionally not implemented ye
 - [spec/01-terminology.md](spec/01-terminology.md) — protocol roles and objects
 - [spec/02-threat-model.md](spec/02-threat-model.md) — attackers, trust boundaries and security limits
 - [spec/03-architecture.md](spec/03-architecture.md) — component responsibilities and message flows
+- [spec/04-cryptographic-profile.md](spec/04-cryptographic-profile.md) — fixed relay-authentication and end-to-end encryption profile
 - [spec/05-wire-format.md](spec/05-wire-format.md) — canonical envelope, framing and version negotiation
 
 ## License

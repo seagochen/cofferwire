@@ -418,6 +418,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "cofferwire-client"
+version = "0.1.0"
+dependencies = [
+ "cofferwire-codec",
+ "cofferwire-crypto",
+ "cofferwire-types",
+ "rand_core",
+]
+
+[[package]]
 name = "cofferwire-codec"
 version = "0.1.0"
 dependencies = [

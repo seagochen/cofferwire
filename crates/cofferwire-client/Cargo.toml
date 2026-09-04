@@ -1,0 +1,16 @@
+[package]
+name = "cofferwire-client"
+version = "0.1.0"
+description = "Transport-independent durable messaging state machines for Cofferwire"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+cofferwire-codec = { path = "../cofferwire-codec" }
+cofferwire-crypto = { path = "../cofferwire-crypto" }
+cofferwire-types = { path = "../cofferwire-types" }
+rand_core = "=0.6.4"
+
+[lints]
+workspace = true

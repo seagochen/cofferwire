@@ -37,6 +37,12 @@ negative CBOR examples, including command/body discrimination, response
 body selection, forbidden data-model types, authentication size and the
 maximum message boundary. Run it with `cargo test -p cofferwire-test`.
 
+`cofferwire-codec`, `cofferwire-crypto`, and `cofferwire-client` exercise strict
+framing, public cryptographic vectors, tampering, retry, redelivery and durable
+commit ordering. Run the complete suite with `cargo test --workspace`. The
+parser fuzz target is buildable with `cargo check --manifest-path
+fuzz/Cargo.toml` and runnable with `cargo fuzz run decode_frames`.
+
 ## 4. Reference-model and property testing
 
 A small executable model defines queue and blob state independently from the production server. Property tests generate command sequences and compare the implementation with the model.
