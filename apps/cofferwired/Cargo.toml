@@ -1,0 +1,32 @@
+[package]
+name = "cofferwired"
+version = "0.1.0"
+description = "Baseline HTTPS and WebSocket relay daemon for Cofferwire"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+axum = { version = "=0.8.1", features = ["ws"] }
+axum-server = { version = "=0.7.3", features = ["tls-rustls"] }
+cofferwire-codec = { path = "../../crates/cofferwire-codec" }
+cofferwire-crypto = { path = "../../crates/cofferwire-crypto" }
+cofferwire-relay = { path = "../../crates/cofferwire-relay" }
+cofferwire-types = { path = "../../crates/cofferwire-types" }
+futures-util = "=0.3.31"
+# h2 and aws-lc-sys permit newer transitive releases whose manifests require
+# Cargo newer than the workspace's Rust 1.84 baseline.
+indexmap = "=2.7.1"
+jobserver = "=0.1.32"
+tokio = { version = "=1.43.0", features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
+tower-http = { version = "=0.6.2", features = ["limit", "timeout"] }
+tower-service = "=0.3.3"
+
+[dev-dependencies]
+cofferwire-client = { path = "../../crates/cofferwire-client" }
+rand_core = { version = "=0.6.4", features = ["getrandom"] }
+tower = { version = "=0.5.2", features = ["util"] }
+tokio-tungstenite = "=0.26.2"
+
+[lints]
+workspace = true

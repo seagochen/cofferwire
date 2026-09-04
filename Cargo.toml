@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "apps/cofferwired",
     "crates/cofferwire-codec",
     "crates/cofferwire-client",
     "crates/cofferwire-crypto",

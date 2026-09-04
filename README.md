@@ -45,11 +45,12 @@ separate transport-independent crates.
 - [`crates/cofferwire-client`](crates/cofferwire-client) — sender retry and recipient durable-commit-before-ACK state machines over a replaceable transport trait;
 - [`crates/cofferwire-relay`](crates/cofferwire-relay) — transport-independent in-memory reference state machine and SQLite transactional store;
 - [`crates/cofferwire-test`](crates/cofferwire-test) — structural conformance tests and public-vector harnesses.
+- [`apps/cofferwired`](apps/cofferwired) — bounded reference HTTPS/WebSocket
+  daemon backed by the SQLite relay.
 
-No network binding or complete relay service exists yet. The cryptographic and
-client crates are reference implementations pending independent
-interoperability testing and external security review; they are not
-production-ready security claims.
+The network daemon and client crates are reference implementations pending
+independent interoperability testing and external security review; they are
+not production-ready security claims.
 
 ## Documents
 
@@ -63,6 +64,8 @@ production-ready security claims.
 - [spec/03-architecture.md](spec/03-architecture.md) — component responsibilities and message flows
 - [spec/04-cryptographic-profile.md](spec/04-cryptographic-profile.md) — fixed relay-authentication and end-to-end encryption profile
 - [spec/05-wire-format.md](spec/05-wire-format.md) — canonical envelope, framing and version negotiation
+- [spec/09-transport-bindings.md](spec/09-transport-bindings.md) — baseline
+  HTTPS/WebSocket mappings and resource bounds
 
 ## License
 
