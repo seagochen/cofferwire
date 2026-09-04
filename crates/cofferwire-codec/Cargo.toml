@@ -1,0 +1,13 @@
+[package]
+name = "cofferwire-codec"
+version = "0.1.0"
+description = "Deterministic framing and strict canonical CBOR codec for Cofferwire"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+cofferwire-types = { path = "../cofferwire-types" }
+
+[lints]
+workspace = true

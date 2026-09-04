@@ -1,0 +1,21 @@
+[package]
+name = "cofferwire-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+cofferwire-codec = { path = "../crates/cofferwire-codec" }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "decode_frames"
+path = "fuzz_targets/decode_frames.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]

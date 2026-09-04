@@ -37,4 +37,4 @@ queue-id   = bstr .size 32
 principal  = bstr .size 32
 message-id = bstr .size 32
 timestamp  = uint
-ttl        = uint .ge 1
+ttl        = uint
