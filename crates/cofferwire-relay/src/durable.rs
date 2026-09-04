@@ -1,8 +1,11 @@
 //! SQLite-backed transactional queue storage.
 
 use std::path::Path;
+use std::time::Duration;
 
-use rusqlite::{params, Connection, OptionalExtension, Transaction};
+use rusqlite::{
+    params, Connection, ErrorCode, OptionalExtension, Transaction, TransactionBehavior,
+};
 
 use crate::{
     CreateQueueOutcome, Delivery, MessageId, Principal, QueueConfig, QueueId, QueueLimits,
@@ -35,13 +38,38 @@ CREATE INDEX IF NOT EXISTS messages_expiry
 ";
 const SCHEMA_VERSION: i64 = 1;
 
+/// Maximum time a command waits to acquire `SQLite`'s writer lock.
+pub const DEFAULT_BUSY_TIMEOUT: Duration = Duration::from_millis(250);
+
+/// Stable classification for storage failures exposed above `SQLite`.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum StorageErrorKind {
+    /// The bounded writer-lock wait expired.
+    Busy,
+    /// `SQLite` rejected a write to read-only storage.
+    ReadOnly,
+    /// The database or filesystem reached its configured capacity.
+    Full,
+    /// The storage system reported an I/O failure.
+    Io,
+    /// `SQLite` reported a malformed database image.
+    Corrupt,
+    /// Another storage failure occurred.
+    Other,
+}
+
 /// An error from the durable queue layer.
 #[derive(Debug)]
 pub enum DurableRelayError {
     /// The command was rejected by queue semantics.
     Relay(RelayError),
     /// The storage engine could not complete the transaction.
-    Storage(rusqlite::Error),
+    Storage {
+        /// Stable category suitable for retry and operator policy.
+        kind: StorageErrorKind,
+        /// Original `SQLite` error retained for diagnostics.
+        source: rusqlite::Error,
+    },
     /// The database was written by an unsupported schema version.
     UnsupportedSchemaVersion {
         /// Version found in the database.
@@ -55,7 +83,12 @@ impl std::fmt::Display for DurableRelayError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Relay(error) => error.fmt(formatter),
-            Self::Storage(error) => write!(formatter, "durable queue storage failed: {error}"),
+            Self::Storage { kind, source } => {
+                write!(
+                    formatter,
+                    "durable queue storage failed ({kind:?}): {source}"
+                )
+            }
             Self::UnsupportedSchemaVersion { found, supported } => write!(
                 formatter,
                 "unsupported durable queue schema version {found}; this build supports {supported}"
@@ -68,7 +101,7 @@ impl std::error::Error for DurableRelayError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Self::Relay(error) => Some(error),
-            Self::Storage(error) => Some(error),
+            Self::Storage { source, .. } => Some(source),
             Self::UnsupportedSchemaVersion { .. } => None,
         }
     }
@@ -82,7 +115,21 @@ impl From<RelayError> for DurableRelayError {
 
 impl From<rusqlite::Error> for DurableRelayError {
     fn from(error: rusqlite::Error) -> Self {
-        Self::Storage(error)
+        Self::Storage {
+            kind: classify_storage_error(&error),
+            source: error,
+        }
+    }
+}
+
+impl DurableRelayError {
+    /// Returns the stable storage category, when this is a storage failure.
+    #[must_use]
+    pub const fn storage_kind(&self) -> Option<StorageErrorKind> {
+        match self {
+            Self::Storage { kind, .. } => Some(*kind),
+            Self::Relay(_) | Self::UnsupportedSchemaVersion { .. } => None,
+        }
     }
 }
 
@@ -111,6 +158,7 @@ impl DurableRelay {
     }
 
     fn initialize(mut connection: Connection) -> Result<Self, DurableRelayError> {
+        connection.busy_timeout(DEFAULT_BUSY_TIMEOUT)?;
         let version =
             connection.query_row("PRAGMA user_version", [], |row| row.get::<_, i64>(0))?;
         if version != 0 && version != SCHEMA_VERSION {
@@ -124,12 +172,12 @@ impl DurableRelay {
              PRAGMA journal_mode = DELETE;
              PRAGMA synchronous = FULL;",
         )?;
-        let transaction = connection.transaction()?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         transaction.execute_batch(SCHEMA)?;
         if version == 0 {
             transaction.pragma_update(None, "user_version", SCHEMA_VERSION)?;
         }
-        transaction.commit()?;
+        commit(transaction)?;
         Ok(Self { connection })
     }
 
@@ -143,7 +191,9 @@ impl DurableRelay {
         id: QueueId,
         config: QueueConfig,
     ) -> Result<CreateQueueOutcome, DurableRelayError> {
-        let transaction = self.connection.transaction()?;
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let existing = transaction
             .query_row(
                 "SELECT sender, recipient, max_messages, max_message_bytes
@@ -188,7 +238,7 @@ impl DurableRelay {
                     .as_slice(),
             ],
         )?;
-        transaction.commit()?;
+        commit(transaction)?;
         Ok(CreateQueueOutcome::Created)
     }
 
@@ -208,7 +258,9 @@ impl DurableRelay {
         now: Timestamp,
         ttl: Ttl,
     ) -> Result<SendOutcome, DurableRelayError> {
-        let transaction = self.connection.transaction()?;
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let config = read_queue(&transaction, queue_id)?.ok_or(RelayError::QueueNotFound)?;
         if config.sender() != sender {
             return Err(RelayError::Unauthorized.into());
@@ -256,7 +308,7 @@ impl DurableRelay {
         )?;
         #[cfg(test)]
         crash_point("send_before_commit");
-        transaction.commit()?;
+        commit(transaction)?;
         #[cfg(test)]
         crash_point("send_after_commit");
         Ok(SendOutcome::Accepted)
@@ -273,7 +325,9 @@ impl DurableRelay {
         recipient: Principal,
         now: Timestamp,
     ) -> Result<Option<Delivery>, DurableRelayError> {
-        let transaction = self.connection.transaction()?;
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         authorize_recipient(&transaction, queue_id, recipient)?;
         discard_expired(&transaction, queue_id, now)?;
         let message = transaction
@@ -292,7 +346,7 @@ impl DurableRelay {
             )
             .optional()?;
         let Some((sequence, message_id, payload, expires_at)) = message else {
-            transaction.commit()?;
+            commit(transaction)?;
             return Ok(None);
         };
         transaction.execute(
@@ -301,7 +355,7 @@ impl DurableRelay {
         )?;
         #[cfg(test)]
         crash_point("fetch_before_commit");
-        transaction.commit()?;
+        commit(transaction)?;
         #[cfg(test)]
         crash_point("fetch_after_commit");
         Ok(Some(Delivery {
@@ -323,7 +377,9 @@ impl DurableRelay {
         message_id: MessageId,
         now: Timestamp,
     ) -> Result<(), DurableRelayError> {
-        let transaction = self.connection.transaction()?;
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         authorize_recipient(&transaction, queue_id, recipient)?;
         discard_expired(&transaction, queue_id, now)?;
         let current = transaction
@@ -350,7 +406,7 @@ impl DurableRelay {
         transaction.execute("DELETE FROM messages WHERE sequence = ?1", [current.0])?;
         #[cfg(test)]
         crash_point("ack_before_commit");
-        transaction.commit()?;
+        commit(transaction)?;
         #[cfg(test)]
         crash_point("ack_after_commit");
         Ok(())
@@ -366,13 +422,15 @@ impl DurableRelay {
         queue_id: QueueId,
         recipient: Principal,
     ) -> Result<(), DurableRelayError> {
-        let transaction = self.connection.transaction()?;
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         authorize_recipient(&transaction, queue_id, recipient)?;
         transaction.execute(
             "DELETE FROM queues WHERE queue_id = ?1",
             [queue_id.as_bytes().as_slice()],
         )?;
-        transaction.commit()?;
+        commit(transaction)?;
         Ok(())
     }
 }
@@ -453,6 +511,37 @@ fn invalid_data(message: &'static str) -> rusqlite::Error {
     rusqlite::Error::InvalidParameterName(message.to_owned())
 }
 
+fn classify_storage_error(error: &rusqlite::Error) -> StorageErrorKind {
+    let rusqlite::Error::SqliteFailure(failure, _) = error else {
+        return StorageErrorKind::Other;
+    };
+    match failure.code {
+        ErrorCode::DatabaseBusy | ErrorCode::DatabaseLocked => StorageErrorKind::Busy,
+        ErrorCode::ReadOnly | ErrorCode::PermissionDenied => StorageErrorKind::ReadOnly,
+        ErrorCode::DiskFull => StorageErrorKind::Full,
+        ErrorCode::SystemIoFailure | ErrorCode::CannotOpen => StorageErrorKind::Io,
+        ErrorCode::DatabaseCorrupt | ErrorCode::NotADatabase => StorageErrorKind::Corrupt,
+        _ => StorageErrorKind::Other,
+    }
+}
+
+fn commit(transaction: Transaction<'_>) -> rusqlite::Result<()> {
+    #[cfg(test)]
+    if FAIL_NEXT_COMMIT.with(std::cell::Cell::take) {
+        drop(transaction);
+        return Err(rusqlite::Error::SqliteFailure(
+            rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_IOERR),
+            Some("injected commit failure".to_owned()),
+        ));
+    }
+    transaction.commit()
+}
+
+#[cfg(test)]
+thread_local! {
+    static FAIL_NEXT_COMMIT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
 #[cfg(test)]
 fn crash_point(point: &str) {
     if std::env::var("COFFERWIRE_TEST_CRASH_POINT").as_deref() == Ok(point) {
@@ -466,6 +555,9 @@ mod tests {
     use std::path::{Path, PathBuf};
     use std::process::Command;
     use std::sync::atomic::{AtomicU64, Ordering};
+    use std::sync::{Arc, Barrier};
+    use std::thread;
+    use std::time::{Duration, Instant};
 
     use super::*;
 
@@ -551,6 +643,10 @@ mod tests {
             .query_row("PRAGMA integrity_check", [], |row| row.get(0))
             .expect("integrity check executes");
         assert_eq!(result, "ok");
+    }
+
+    fn storage_kind(error: &DurableRelayError) -> StorageErrorKind {
+        error.storage_kind().expect("expected storage failure")
     }
 
     fn prepare_delivered_message(database: &TestDatabase) {
@@ -869,5 +965,245 @@ mod tests {
             relay.delete_queue(QUEUE, OTHER),
             Err(DurableRelayError::Relay(RelayError::Unauthorized))
         ));
+    }
+
+    #[test]
+    fn concurrent_sends_serialize_capacity_and_message_id_conflicts() {
+        let capacity_database = TestDatabase::new();
+        {
+            let mut relay = DurableRelay::open(capacity_database.path()).expect("database opens");
+            relay
+                .create_queue(
+                    QUEUE,
+                    QueueConfig::new(
+                        SENDER,
+                        RECIPIENT,
+                        QueueLimits::new(1, 1024).expect("valid limits"),
+                    ),
+                )
+                .expect("queue creation commits");
+        }
+        let results = concurrent_sends(
+            capacity_database.path(),
+            [(MESSAGE, b"one".as_slice()), (MESSAGE_B, b"two".as_slice())],
+        );
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| matches!(result, Ok(SendOutcome::Accepted)))
+                .count(),
+            1
+        );
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| {
+                    matches!(result, Err(DurableRelayError::Relay(RelayError::QueueFull)))
+                })
+                .count(),
+            1
+        );
+        let recovered = DurableRelay::open(capacity_database.path()).expect("database reopens");
+        assert_database_integrity(&recovered);
+
+        let conflict_database = TestDatabase::new();
+        drop(open_with_queue(&conflict_database));
+        let results = concurrent_sends(
+            conflict_database.path(),
+            [(MESSAGE, b"one".as_slice()), (MESSAGE, b"two".as_slice())],
+        );
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| matches!(result, Ok(SendOutcome::Accepted)))
+                .count(),
+            1
+        );
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| {
+                    matches!(
+                        result,
+                        Err(DurableRelayError::Relay(RelayError::MessageIdConflict))
+                    )
+                })
+                .count(),
+            1
+        );
+        let recovered = DurableRelay::open(conflict_database.path()).expect("database reopens");
+        assert_database_integrity(&recovered);
+    }
+
+    fn concurrent_sends(
+        path: &Path,
+        operations: [(MessageId, &[u8]); 2],
+    ) -> Vec<Result<SendOutcome, DurableRelayError>> {
+        let barrier = Arc::new(Barrier::new(3));
+        let mut workers = Vec::new();
+        for (message_id, payload) in operations {
+            let path = path.to_owned();
+            let barrier = Arc::clone(&barrier);
+            let payload = payload.to_vec();
+            workers.push(thread::spawn(move || {
+                let mut relay = DurableRelay::open(path).expect("worker opens database");
+                barrier.wait();
+                relay.send(QUEUE, SENDER, message_id, &payload, NOW, TTL)
+            }));
+        }
+        barrier.wait();
+        workers
+            .into_iter()
+            .map(|worker| worker.join().expect("worker does not panic"))
+            .collect()
+    }
+
+    #[test]
+    fn busy_timeout_is_bounded_and_classified() {
+        let database = TestDatabase::new();
+        let mut relay = open_with_queue(&database);
+        let blocker = Connection::open(database.path()).expect("second connection opens");
+        blocker
+            .execute_batch("BEGIN IMMEDIATE")
+            .expect("writer lock acquired");
+
+        let start = Instant::now();
+        let error = relay
+            .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+            .expect_err("bounded lock wait must fail");
+        let elapsed = start.elapsed();
+        assert_eq!(storage_kind(&error), StorageErrorKind::Busy);
+        assert!(
+            elapsed >= Duration::from_millis(200),
+            "elapsed: {elapsed:?}"
+        );
+        assert!(elapsed < Duration::from_secs(2), "elapsed: {elapsed:?}");
+
+        blocker
+            .execute_batch("ROLLBACK")
+            .expect("writer lock released");
+        assert_database_integrity(&relay);
+    }
+
+    #[test]
+    fn readonly_full_and_commit_failures_rollback_without_false_success() {
+        let readonly_database = TestDatabase::new();
+        let mut readonly = open_with_queue(&readonly_database);
+        readonly
+            .connection
+            .pragma_update(None, "query_only", true)
+            .expect("query-only mode enabled");
+        let error = readonly
+            .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+            .expect_err("read-only write fails");
+        assert_eq!(storage_kind(&error), StorageErrorKind::ReadOnly);
+        readonly
+            .connection
+            .pragma_update(None, "query_only", false)
+            .expect("query-only mode disabled");
+        assert!(readonly
+            .fetch(QUEUE, RECIPIENT, NOW)
+            .expect("fetch after failure")
+            .is_none());
+        assert_database_integrity(&readonly);
+
+        let full_database = TestDatabase::new();
+        let mut full = DurableRelay::open(full_database.path()).expect("database opens");
+        full.create_queue(
+            QUEUE,
+            QueueConfig::new(
+                SENDER,
+                RECIPIENT,
+                QueueLimits::new(2, 128 * 1024).expect("valid limits"),
+            ),
+        )
+        .expect("queue creation commits");
+        let page_count: i64 = full
+            .connection
+            .query_row("PRAGMA page_count", [], |row| row.get(0))
+            .expect("page count reads");
+        full.connection
+            .pragma_update(None, "max_page_count", page_count)
+            .expect("page limit fixed at current size");
+        let error = full
+            .send(QUEUE, SENDER, MESSAGE, &vec![0x5a; 128 * 1024], NOW, TTL)
+            .expect_err("page limit makes insertion fail");
+        assert_eq!(storage_kind(&error), StorageErrorKind::Full);
+        assert!(full
+            .fetch(QUEUE, RECIPIENT, NOW)
+            .expect("fetch after failure")
+            .is_none());
+        assert_database_integrity(&full);
+
+        let commit_database = TestDatabase::new();
+        let mut commit_failure = open_with_queue(&commit_database);
+        FAIL_NEXT_COMMIT.with(|flag| flag.set(true));
+        let error = commit_failure
+            .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+            .expect_err("injected commit failure is returned");
+        assert_eq!(storage_kind(&error), StorageErrorKind::Io);
+        assert!(commit_failure
+            .fetch(QUEUE, RECIPIENT, NOW)
+            .expect("fetch after rollback")
+            .is_none());
+        assert_database_integrity(&commit_failure);
+    }
+
+    #[test]
+    fn long_generated_sequence_matches_in_memory_reference_model() {
+        let database = TestDatabase::new();
+        let mut durable = DurableRelay::open(database.path()).expect("database opens");
+        let mut reference = crate::Relay::new();
+        let limits = QueueLimits::new(4, 32).expect("valid limits");
+        let config = QueueConfig::new(SENDER, RECIPIENT, limits);
+        let mut random = 0x4d59_5df4_d0f3_3173_u64;
+
+        for step in 0..2_000_u64 {
+            random = random
+                .wrapping_mul(6_364_136_223_846_793_005)
+                .wrapping_add(1_442_695_040_888_963_407);
+            let now = Timestamp::from_secs(NOW.as_secs() + step / 7);
+            let message = MessageId::from_bytes([random.to_be_bytes()[6]; 32]);
+            let payload =
+                vec![random.to_be_bytes()[5]; usize::try_from(random % 40).expect("small")];
+            let ttl = Ttl::from_secs(random % 11 + 1).expect("nonzero TTL");
+            match random % 6 {
+                0 => assert_eq!(
+                    reference.create_queue(QUEUE, config),
+                    durable_relay_result(durable.create_queue(QUEUE, config))
+                ),
+                1 => assert_eq!(
+                    reference.send(QUEUE, SENDER, message, payload.clone(), now, ttl),
+                    durable_relay_result(durable.send(QUEUE, SENDER, message, &payload, now, ttl))
+                ),
+                2 => assert_eq!(
+                    reference.fetch(QUEUE, RECIPIENT, now),
+                    durable_relay_result(durable.fetch(QUEUE, RECIPIENT, now))
+                ),
+                3 => assert_eq!(
+                    reference.acknowledge(QUEUE, RECIPIENT, message, now),
+                    durable_relay_result(durable.acknowledge(QUEUE, RECIPIENT, message, now))
+                ),
+                4 => assert_eq!(
+                    reference.delete_queue(QUEUE, RECIPIENT),
+                    durable_relay_result(durable.delete_queue(QUEUE, RECIPIENT))
+                ),
+                _ => {
+                    let expiry_time = Timestamp::from_secs(now.as_secs() + 20);
+                    assert_eq!(
+                        reference.fetch(QUEUE, RECIPIENT, expiry_time),
+                        durable_relay_result(durable.fetch(QUEUE, RECIPIENT, expiry_time))
+                    );
+                }
+            }
+        }
+        assert_database_integrity(&durable);
+    }
+
+    fn durable_relay_result<T>(result: Result<T, DurableRelayError>) -> Result<T, RelayError> {
+        result.map_err(|error| match error {
+            DurableRelayError::Relay(error) => error,
+            other => panic!("unexpected durable storage failure: {other}"),
+        })
     }
 }

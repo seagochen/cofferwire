@@ -10,7 +10,7 @@ use std::num::NonZeroUsize;
 
 mod durable;
 
-pub use durable::{DurableRelay, DurableRelayError};
+pub use durable::{DurableRelay, DurableRelayError, StorageErrorKind, DEFAULT_BUSY_TIMEOUT};
 
 macro_rules! opaque_id {
     ($name:ident, $description:literal) => {
