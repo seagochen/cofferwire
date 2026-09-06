@@ -1,0 +1,91 @@
+{
+  "all_named_tests_passed": true,
+  "fault_classes": {
+    "backup_restore_and_schema_upgrade": {
+      "description": "A rollback-journal-mode file copy must restore correctly in a fresh process; every historical schema version (v1, v2) must migrate to the latest version preserving existing state.",
+      "seed_or_budget": "deterministic fixture state, no randomness",
+      "tests": {
+        "durable::tests::file_copy_backup_restores_correctly_in_a_fresh_process": "passed",
+        "durable::tests::v2_databases_migrate_to_version_3_adding_queue_replays": "passed",
+        "durable_blob::tests::v1_databases_migrate_to_the_latest_schema_preserving_blob_state": "passed"
+      }
+    },
+    "clock_jump": {
+      "description": "A large backward jump must not fabricate an expiry or let a conflicting resend through; a large forward jump must discard the now-ancient message and release capacity; jumping back again must not resurrect it.",
+      "seed_or_budget": "fixed timestamps, no randomness",
+      "tests": {
+        "durable::tests::clock_jumps_never_fabricate_or_silently_lose_an_accepted_message": "passed"
+      }
+    },
+    "concurrency_and_expiry_races": {
+      "description": "Two threads race SEND, FETCH+ACK, and DELETE against the same queue/message; a further pair races an expiry-time fetch against a pre-expiry fetch.",
+      "seed_or_budget": "SQLite IMMEDIATE-transaction serialization, no randomness",
+      "tests": {
+        "durable::tests::concurrent_delete_queue_applies_exactly_once": "passed",
+        "durable::tests::concurrent_fetch_across_the_expiry_boundary_never_yields_an_expired_message": "passed",
+        "durable::tests::concurrent_fetch_and_acknowledge_never_apply_twice_or_lose_the_message": "passed",
+        "durable::tests::concurrent_sends_serialize_capacity_and_message_id_conflicts": "passed"
+      }
+    },
+    "disconnect_and_dropped_response": {
+      "description": "A transport that fails exactly once after the relay has already durably accepted the command; the client's identical retry over a fresh connection must complete exactly once.",
+      "seed_or_budget": "deterministic scripted transport, no randomness",
+      "tests": {
+        "empty_expired_disconnect_and_out_of_order_paths_are_deterministic": "passed",
+        "tests::disconnected_clients_exchange_encrypted_message_via_durable_http_binding": "passed"
+      }
+    },
+    "disk_full_read_only_busy_commit_failure": {
+      "description": "SQLite pragmas force read-only rejection and page-limited disk exhaustion; a thread-local flag injects one commit failure; a second connection holds the writer lock to bound busy-wait.",
+      "seed_or_budget": "deterministic fault injection, no randomness",
+      "tests": {
+        "durable::tests::busy_timeout_is_bounded_and_classified": "passed",
+        "durable::tests::readonly_full_and_commit_failures_rollback_without_false_success": "passed",
+        "durable_blob::tests::blob_storage_faults_roll_back_without_false_success_or_partial_state": "passed"
+      }
+    },
+    "duplicate_delivery_and_durable_replay": {
+      "description": "Exact request retries and daemon restarts must return the original response byte-for-byte; conflicting request-id reuse must return AUTH_REPLAY, never silently re-execute.",
+      "seed_or_budget": "deterministic fixed frames, no randomness",
+      "tests": {
+        "blob_replays_survive_daemon_restart": "passed",
+        "durable_blob::tests::blob_replay_record_survives_restart_and_returns_stored_response": "passed",
+        "durable_blob::tests::conflicting_request_id_reuse_is_rejected_after_restart": "passed",
+        "durable_blob::tests::replay_record_and_effect_commit_atomically": "passed",
+        "queue_replays_survive_daemon_restart": "passed",
+        "tests::authenticated_request_replay_is_consistent_and_conflicts_fail": "passed"
+      }
+    },
+    "long_sequence_model_check": {
+      "description": "A fixed-seed LCG drives 2000 random operations against both the SQLite-backed relay and an independent in-memory reference model, asserting an identical outcome after every step.",
+      "seed_or_budget": "LCG seed 0x4d595df4d0f33173, 2000 steps",
+      "tests": {
+        "durable::tests::long_generated_sequence_matches_in_memory_reference_model": "passed"
+      }
+    },
+    "malicious_or_inconsistent_relay": {
+      "description": "A relay response with a mismatched request id, or a tampered ciphertext payload, must be rejected by the client without corrupting local state or sending a false ACK.",
+      "seed_or_budget": "deterministic scripted transport, no randomness",
+      "tests": {
+        "authentication_or_store_failure_never_sends_ack": "passed",
+        "empty_expired_disconnect_and_out_of_order_paths_are_deterministic": "passed"
+      }
+    },
+    "restart_process_kill_at_every_durability_boundary": {
+      "description": "A real child process is aborted at a named point immediately before/after each command's SQLite commit; the parent reopens the database and verifies the recovered state.",
+      "seed_or_budget": "10 queue boundaries + 10 blob boundaries, deterministic (no randomness)",
+      "tests": {
+        "crash_after_commit_redelivers_without_duplicate_application_then_acks": "passed",
+        "durable::tests::hard_process_crashes_recover_at_every_command_commit_boundary": "passed",
+        "durable_blob::tests::hard_process_crashes_recover_at_every_blob_command_boundary": "passed"
+      }
+    }
+  },
+  "format": "cofferwire-durability-evidence-v1",
+  "revision": "d451da17e423d1be1ea01bfbb06933076f7999d9",
+  "toolchain": {
+    "cargo": "cargo 1.84.1 (66221abde 2024-11-19)",
+    "rustc": "rustc 1.84.1 (e71f9a9a9 2025-01-27)"
+  },
+  "workspace_test_exit_code": 0
+}

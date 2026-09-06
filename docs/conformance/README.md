@@ -35,3 +35,21 @@ Regenerate after a passing run with:
 COFFERWIRE_FUZZ_SECONDS=10 scripts/fuzz_smoke.sh
 python3 scripts/collect_fuzz_evidence.py
 ```
+
+## System-level fault injection and model-checking evidence
+
+`durability-evidence-v1.json` is the machine-readable result of the
+system-level fault-injection and model-checking regression suite (see the
+`hard_process_crashes_*`, `*_storage_faults_*`, `*_replay_*`,
+`concurrent_*`, `clock_jumps_*`, `*_backup_*`, and
+`long_generated_sequence_*` tests across `cofferwire-relay`,
+`cofferwire-client`, and `cofferwired`). For each documented fault class it
+records which named tests cover it, the fixed seed or budget that makes the
+scenario deterministic and reviewable, and each test's pass/fail result from
+an actual `cargo test --workspace` run.
+
+Regenerate after a passing run with:
+
+```console
+python3 scripts/collect_durability_evidence.py
+```
