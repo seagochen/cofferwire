@@ -1,0 +1,16 @@
+{
+  "format": "cofferwire-release-gates-v1",
+  "candidate_revision": "0000000000000000000000000000000000000000",
+  "gates": [
+    {"number": 1, "name": "normative-conformance", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 2, "name": "two-implementation-vectors", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 3, "name": "interoperability-matrix", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 4, "name": "continuous-fuzzing", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 5, "name": "fault-injection-recovery", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 6, "name": "version-negotiation", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 7, "name": "external-security-review", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 8, "name": "security-privacy-operations", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 9, "name": "real-family-tree-pilot", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"number": 10, "name": "reproducible-release-artifacts", "status": "pending", "evidence": "REPLACE-ME", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"}
+  ]
+}

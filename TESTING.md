@@ -196,3 +196,10 @@ A release candidate cannot become version 1.0 unless:
 10. release artifacts and test results are reproducible and publicly archived.
 
 These gates verify conformance to the documented protocol. They do not prove universal security; claims must remain limited to the threat model and evidence actually tested.
+
+`docs/release/release-process-v1.md` defines the single-revision evidence
+manifest, deterministic artifact set, two-environment binary comparison,
+signature, and final machine validation used to enforce these gates. An
+artifact rehearsal is not a release: `scripts/validate_release_candidate.py`
+requires all ten gates plus the real pilot and independent review evidence
+before it accepts a signed version 1 candidate.

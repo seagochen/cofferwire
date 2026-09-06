@@ -99,6 +99,9 @@ not production-ready security claims.
 - [docs/security/external-review-scope-v1.md](docs/security/external-review-scope-v1.md) —
   frozen-input procedure, mandatory scope, and finding-disposition contract
   for the independent version 1 security review
+- [docs/release/release-process-v1.md](docs/release/release-process-v1.md) —
+  deterministic artifacts, SBOM, signed checksums, and same-revision release
+  gate validation for version 1
 
 ## License
 
