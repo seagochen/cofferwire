@@ -1,0 +1,1804 @@
+{
+  "coverage_by_category": {
+    "client": 39,
+    "codec": 76,
+    "crypto": 56,
+    "quality": 36,
+    "relay": 43,
+    "transport": 29
+  },
+  "coverage_by_role": {
+    "client": 236,
+    "relay": 240
+  },
+  "format": "cofferwire-conformance-coverage-v1",
+  "registry_format": "cofferwire-conformance-registry-v1",
+  "requirement_count": 134,
+  "requirements": [
+    {
+      "id": "CW-TERM-001",
+      "line": 11,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/01-terminology.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-TERM-002",
+      "line": 12,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/01-terminology.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-TERM-003",
+      "line": 70,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/01-terminology.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-TERM-004",
+      "line": 71,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/01-terminology.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-TERM-005",
+      "line": 95,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/01-terminology.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-001",
+      "line": 19,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-002",
+      "line": 20,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-003",
+      "line": 37,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-004",
+      "line": 38,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-005",
+      "line": 39,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-006",
+      "line": 45,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-007",
+      "line": 46,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-008",
+      "line": 54,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-009",
+      "line": 55,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-010",
+      "line": 61,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-011",
+      "line": 62,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-012",
+      "line": 63,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-013",
+      "line": 69,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-014",
+      "line": 70,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-001",
+      "line": 9,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-002",
+      "line": 10,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-012",
+      "line": 31,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-003",
+      "line": 50,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-004",
+      "line": 51,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-005",
+      "line": 72,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-006",
+      "line": 73,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-007",
+      "line": 91,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-008",
+      "line": 92,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-009",
+      "line": 93,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-010",
+      "line": 94,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-ARCH-011",
+      "line": 112,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/03-architecture.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-001",
+      "line": 26,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-002",
+      "line": 31,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-003",
+      "line": 35,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-004",
+      "line": 73,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-005",
+      "line": 77,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-006",
+      "line": 82,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-007",
+      "line": 87,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MAY",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-008",
+      "line": 90,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-009",
+      "line": 131,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-010",
+      "line": 137,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-011",
+      "line": 142,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-012",
+      "line": 146,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-013",
+      "line": 154,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-014",
+      "line": 158,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-015",
+      "line": 163,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-016",
+      "line": 177,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MAY",
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-CRYPTO-017",
+      "line": 180,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/04-cryptographic-profile.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CRYPTO"
+      ]
+    },
+    {
+      "id": "CW-WIRE-001",
+      "line": 42,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-002",
+      "line": 47,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-003",
+      "line": 60,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-004",
+      "line": 77,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-005",
+      "line": 80,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MAY",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-006",
+      "line": 86,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-007",
+      "line": 94,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-008",
+      "line": 110,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-009",
+      "line": 112,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-010",
+      "line": 124,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-011",
+      "line": 128,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-012",
+      "line": 150,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-013",
+      "line": 153,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-014",
+      "line": 162,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-015",
+      "line": 175,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-016",
+      "line": 185,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-017",
+      "line": 194,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-018",
+      "line": 202,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-019",
+      "line": 209,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-020",
+      "line": 218,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-021",
+      "line": 228,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MAY",
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-029",
+      "line": 234,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-030",
+      "line": 265,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-022",
+      "line": 280,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-023",
+      "line": 287,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-024",
+      "line": 291,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-025",
+      "line": 307,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-026",
+      "line": 343,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-027",
+      "line": 365,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-WIRE-028",
+      "line": 371,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/05-wire-format.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TYPES",
+        "RUST-CODEC"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-001",
+      "line": 14,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-002",
+      "line": 15,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-003",
+      "line": 16,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-004",
+      "line": 17,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-005",
+      "line": 18,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-006",
+      "line": 19,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-007",
+      "line": 20,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-QUEUE-008",
+      "line": 21,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY",
+        "RUST-CLIENT"
+      ]
+    },
+    {
+      "id": "CW-STORE-001",
+      "line": 37,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-002",
+      "line": 38,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-003",
+      "line": 39,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-004",
+      "line": 40,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-005",
+      "line": 41,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-006",
+      "line": 42,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-007",
+      "line": 43,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-008",
+      "line": 44,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-STORE-009",
+      "line": 45,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/06-queues.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RELAY"
+      ]
+    },
+    {
+      "id": "CW-BLOB-001",
+      "line": 33,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-002",
+      "line": 37,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-023",
+      "line": 54,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-003",
+      "line": 80,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-004",
+      "line": 85,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-005",
+      "line": 110,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-006",
+      "line": 113,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-007",
+      "line": 116,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-024",
+      "line": 144,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-008",
+      "line": 150,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-009",
+      "line": 154,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-010",
+      "line": 176,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-011",
+      "line": 180,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-012",
+      "line": 184,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-013",
+      "line": 189,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-014",
+      "line": 192,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-015",
+      "line": 195,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-025",
+      "line": 205,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-016",
+      "line": 208,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-017",
+      "line": 212,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-018",
+      "line": 217,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MAY"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-019",
+      "line": 230,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-020",
+      "line": 233,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-021",
+      "line": 242,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-BLOB-022",
+      "line": 246,
+      "revision": "CW-BLOB-1-DRAFT-2026-09-06",
+      "source": "spec/07-blobs.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-TRANSPORT-001",
+      "line": 13,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/09-transport-bindings.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-TRANSPORT-002",
+      "line": 17,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/09-transport-bindings.md",
+      "terms": [],
+      "tests": [
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-TRANSPORT-003",
+      "line": 20,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/09-transport-bindings.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-TRANSPORT"
+      ]
+    },
+    {
+      "id": "CW-VERSION-001",
+      "line": 21,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-002",
+      "line": 25,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-003",
+      "line": 48,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-004",
+      "line": 50,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-005",
+      "line": 72,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-006",
+      "line": 75,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-007",
+      "line": 78,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-008",
+      "line": 81,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MAY",
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-009",
+      "line": 84,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-010",
+      "line": 88,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-VERSION-011",
+      "line": 92,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST"
+      ]
+    }
+  ],
+  "uncovered_must": [],
+  "unresolved_should": []
+}

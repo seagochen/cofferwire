@@ -1,0 +1,70 @@
+{
+  "format": "cofferwire-conformance-registry-v1",
+  "revisions": {
+    "queue-v1": "CW-SCOPE-QUEUE-V1-2026-09-06",
+    "blob-v1": "CW-BLOB-1-DRAFT-2026-09-06"
+  },
+  "tests": {
+    "RUST-TYPES": {
+      "command": "cargo test -p cofferwire-types",
+      "category": "codec",
+      "roles": ["client", "relay"],
+      "security_properties": ["bounded-values", "closed-enums"]
+    },
+    "RUST-CODEC": {
+      "command": "cargo test -p cofferwire-codec && cargo test -p cofferwire-test --test wire_cddl",
+      "category": "codec",
+      "roles": ["client", "relay"],
+      "security_properties": ["canonical-encoding", "bounded-parsing", "version-rejection"]
+    },
+    "RUST-CRYPTO": {
+      "command": "cargo test -p cofferwire-crypto",
+      "category": "crypto",
+      "roles": ["client", "relay"],
+      "security_properties": ["authentication", "confidentiality", "domain-separation"]
+    },
+    "RUST-CLIENT": {
+      "command": "cargo test -p cofferwire-client",
+      "category": "client",
+      "roles": ["client"],
+      "security_properties": ["persist-before-ack", "retry-safety", "deduplication"]
+    },
+    "RUST-RELAY": {
+      "command": "cargo test -p cofferwire-relay",
+      "category": "relay",
+      "roles": ["relay"],
+      "security_properties": ["durability", "authorization", "atomicity"]
+    },
+    "RUST-TRANSPORT": {
+      "command": "cargo test -p cofferwired",
+      "category": "transport",
+      "roles": ["client", "relay"],
+      "security_properties": ["transport-independence", "resource-bounds"]
+    },
+    "RUST-BLOB-VECTORS": {
+      "command": "cargo test -p cofferwire-test --test blob_vectors",
+      "category": "crypto",
+      "roles": ["client", "relay"],
+      "security_properties": ["blob-integrity", "ciphertext-identity", "capability-separation"]
+    },
+    "TRACEABILITY-SELFTEST": {
+      "command": "python3 -m unittest scripts.tests.test_check_conformance",
+      "category": "quality",
+      "roles": ["client", "relay"],
+      "security_properties": ["specification-coverage"]
+    }
+  },
+  "mappings": [
+    {"prefix": "CW-TERM-", "revision": "queue-v1", "tests": ["RUST-TYPES", "RUST-CLIENT"]},
+    {"prefix": "CW-THREAT-", "revision": "queue-v1", "tests": ["RUST-CRYPTO", "RUST-CLIENT", "RUST-RELAY", "RUST-TRANSPORT"]},
+    {"prefix": "CW-ARCH-", "revision": "queue-v1", "tests": ["RUST-CLIENT", "RUST-RELAY", "RUST-TRANSPORT"]},
+    {"prefix": "CW-CRYPTO-", "revision": "queue-v1", "tests": ["RUST-CRYPTO"]},
+    {"prefix": "CW-WIRE-", "revision": "queue-v1", "tests": ["RUST-TYPES", "RUST-CODEC"]},
+    {"prefix": "CW-QUEUE-", "revision": "queue-v1", "tests": ["RUST-RELAY", "RUST-CLIENT"]},
+    {"prefix": "CW-STORE-", "revision": "queue-v1", "tests": ["RUST-RELAY"]},
+    {"prefix": "CW-TRANSPORT-", "revision": "queue-v1", "tests": ["RUST-TRANSPORT"]},
+    {"prefix": "CW-VERSION-", "revision": "queue-v1", "tests": ["RUST-CODEC", "TRACEABILITY-SELFTEST"]},
+    {"prefix": "CW-BLOB-", "revision": "blob-v1", "tests": ["RUST-BLOB-VECTORS", "TRACEABILITY-SELFTEST"]}
+  ],
+  "should_exceptions": []
+}

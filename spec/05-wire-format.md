@@ -69,8 +69,8 @@ why.
 
 CW-WIRE-001 through CW-WIRE-003 together define what "canonical" and
 "non-canonical" mean for this protocol: canonical is exactly the subset
-above, in shortest form, with no trailing bytes; anything else is
-non-canonical and MUST be rejected, not repaired or reinterpreted.
+above, in shortest form, with no trailing bytes; those requirements reject
+anything else rather than repairing or reinterpreting it.
 
 ## Frame structure
 
@@ -402,9 +402,9 @@ minimal reference encoder/decoder implementing exactly the rules above.
 `version = 1`, `request-id = 0xAA * 16`, `queue-id = 0x11 * 32`,
 `sender = 0x22 * 32`, `message-id = 0x33 * 32`, opaque `payload = "hi"`,
 `ttl = 60` seconds, and an empty structural `auth` encode to exactly these
-129 bytes. This is a codec example and negative authentication fixture: the
-adopted profile requires a 68-byte proof, so a relay MUST return
-`AUTH_INVALID` without applying this request.
+129 bytes. This is a codec example and negative authentication fixture: under
+CW-WIRE-018 the adopted profile's 68-byte proof requirement makes the relay
+return `AUTH_INVALID` without applying this request.
 
 ```text
 01                                                                # preamble: version = 1
@@ -437,7 +437,7 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa      # preamble: request-id (echoed)
     00                                # outcome = 0 (accepted)
 ```
 
-### (c) A non-canonical encoding that MUST be rejected
+### (c) A rejected non-canonical encoding
 
 The same `queue-id` from (a), encoded with a longer-than-necessary length
 argument (CW-WIRE-002): initial byte `0x59` (major type 2, 2-byte length
@@ -453,11 +453,10 @@ same logical `SEND` request, breaking the byte-for-byte determinism this
 document requires; CW-WIRE-002/003 require rejecting the `0x59` form.
 
 The same requirement applies to array-length arguments, not just
-byte-string lengths. The 5-element `send-req` body in (a) MUST use initial
-byte `0x85` (major type 4, direct length 5). The alternative
+byte-string lengths. CW-WIRE-002 requires the 5-element `send-req` body in (a)
+to use initial byte `0x85` (major type 4, direct length 5). The alternative
 `0x98 0x05` (major type 4, 1-byte length argument, also representing 5)
-encodes the same array length non-canonically and MUST equally be
-rejected.
+encodes the same array length non-canonically and is equally rejected.
 
 ### (d) A hypothetical future version, handled without understanding it
 
@@ -504,7 +503,7 @@ model types excluded by CW-WIRE-001.
 after a request payload rather than part of the payload tree. The raw
 `preamble`, shortest-argument encoding, item ordering and absence of
 trailing bytes are byte-level constraints that RFC 8610 CDDL cannot
-express; CW-WIRE-002–005 remain normative and a conforming codec MUST
+express; CW-WIRE-002–005 remain normative and require a conforming codec to
 check them in addition to validating the structural schema.
 
 ## Open decisions

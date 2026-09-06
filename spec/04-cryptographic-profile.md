@@ -98,9 +98,10 @@ decoded or re-encoded value.
 ## End-to-end application payload
 
 Each device has a distinct long-term X25519 HPKE identity key pair in addition
-to its relay-command Ed25519 key. The sender MUST know the intended recipient
-device's HPKE public key, and the recipient MUST know the expected sender
-device's HPKE public key through an authenticated out-of-band relationship.
+to its relay-command Ed25519 key. CW-CRYPTO-010 requires the sender to know the
+intended recipient device's HPKE public key and the recipient to know the
+expected sender device's HPKE public key through an authenticated out-of-band
+relationship.
 
 One plaintext is protected using a new RFC 9180 Auth-mode setup and sequence
 number zero. The opaque `SEND` payload has this exact form:
