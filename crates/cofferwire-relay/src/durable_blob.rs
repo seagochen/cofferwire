@@ -1003,13 +1003,69 @@ mod tests {
                     .commit_blob(upload_id, caps.upload, blob_id, NOW)
                     .expect("configured crash point must terminate commit");
             }
+            "put" => {
+                let (upload_id, caps, manifest, chunks, _) = fixture();
+                relay
+                    .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+                    .expect("begin commits before the targeted crash point");
+                relay
+                    .put_blob_chunk(upload_id, caps.upload, 0, &chunks[0], NOW)
+                    .expect("configured crash point must terminate put");
+            }
+            "renew" => {
+                let (upload_id, caps, manifest, chunks, blob_id) = fixture();
+                relay
+                    .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+                    .expect("begin commits before the targeted crash point");
+                for (index, chunk) in chunks.iter().enumerate() {
+                    relay
+                        .put_blob_chunk(
+                            upload_id,
+                            caps.upload,
+                            u32::try_from(index).expect("index fits"),
+                            chunk,
+                            NOW,
+                        )
+                        .expect("chunk commits before the targeted crash point");
+                }
+                relay
+                    .commit_blob(upload_id, caps.upload, blob_id, NOW)
+                    .expect("commit commits before the targeted crash point");
+                relay
+                    .renew_blob(blob_id, caps.renew, NOW, 500)
+                    .expect("configured crash point must terminate renew");
+            }
+            "delete" => {
+                let (upload_id, caps, manifest, chunks, blob_id) = fixture();
+                relay
+                    .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+                    .expect("begin commits before the targeted crash point");
+                for (index, chunk) in chunks.iter().enumerate() {
+                    relay
+                        .put_blob_chunk(
+                            upload_id,
+                            caps.upload,
+                            u32::try_from(index).expect("index fits"),
+                            chunk,
+                            NOW,
+                        )
+                        .expect("chunk commits before the targeted crash point");
+                }
+                relay
+                    .commit_blob(upload_id, caps.upload, blob_id, NOW)
+                    .expect("commit commits before the targeted crash point");
+                relay
+                    .delete_blob(blob_id, caps.delete, NOW)
+                    .expect("configured crash point must terminate delete");
+            }
             other => panic!("unknown crash action: {other}"),
         }
         panic!("crash worker passed its configured crash point");
     }
 
     #[test]
-    fn hard_process_crashes_recover_at_blob_begin_and_publish_boundaries() {
+    #[allow(clippy::too_many_lines)]
+    fn hard_process_crashes_recover_at_every_blob_command_boundary() {
         let begin_before = TestDatabase::new();
         run_crashing_child(&begin_before, "begin", "begin_before_commit");
         let mut recovered = DurableRelay::open(begin_before.path()).expect("database recovers");
@@ -1058,6 +1114,85 @@ mod tests {
             .get_blob_manifest(blob_id, caps.download, NOW)
             .expect("crash after the publish commit leaves the object available");
         assert_eq!(stored, manifest);
+
+        let put_before = TestDatabase::new();
+        run_crashing_child(&put_before, "put", "put_before_commit");
+        let mut recovered = DurableRelay::open(put_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (upload_id, caps, _, chunks, _) = fixture();
+        assert!(
+            matches!(
+                recovered.put_blob_chunk(upload_id, caps.upload, 0, &chunks[0], NOW),
+                Ok(0)
+            ),
+            "crash before commit leaves no stored chunk behind"
+        );
+
+        let put_after = TestDatabase::new();
+        run_crashing_child(&put_after, "put", "put_after_commit");
+        let mut recovered = DurableRelay::open(put_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (upload_id, caps, _, chunks, _) = fixture();
+        assert!(
+            matches!(
+                recovered.put_blob_chunk(upload_id, caps.upload, 0, &chunks[0], NOW),
+                Ok(1)
+            ),
+            "crash after commit durably records the chunk"
+        );
+
+        let renew_before = TestDatabase::new();
+        run_crashing_child(&renew_before, "renew", "renew_before_commit");
+        let mut recovered = DurableRelay::open(renew_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (_, caps, _, _, blob_id) = fixture();
+        let (_, expiry) = recovered
+            .get_blob_manifest(blob_id, caps.download, NOW)
+            .expect("committed object remains available");
+        assert_eq!(
+            expiry,
+            NOW.as_secs() + 100,
+            "crash before commit leaves the original expiry untouched"
+        );
+
+        let renew_after = TestDatabase::new();
+        run_crashing_child(&renew_after, "renew", "renew_after_commit");
+        let mut recovered = DurableRelay::open(renew_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (_, caps, _, _, blob_id) = fixture();
+        let (_, expiry) = recovered
+            .get_blob_manifest(blob_id, caps.download, NOW)
+            .expect("committed object remains available");
+        assert_eq!(
+            expiry,
+            NOW.as_secs() + 500,
+            "crash after commit durably records the extended expiry"
+        );
+
+        let delete_before = TestDatabase::new();
+        run_crashing_child(&delete_before, "delete", "delete_before_commit");
+        let mut recovered = DurableRelay::open(delete_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (_, caps, _, _, blob_id) = fixture();
+        assert!(
+            recovered
+                .get_blob_manifest(blob_id, caps.download, NOW)
+                .is_ok(),
+            "crash before commit leaves the grant undeleted"
+        );
+
+        let delete_after = TestDatabase::new();
+        run_crashing_child(&delete_after, "delete", "delete_after_commit");
+        let mut recovered = DurableRelay::open(delete_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (_, caps, _, _, blob_id) = fixture();
+        assert!(
+            matches!(
+                recovered.get_blob_manifest(blob_id, caps.download, NOW),
+                Err(BlobRelayResult::Protocol(BlobRelayError::NotFound))
+            ),
+            "crash after commit durably records the deletion"
+        );
     }
 
     #[test]
