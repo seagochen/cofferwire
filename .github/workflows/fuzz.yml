@@ -22,6 +22,9 @@ jobs:
           COFFERWIRE_FUZZ_RSS_MB: "1024"
           COFFERWIRE_FUZZ_TIMEOUT_SECONDS: "10"
         run: scripts/fuzz_smoke.sh
+      - name: Minimize crash and timeout inputs
+        if: failure()
+        run: scripts/minimize_fuzz_crashes.sh
       - name: Archive crash and timeout inputs
         if: always()
         uses: actions/upload-artifact@v4

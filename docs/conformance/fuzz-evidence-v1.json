@@ -1,0 +1,33 @@
+{
+  "budget": {
+    "scheduled_ci_seconds_per_target": 900,
+    "this_run_seconds_per_target": 10
+  },
+  "corpus_source": "scripts/prepare_fuzz_corpus.py derives seeds from the tracked vectors/codec-v1.json, vectors/blob-v1.json, and vectors/queue-v1-traces.json public/interop vectors, exact blob manifest/chunk vectors, and a fixed set of hostile-input byte classes (indefinite-length markers, truncation, declared allocation bombs) into the ignored fuzz/target/generated-corpus/ directory; it is fully reproducible from tracked files.",
+  "format": "cofferwire-fuzz-evidence-v1",
+  "limits": {
+    "max_input_bytes": 1049601,
+    "rss_limit_mb": 1024,
+    "timeout_seconds": 10
+  },
+  "revision": "342579f085531db113ade41138ffae184df22e37",
+  "targets": [
+    "decode-frames",
+    "decode-blob-frames",
+    "verify-hostile-proofs",
+    "relay-transitions"
+  ],
+  "toolchain": {
+    "cargo_fuzz": "cargo-fuzz 0.13.2",
+    "rustc_nightly": "rustc 1.100.0-nightly (f248f4038 2026-09-05)"
+  },
+  "unresolved_crashes": {
+    "by_target": {
+      "decode-blob-frames": [],
+      "decode-frames": [],
+      "relay-transitions": [],
+      "verify-hostile-proofs": []
+    },
+    "count": 0
+  }
+}

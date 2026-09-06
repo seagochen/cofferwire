@@ -28,10 +28,15 @@ a 1 GiB RSS limit, ten-second per-input timeout, bounded maximum input and a
 hard wall-clock budget. Panic, sanitizer failure, OOM, timeout, or nonzero exit
 fails the script. LeakSanitizer is disabled because it cannot operate under the
 restricted `ptrace` policy used by CI and Codex; Rust panic, AddressSanitizer,
-timeout and RSS checks remain active. Scheduled CI uses 900 seconds per target and retains all
-artifacts for 30 days. A crash is minimized with
-`cargo fuzz tmin <target> <artifact>`, copied into the relevant deterministic
-test/corpus, and tracked by a security Issue before the gate may pass.
+timeout and RSS checks remain active. Scheduled CI uses 900 seconds per target
+and retains all artifacts for 30 days; ordinary push/PR CI only compiles every
+target (`cargo check --manifest-path fuzz/Cargo.toml --bins`) without running
+them. On a scheduled-run failure, `scripts/minimize_fuzz_crashes.sh` shrinks
+every `crash-`/`timeout-`/`oom-` artifact with `cargo fuzz tmin` (an
+`<artifact>.minimized` copy lands next to the original) before artifacts
+upload, so triage starts from the smallest reproducer. A crash is still
+promoted by hand: copy the (minimized) input into the relevant deterministic
+test/corpus and track it with a security Issue before the gate may pass.
 
 Diagnostics from these targets contain only stable error categories; protocol
 keys, proofs, capabilities, plaintext and ciphertext bytes are never formatted.

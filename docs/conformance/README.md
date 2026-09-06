@@ -20,3 +20,18 @@ Queue v1 is the first registered version, so there is no previous/current pair
 inside the compatibility window. This is recorded as `not-applicable`, not as a
 passing interoperability combination. Unknown-version and downgrade rejection
 remain required and are exercised by both implementations.
+
+## Continuous fuzzing evidence
+
+`fuzz-evidence-v1.json` is the machine-readable result of a clean hostile-input
+fuzzing run (see `fuzz/README.md`). It records the exact revision, nightly
+rustc and cargo-fuzz versions, target list, per-target budget (the budget this
+run actually used and the 900-second scheduled-CI budget it stands in for),
+RSS/timeout/input limits, corpus provenance, and the unresolved crash count.
+
+Regenerate after a passing run with:
+
+```console
+COFFERWIRE_FUZZ_SECONDS=10 scripts/fuzz_smoke.sh
+python3 scripts/collect_fuzz_evidence.py
+```
