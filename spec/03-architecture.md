@@ -4,7 +4,7 @@ This document defines the component boundaries and message flow of the initial C
 
 ## Profile boundary
 
-The initial profile supports small asynchronous messages. Each receiving device owns an independent unidirectional receive queue. Blob transfer is deferred to a separate profile rather than emulated by exceeding this profile's message limits.
+The initial profile supports small asynchronous messages. Each receiving device owns an independent unidirectional receive queue. Blob transfer is defined by the separately negotiated `cofferwire-blob/1` profile rather than emulated by exceeding this profile's message limits. The frozen queue-v1 scope revision is `CW-SCOPE-QUEUE-V1-2026-09-06`.
 
 - **CW-ARCH-001:** A relay MUST model each receive queue independently and MUST NOT require a global user account to route queue commands.
 - **CW-ARCH-002:** Multi-device fan-out MUST occur above the relay queue layer. The relay MUST NOT infer device grouping or duplicate a message across queues on behalf of an account.

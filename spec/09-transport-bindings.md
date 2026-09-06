@@ -4,6 +4,10 @@ This document binds the transport-independent v1 envelope to the reference
 network daemon. It does not add fields, reinterpret statuses or make connection
 identity part of authentication or queue semantics.
 
+These identifiers select only the queue-v1 profile. Blob/1 uses the distinct
+endpoints, media type and WebSocket subprotocol registered in
+`10-versioning.md` and defined by `07-blobs.md`.
+
 ## Common rules
 
 - **CW-TRANSPORT-001:** One transport request carries exactly one complete

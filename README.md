@@ -1,6 +1,10 @@
 # Cofferwire
 
-Cofferwire is an open, transport-independent protocol for private asynchronous messaging and encrypted object delivery through replaceable, untrusted relays.
+Cofferwire is an open, transport-independent protocol family for private
+asynchronous messaging and encrypted object delivery through replaceable,
+untrusted relays. The frozen queue protocol version 1 carries small messages;
+encrypted objects use the separately negotiated draft `cofferwire-blob/1`
+profile.
 
 > **Project status:** design phase with executable in-memory and transactional queue models. No implementation is production-ready, and no security guarantees should be inferred yet.
 
@@ -66,6 +70,11 @@ not production-ready security claims.
 - [spec/05-wire-format.md](spec/05-wire-format.md) — canonical envelope, framing and version negotiation
 - [spec/09-transport-bindings.md](spec/09-transport-bindings.md) — baseline
   HTTPS/WebSocket mappings and resource bounds
+- [spec/10-versioning.md](spec/10-versioning.md) — profile scopes, identifier
+  registry and compatibility policy
+- [spec/07-blobs.md](spec/07-blobs.md) — independent encrypted blob/1 profile
+- [docs/adr/0001-version-1-scope.md](docs/adr/0001-version-1-scope.md) — accepted
+  queue-v1 scope decision (`CW-SCOPE-QUEUE-V1-2026-09-06`)
 
 ## License
 

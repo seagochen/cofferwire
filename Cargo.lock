@@ -620,7 +620,13 @@ version = "0.1.0"
 dependencies = [
  "base45",
  "cddl",
+ "chacha20poly1305",
  "clap",
+ "ed25519-dalek",
+ "hex",
+ "hkdf",
+ "serde_json",
+ "sha2",
  "time",
  "unicode-segmentation",
 ]

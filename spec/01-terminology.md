@@ -6,7 +6,7 @@ Normative terms such as **MUST**, **MUST NOT**, **SHOULD** and **MAY** are inter
 
 ## Initial scope
 
-The initial interoperable profile carries small asynchronous application messages. Each receiving device has its own independent receive queue. Blob transfer, account discovery, device enrollment and application-specific synchronization are outside this profile.
+The initial interoperable queue-v1 profile carries small asynchronous application messages. Each receiving device has its own independent receive queue. Blob transfer is defined by the separately negotiated `cofferwire-blob/1` profile; account discovery, device enrollment and application-specific synchronization remain outside queue v1. Its frozen scope revision is `CW-SCOPE-QUEUE-V1-2026-09-06`.
 
 - **CW-TERM-001:** A protocol role or identifier defined here MUST NOT be interpreted as a global user identity unless a later application profile explicitly defines that mapping.
 - **CW-TERM-002:** Each receiving device MUST use an independent receive queue. A relay MUST NOT infer that separate queues belong to the same user or application identity.

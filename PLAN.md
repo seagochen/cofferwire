@@ -66,6 +66,10 @@ Names may change before the first wire-format freeze. Public Rust APIs are not t
 
 ### M3 — Encrypted blob delivery
 
+M3 targets the independently negotiated `cofferwire-blob/1` profile. It does
+not extend the frozen queue-v1 command, status or transport namespaces (ADR
+0001, scope revision `CW-SCOPE-QUEUE-V1-2026-09-06`).
+
 - separate ciphertext identity from access capability;
 - specify chunking, padding buckets, upload commit, download, renewal and deletion;
 - define leases/TTL as availability policy rather than ownership;
@@ -122,15 +126,25 @@ Names may change before the first wire-format freeze. Public Rust APIs are not t
 
 **Exit:** storage behavior is independently specified and does not change the version 1 messaging wire contract.
 
-## Decisions required before coding the wire protocol
+## Version and scope baseline
+
+ADR 0001 fixes version 1 as the queue-only small-message profile. Blob delivery
+uses `cofferwire-blob/1`; application receipts and offline bundles remain later
+application/profile or transport work. `spec/10-versioning.md` is the single
+identifier registry and compatibility policy. M3 depends on the blob/1
+specification, M4 must allocate separate receipt/offline identifiers, M5 reports
+the profiles and scope revision under test, and M7 freezes a release without
+silently expanding queue v1.
+
+## Remaining protocol decisions
 
 - exact attacker capabilities and metadata privacy target;
 - exact cryptographic suites and algorithm-agility limits;
 - deterministic encoding rules and extension mechanism;
 - per-recipient queue model and multi-device behavior;
 - relay persistence, quota and abuse-control contract;
-- backward-compatibility window and deprecation process;
-- whether the first release includes blobs or queues only.
+- concrete freshness windows beyond durable replay records;
+- abuse-control policy and deployment-specific quotas.
 
 ## Definition of done
 
@@ -145,4 +159,3 @@ Cofferwire is not complete merely because the reference implementation works. Ve
 - an external security review has no unresolved critical/high findings;
 - upgrade and version-negotiation behavior is demonstrated;
 - the family-tree application completes an end-to-end pilot without protocol-specific exceptions.
-

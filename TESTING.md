@@ -26,6 +26,12 @@ Language-neutral vectors will cover:
 - valid messages plus malformed, truncated and non-canonical variants;
 - version negotiation and unknown extension handling.
 
+`vectors/blob-v1.json` fixes the blob/1 content-protection, chunk digest,
+manifest, ciphertext identity and independent capability fixtures. Its stable
+negative IDs cover tampering, reordering, incomplete visibility, capability
+cross-use, expiry and committed immutability. Run these executable vector checks
+with `cargo test -p cofferwire-test`.
+
 Vectors contain fixed test-only keys and must never be accepted as production credentials. Formats should be simple JSON metadata plus binary fixtures, even when the protocol itself uses a binary encoding.
 
 ## 3. Unit and component tests
@@ -68,6 +74,10 @@ The decisive protocol test is independent interoperability:
 | Rust reference | Independent relay | yes |
 | Independent client | Independent relay | yes |
 | Previous supported version | Current version | during compatibility window |
+
+Every matrix result identifies the profile/version under test. Queue-v1 results
+also identify scope revision `CW-SCOPE-QUEUE-V1-2026-09-06`; blob/1 is tested in
+a separate matrix and is never inferred from queue-v1 support.
 
 The second implementation must be written from the public specification and vectors, preferably in another language and without importing reference implementation code. Any ambiguity it finds is a specification bug.
 

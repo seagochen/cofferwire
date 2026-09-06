@@ -1,0 +1,48 @@
+; Cofferwire blob/1 payload schema (RFC 8610 CDDL).
+; The raw 17-byte preamble, canonical byte checks, manifest internals and
+; cross-field limit equations are specified in 07-blobs.md.
+
+frame-payload =
+    [direction: 0, command: 1,
+         body: [upload: upload-id, upload-cap: capability-id,
+         download-cap: capability-id, renew-cap: capability-id,
+         delete-cap: capability-id, manifest: manifest, lifetime: ttl]]
+  / [direction: 0, command: 2,
+         body: [upload: upload-id, upload-cap: capability-id,
+         index: chunk-index, ciphertext: ciphertext-chunk]]
+  / [direction: 0, command: 3,
+         body: [upload: upload-id, upload-cap: capability-id, blob: blob-id]]
+  / [direction: 0, command: 4,
+         body: [blob: blob-id, download-cap: capability-id]]
+  / [direction: 0, command: 5,
+         body: [blob: blob-id, download-cap: capability-id,
+         index: chunk-index]]
+  / [direction: 0, command: 6,
+         body: [blob: blob-id, renew-cap: capability-id, lifetime: ttl]]
+  / [direction: 0, command: 7,
+         body: [blob: blob-id, delete-cap: capability-id]]
+  / [direction: 1, command: 1, status: 0, body: [outcome: 0..1]]
+  / [direction: 1, command: 2, status: 0, body: [outcome: 0..1]]
+  / [direction: 1, command: 3, status: 0, body: [expires-at: timestamp]]
+  / [direction: 1, command: 4, status: 0,
+         body: [manifest: manifest, expires-at: timestamp]]
+  / [direction: 1, command: 5, status: 0,
+         body: [ciphertext: ciphertext-chunk, expires-at: timestamp]]
+  / [direction: 1, command: 6, status: 0, body: [expires-at: timestamp]]
+  / [direction: 1, command: 7, status: 0, body: []]
+  / [direction: 1, command: response-command,
+         status: error-status, body: []]
+
+error-status = 1..14
+response-command = 0..7
+
+request-auth = bstr .size 68
+
+upload-id        = bstr .size 32
+blob-id          = bstr .size 32
+capability-id    = bstr .size 32
+manifest         = bstr .size (72..1048616)
+ciphertext-chunk = bstr .size (48..1048592)
+chunk-index      = 0..32767
+timestamp        = uint
+ttl              = uint

@@ -9,6 +9,12 @@ publish = false
 
 [dev-dependencies]
 cddl = "=0.10.2"
+chacha20poly1305 = "0.10.1"
+ed25519-dalek = "2.2.0"
+hex = "0.4.3"
+hkdf = "0.12.4"
+serde_json = "1.0.140"
+sha2 = "0.10.8"
 
 # cddl 0.10.2 permits newer transitive releases whose MSRV exceeds the
 # workspace Rust 1.84 baseline. Exact direct constraints keep this test

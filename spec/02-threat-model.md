@@ -73,9 +73,10 @@ The initial profile does not hide IP addresses, queue access, timing, message le
 
 No protocol can force a malicious relay or network to deliver data. Cofferwire can detect invalid authenticated content and make retries safe, but omission and permanent denial of service require relay replacement or another transport.
 
-## Out of scope for the initial profile
+## Out of scope for the initial queue profile
 
-- blob confidentiality, chunk integrity and partial-upload visibility;
+- blob confidentiality, chunk integrity and partial-upload visibility, which
+  are defined separately by `cofferwire-blob/1` in `07-blobs.md`;
 - global account discovery or contact directories;
 - traffic padding, mixing, cover traffic or anonymous network routing;
 - recovery from a fully compromised endpoint;
