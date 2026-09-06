@@ -19,6 +19,7 @@ jobs:
       - run: python3 scripts/check_conformance.py --check-report conformance/coverage.json
       - run: python3 -m unittest scripts.tests.test_check_conformance -v
       - run: python3 -m unittest discover -s independent/python/tests -v
+      - run: python3 scripts/run_interop_matrix.py --output /tmp/interop-matrix-v1.json
       - run: cargo fmt --all -- --check
       - run: cargo test --workspace
       - run: cargo clippy --workspace --all-targets -- -D warnings

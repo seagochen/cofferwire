@@ -86,6 +86,13 @@ Their local codec, Ed25519, HPKE-vector and queue tests run with
 `python3 -m unittest discover -s independent/python/tests -v`; independence and
 dependency boundaries are recorded in `independent/python/IMPLEMENTATION_NOTES.md`.
 
+Run the complete four-way matrix with
+`python3 scripts/run_interop_matrix.py --output
+docs/conformance/interop-matrix-v1.json`. The shared semantic catalog is
+`vectors/queue-v1-traces.json`, and the checked-in JSON report records source,
+environment, commands, artifact digests, vector evidence and compatibility
+results.
+
 ## 6. Parser fuzzing and hostile input
 
 Continuous fuzz targets cover every unauthenticated parser and state transition. Corpora include valid vectors, boundary sizes and captured interoperability traces.

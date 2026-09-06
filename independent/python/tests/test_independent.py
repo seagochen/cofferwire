@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+TRACE_CATALOG = json.loads((ROOT / "vectors" / "queue-v1-traces.json").read_text())
 sys.path.insert(0, str(ROOT / "independent" / "python"))
 
 import cofferwire_v1 as cw  # noqa: E402
@@ -14,14 +15,16 @@ from cryptography.exceptions import InvalidSignature, InvalidTag  # noqa: E402
 
 
 class QueueScenario:
-    def __init__(self, exchange):
+    def __init__(self, exchange, restart=None):
         self.client = cw.Client(exchange)
+        self.restart = restart
         self.sender_seed = bytes([0x31]) * 32
         self.recipient_seed = bytes([0x32]) * 32
         self.sender = cw.public_key(self.sender_seed)
         self.recipient = cw.public_key(self.recipient_seed)
         self.queue = bytes([0x41]) * 32
         self.message = bytes([0x51]) * 32
+        self.second_message = bytes([0x52]) * 32
         self.next_id = 1
 
     def request_id(self):
@@ -30,6 +33,9 @@ class QueueScenario:
         return value
 
     def run(self):
+        assert [case["id"] for case in TRACE_CATALOG["cases"]] == [
+            f"QV1-TRACE-{number:03}" for number in range(1, 9)
+        ]
         status, body, _ = self.client.call(
             self.sender_seed,
             self.request_id(),
@@ -55,6 +61,16 @@ class QueueScenario:
             1_000,
         )
         assert frame == retried and (status, body) == (cw.OK, [0])
+        status, body, _ = self.client.call(
+            self.sender_seed,
+            self.request_id(),
+            cw.SEND,
+            [self.queue, self.sender, self.second_message, b"second ciphertext", 60],
+            1_000,
+        )
+        assert (status, body) == (cw.OK, [0])
+        if self.restart is not None:
+            self.restart()
         fetch_id = self.request_id()
         status, first, _ = self.client.call(
             self.recipient_seed,
@@ -77,6 +93,22 @@ class QueueScenario:
             self.request_id(),
             cw.ACK,
             [self.queue, self.recipient, self.message],
+            1_001,
+        )
+        assert (status, body) == (cw.OK, [])
+        status, second, _ = self.client.call(
+            self.recipient_seed,
+            self.request_id(),
+            cw.FETCH,
+            [self.queue, self.recipient],
+            1_001,
+        )
+        assert status == cw.OK and second[0] == 1 and second[1] == self.second_message
+        status, body, _ = self.client.call(
+            self.recipient_seed,
+            self.request_id(),
+            cw.ACK,
+            [self.queue, self.recipient, self.second_message],
             1_001,
         )
         assert (status, body) == (cw.OK, [])
@@ -251,13 +283,17 @@ class IndependentImplementationTests(unittest.TestCase):
 
 class RustLineRelay:
     def __init__(self):
-        executable = os.environ.get(
+        self.executable = os.environ.get(
             "COFFERWIRE_RUST_LINE_RELAY",
             str(ROOT / "target" / "debug" / "cofferwire-line-relay"),
         )
         self.temp = tempfile.TemporaryDirectory()
+        self.database = Path(self.temp.name) / "relay.sqlite"
+        self._start()
+
+    def _start(self):
         self.process = subprocess.Popen(
-            [executable, str(Path(self.temp.name) / "relay.sqlite")],
+            [self.executable, str(self.database)],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True,
@@ -267,6 +303,12 @@ class RustLineRelay:
         self.process.stdin.write(f"{now} {frame.hex()}\n")
         self.process.stdin.flush()
         return bytes.fromhex(self.process.stdout.readline().strip())
+
+    def restart(self):
+        self.process.stdin.close()
+        self.process.wait(timeout=10)
+        self.process.stdout.close()
+        self._start()
 
     def close(self):
         self.process.stdin.close()
@@ -280,7 +322,7 @@ class CrossImplementationTests(unittest.TestCase):
     def test_independent_client_to_rust_relay(self):
         relay = RustLineRelay()
         try:
-            QueueScenario(relay.exchange).run()
+            QueueScenario(relay.exchange, relay.restart).run()
             run_failure_scenario(relay.exchange)
         finally:
             relay.close()

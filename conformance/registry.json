@@ -58,18 +58,24 @@
       "category": "independent",
       "roles": ["client", "relay"],
       "security_properties": ["canonical-encoding", "authentication", "confidentiality", "durability", "independent-interpretation"]
+    },
+    "QUEUE-V1-INTEROP-MATRIX": {
+      "command": "python3 scripts/run_interop_matrix.py --output /tmp/cofferwire-interop-matrix.json",
+      "category": "interoperability",
+      "roles": ["client", "relay"],
+      "security_properties": ["cross-implementation", "retry-safety", "version-rejection"]
     }
   },
   "mappings": [
     {"prefix": "CW-TERM-", "revision": "queue-v1", "tests": ["RUST-TYPES", "RUST-CLIENT", "PYTHON-INDEPENDENT"]},
     {"prefix": "CW-THREAT-", "revision": "queue-v1", "tests": ["RUST-CRYPTO", "RUST-CLIENT", "RUST-RELAY", "RUST-TRANSPORT", "PYTHON-INDEPENDENT"]},
-    {"prefix": "CW-ARCH-", "revision": "queue-v1", "tests": ["RUST-CLIENT", "RUST-RELAY", "RUST-TRANSPORT", "PYTHON-INDEPENDENT"]},
-    {"prefix": "CW-CRYPTO-", "revision": "queue-v1", "tests": ["RUST-CRYPTO", "PYTHON-INDEPENDENT"]},
-    {"prefix": "CW-WIRE-", "revision": "queue-v1", "tests": ["RUST-TYPES", "RUST-CODEC", "PYTHON-INDEPENDENT"]},
-    {"prefix": "CW-QUEUE-", "revision": "queue-v1", "tests": ["RUST-RELAY", "RUST-CLIENT", "PYTHON-INDEPENDENT"]},
+    {"prefix": "CW-ARCH-", "revision": "queue-v1", "tests": ["RUST-CLIENT", "RUST-RELAY", "RUST-TRANSPORT", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
+    {"prefix": "CW-CRYPTO-", "revision": "queue-v1", "tests": ["RUST-CRYPTO", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
+    {"prefix": "CW-WIRE-", "revision": "queue-v1", "tests": ["RUST-TYPES", "RUST-CODEC", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
+    {"prefix": "CW-QUEUE-", "revision": "queue-v1", "tests": ["RUST-RELAY", "RUST-CLIENT", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
     {"prefix": "CW-STORE-", "revision": "queue-v1", "tests": ["RUST-RELAY", "PYTHON-INDEPENDENT"]},
     {"prefix": "CW-TRANSPORT-", "revision": "queue-v1", "tests": ["RUST-TRANSPORT"]},
-    {"prefix": "CW-VERSION-", "revision": "queue-v1", "tests": ["RUST-CODEC", "TRACEABILITY-SELFTEST", "PYTHON-INDEPENDENT"]},
+    {"prefix": "CW-VERSION-", "revision": "queue-v1", "tests": ["RUST-CODEC", "TRACEABILITY-SELFTEST", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
     {"prefix": "CW-BLOB-", "revision": "blob-v1", "tests": ["RUST-BLOB-VECTORS", "TRACEABILITY-SELFTEST"]}
   ],
   "should_exceptions": []

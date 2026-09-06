@@ -4,13 +4,14 @@
     "codec": 76,
     "crypto": 56,
     "independent": 106,
+    "interoperability": 78,
     "quality": 36,
     "relay": 43,
     "transport": 29
   },
   "coverage_by_role": {
-    "client": 342,
-    "relay": 346
+    "client": 420,
+    "relay": 424
   },
   "format": "cofferwire-conformance-coverage-v1",
   "registry_format": "cofferwire-conformance-registry-v1",
@@ -325,7 +326,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -341,7 +343,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -357,7 +360,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -372,7 +376,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -387,7 +392,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -402,7 +408,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -417,7 +424,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -432,7 +440,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -447,7 +456,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -462,7 +472,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -477,7 +488,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -492,7 +504,8 @@
         "RUST-CLIENT",
         "RUST-RELAY",
         "RUST-TRANSPORT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -506,7 +519,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -519,7 +533,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -530,7 +545,8 @@
       "terms": [],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -543,7 +559,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -556,7 +573,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -570,7 +588,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -584,7 +603,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -597,7 +617,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -611,7 +632,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -624,7 +646,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -637,7 +660,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -651,7 +675,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -664,7 +689,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -678,7 +704,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -692,7 +719,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -707,7 +735,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -720,7 +749,8 @@
       ],
       "tests": [
         "RUST-CRYPTO",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -735,7 +765,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -749,7 +780,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -763,7 +795,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -777,7 +810,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -792,7 +826,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -807,7 +842,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -821,7 +857,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -835,7 +872,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -850,7 +888,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -864,7 +903,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -876,7 +916,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -890,7 +931,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -905,7 +947,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -920,7 +963,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -934,7 +978,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -948,7 +993,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -962,7 +1008,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -976,7 +1023,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -990,7 +1038,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1005,7 +1054,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1021,7 +1071,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1035,7 +1086,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1050,7 +1102,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1064,7 +1117,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1076,7 +1130,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1088,7 +1143,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1102,7 +1158,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1116,7 +1173,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1130,7 +1188,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1144,7 +1203,8 @@
       "tests": [
         "RUST-TYPES",
         "RUST-CODEC",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1158,7 +1218,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1173,7 +1234,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1187,7 +1249,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1202,7 +1265,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1217,7 +1281,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1229,7 +1294,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1243,7 +1309,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1257,7 +1324,8 @@
       "tests": [
         "RUST-RELAY",
         "RUST-CLIENT",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1761,7 +1829,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1775,7 +1844,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1789,7 +1859,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1803,7 +1874,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1818,7 +1890,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1830,7 +1903,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1844,7 +1918,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1860,7 +1935,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1875,7 +1951,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1890,7 +1967,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     },
     {
@@ -1902,7 +1980,8 @@
       "tests": [
         "RUST-CODEC",
         "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT"
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
       ]
     }
   ],

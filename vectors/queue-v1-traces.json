@@ -1,0 +1,18 @@
+{
+  "format": "cofferwire-queue-v1-traces",
+  "scope_revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+  "cases": [
+    {"id": "QV1-TRACE-001", "name": "all_commands", "expectation": "CREATE_QUEUE, SEND, FETCH, ACK and DELETE_QUEUE succeed with correlated responses"},
+    {"id": "QV1-TRACE-002", "name": "ambiguous_retry", "expectation": "a lost response followed by the exact authenticated request returns the recorded response without duplicate state"},
+    {"id": "QV1-TRACE-003", "name": "redelivery", "expectation": "FETCH before ACK redelivers the same current message"},
+    {"id": "QV1-TRACE-004", "name": "authentication_failure", "expectation": "tampered authentication returns AUTH_INVALID without mutation"},
+    {"id": "QV1-TRACE-005", "name": "malformed_frame", "expectation": "forbidden or truncated CBOR returns MALFORMED_FRAME"},
+    {"id": "QV1-TRACE-006", "name": "unknown_version", "expectation": "a v1 peer returns a readable v1 UNSUPPORTED_VERSION response without decoding the unknown payload"},
+    {"id": "QV1-TRACE-007", "name": "durable_restart", "expectation": "accepted messages and delivery state remain observable after relay restart"},
+    {"id": "QV1-TRACE-008", "name": "message_reordering", "expectation": "two accepted messages are fetched and acknowledged in their committed order"}
+  ],
+  "previous_version": {
+    "status": "not-applicable",
+    "reason": "Queue v1 is the first registered version; spec/10-versioning.md registers no supported predecessor."
+  }
+}
