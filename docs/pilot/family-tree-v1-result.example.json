@@ -1,0 +1,50 @@
+{
+  "format": "cofferwire-family-tree-pilot-v1",
+  "candidate_revision": "0000000000000000000000000000000000000000",
+  "started_at_utc": "YYYY-MM-DDTHH:MM:SSZ",
+  "ended_at_utc": "YYYY-MM-DDTHH:MM:SSZ",
+  "synthetic_data_only": true,
+  "devices": [
+    {"label": "device-a", "physical": true, "platform": "REPLACE-ME"},
+    {"label": "device-b", "physical": true, "platform": "REPLACE-ME"},
+    {"label": "device-c", "physical": true, "platform": "REPLACE-ME"}
+  ],
+  "relays": [
+    {
+      "label": "relay-a",
+      "operator": "REPLACE-ME-A",
+      "endpoint": "https://relay-a.example.invalid",
+      "binary_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "config_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "label": "relay-b",
+      "operator": "REPLACE-ME-B",
+      "endpoint": "https://relay-b.example.invalid",
+      "binary_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "config_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "scenarios": {
+    "delayed_convergence": {"status": "pending", "observation": "REPLACE-ME"},
+    "duplicate_delivery": {"status": "pending", "observation": "REPLACE-ME"},
+    "long_offline_24h": {"status": "pending", "observation": "REPLACE-ME", "wall_clock_hours": 0},
+    "suspend_resume": {"status": "pending", "observation": "REPLACE-ME"},
+    "lost_notification": {"status": "pending", "observation": "REPLACE-ME"},
+    "relay_replacement": {"status": "pending", "observation": "REPLACE-ME", "application_identity_unchanged": false},
+    "offline_history_recovery": {"status": "pending", "observation": "REPLACE-ME", "network_disabled": false},
+    "application_receipts": {"status": "pending", "observation": "REPLACE-ME"}
+  },
+  "aggregate_metrics": {
+    "updates_created": 0,
+    "updates_applied": 0,
+    "duplicate_applications": 0,
+    "silent_losses": 0
+  },
+  "protocol_exceptions": [],
+  "participant_attestations": [
+    {"role": "device-and-coordinator", "name_or_org": "REPLACE-ME", "statement": "REPLACE-ME"},
+    {"role": "relay-a-operator", "name_or_org": "REPLACE-ME", "statement": "REPLACE-ME"},
+    {"role": "relay-b-operator", "name_or_org": "REPLACE-ME", "statement": "REPLACE-ME"}
+  ]
+}

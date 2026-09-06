@@ -93,6 +93,9 @@ not production-ready security claims.
   [docs/runbooks/retention-and-deletion.md](docs/runbooks/retention-and-deletion.md),
   [docs/runbooks/reverse-proxy-and-dual-stack.md](docs/runbooks/reverse-proxy-and-dual-stack.md) —
   operational runbooks
+- [docs/pilot/family-tree-v1-plan.md](docs/pilot/family-tree-v1-plan.md) —
+  execution contract and validated public-evidence format for the required
+  three-device, independently operated two-relay pilot
 
 ## License
 
