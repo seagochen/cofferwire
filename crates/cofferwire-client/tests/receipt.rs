@@ -270,6 +270,70 @@ fn receipt_confirming_a_different_object_is_rejected_distinctly_from_signature_f
     ));
 }
 
+#[test]
+fn receipt_verification_error_debug_never_contains_plaintext_or_signature() {
+    let (a_signing, _) = device(2);
+    let (b_signing, _) = device(3);
+    let a_principal = a_signing.principal();
+    let b_principal = b_signing.principal();
+    let confirmed = ConfirmedObject {
+        queue_id: FORWARD_QUEUE,
+        sender: a_principal,
+        recipient: b_principal,
+        message_id: ORIGINAL_MESSAGE,
+    };
+    let applied_plaintext = b"SECRET-APPLIED-CONTENT-MARKER";
+    let receipt = build_applied_receipt(&b_signing, confirmed, applied_plaintext, 1);
+    let hex = |bytes: &[u8]| {
+        use std::fmt::Write;
+        bytes.iter().fold(String::new(), |mut output, byte| {
+            let _ = write!(output, "{byte:02x}");
+            output
+        })
+    };
+
+    let mut receipts = Receipts::default();
+    let content_mismatch_error = verify_and_record_applied_receipt(
+        &mut receipts,
+        b_principal,
+        confirmed,
+        Some(b"a completely different applied content"),
+        &receipt,
+    )
+    .expect_err("content digest mismatch is rejected");
+    let rendered = format!("{content_mismatch_error:?} {content_mismatch_error}");
+    assert!(
+        !rendered.contains("SECRET-APPLIED-CONTENT-MARKER"),
+        "applied content plaintext leaked"
+    );
+    assert!(!rendered.contains(&hex(&receipt)), "receipt bytes leaked");
+
+    let mut tampered = receipt.clone();
+    let last = tampered.len() - 1;
+    tampered[last] ^= 0xFF;
+    let crypto_error = verify_and_record_applied_receipt(
+        &mut receipts,
+        b_principal,
+        confirmed,
+        Some(applied_plaintext),
+        &tampered,
+    )
+    .expect_err("tampered signature is rejected");
+    let rendered = format!("{crypto_error:?} {crypto_error}");
+    assert!(
+        !rendered.contains("SECRET-APPLIED-CONTENT-MARKER"),
+        "applied content plaintext leaked"
+    );
+    assert!(
+        !rendered.contains(&hex(&tampered)),
+        "tampered receipt bytes leaked"
+    );
+    assert!(
+        !rendered.contains(&hex(&receipt)),
+        "original receipt bytes leaked"
+    );
+}
+
 /// Extracts the sealed payload from an already-prepared SEND frame, so the
 /// test can hand it to a scripted `Fetch` response without a live relay.
 fn prepared_payload(prepared: &cofferwire_client::PreparedSend) -> cofferwire_types::Payload {

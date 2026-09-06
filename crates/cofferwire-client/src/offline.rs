@@ -479,6 +479,14 @@ mod tests {
         )
     }
 
+    fn hex_encode(bytes: &[u8]) -> String {
+        use std::fmt::Write;
+        bytes.iter().fold(String::new(), |mut output, byte| {
+            let _ = write!(output, "{byte:02x}");
+            output
+        })
+    }
+
     fn recovery_fields(peer_principal: Principal, peer_key: EncryptionPublicKey) -> BundleFields {
         BundleFields {
             role: Role::Recipient,
@@ -763,5 +771,112 @@ mod tests {
             ),
             Err(ImportError::ConflictingIdentity)
         ));
+    }
+
+    #[test]
+    fn bundle_error_debug_never_contains_relay_hints_or_key_material() {
+        let (exporter_principal, exporter_key) = device(30);
+        let (importer_principal, importer_key) = device(31);
+        let queue = QueueId::from_bytes([31; 32]);
+        let bundle_id = MessageId::from_bytes([32; 32]);
+        let mut fields = recovery_fields(exporter_principal, exporter_key.public_key());
+        fields.relay_hints = vec![b"https://SECRET-RELAY-MARKER.example".to_vec()];
+        fields.own_identity = Some(OwnIdentitySeed {
+            signing_seed: [0xAB; 32],
+            encryption_ikm: [0xCD; 32],
+        });
+
+        let envelope = seal_bundle(
+            MessageContext {
+                queue_id: queue,
+                sender: exporter_principal,
+                recipient: importer_principal,
+                message_id: bundle_id,
+            },
+            &exporter_key,
+            importer_key.public_key(),
+            &fields,
+            &mut OsRng,
+        )
+        .expect("bundle seals");
+        let mut tampered = envelope.clone();
+        let last = tampered.len() - 1;
+        tampered[last] ^= 0xFF;
+
+        let error = open_bundle(
+            &importer_key,
+            importer_principal,
+            exporter_principal,
+            exporter_key.public_key(),
+            &tampered,
+        )
+        .expect_err("tampered envelope fails authentication");
+
+        let rendered = format!("{error:?} {error}");
+        assert!(
+            !rendered.contains("SECRET-RELAY-MARKER"),
+            "relay hint plaintext leaked"
+        );
+        assert!(
+            !rendered.contains(&hex_encode(&tampered)),
+            "tampered ciphertext leaked"
+        );
+        assert!(
+            !rendered.contains(&hex_encode(&envelope)),
+            "original ciphertext leaked"
+        );
+        assert!(
+            !rendered.contains(&hex_encode(&[0xAB; 32])),
+            "signing seed leaked"
+        );
+        assert!(
+            !rendered.contains(&hex_encode(&[0xCD; 32])),
+            "encryption ikm leaked"
+        );
+    }
+
+    #[test]
+    fn import_error_debug_never_contains_relay_hints_or_key_material() {
+        let (exporter_principal, exporter_key) = device(32);
+        let (importer_principal, importer_key) = device(33);
+        let queue = QueueId::from_bytes([33; 32]);
+        let bundle_id = MessageId::from_bytes([34; 32]);
+        let mut fields = recovery_fields(exporter_principal, exporter_key.public_key());
+        fields.relay_hints = vec![b"https://SECRET-RELAY-MARKER.example".to_vec()];
+
+        let envelope = seal_bundle(
+            MessageContext {
+                queue_id: queue,
+                sender: exporter_principal,
+                recipient: importer_principal,
+                message_id: bundle_id,
+            },
+            &exporter_key,
+            importer_key.public_key(),
+            &fields,
+            &mut OsRng,
+        )
+        .expect("bundle seals");
+
+        let mut store = Imports::default();
+        let error = open_and_record_bundle(
+            &mut store,
+            &importer_key,
+            importer_principal,
+            importer_principal,
+            exporter_key.public_key(),
+            &envelope,
+        )
+        .expect_err("wrong expected exporter fails authentication");
+
+        let rendered = format!("{error:?} {error}");
+        assert!(
+            !rendered.contains("SECRET-RELAY-MARKER"),
+            "relay hint plaintext leaked"
+        );
+        assert!(
+            !rendered.contains(&hex_encode(&envelope)),
+            "ciphertext leaked"
+        );
     }
 }

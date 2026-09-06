@@ -1676,6 +1676,39 @@ mod tests {
     }
 
     #[test]
+    fn durable_relay_error_debug_never_contains_opaque_payload_bytes() {
+        const SECRET: &[u8] = b"top-secret-ciphertext-marker";
+        let database = TestDatabase::new();
+        let mut relay = open_with_queue(&database);
+        relay
+            .send(QUEUE, SENDER, MESSAGE, SECRET, NOW, TTL)
+            .expect("send commits");
+
+        // A relay-semantics error: retrying the same message ID with a
+        // different payload. The rejection carries no request data at all
+        // (RelayError variants are all unit variants), but this proves it
+        // for the exact type surfaced to callers.
+        let conflict = relay
+            .send(QUEUE, SENDER, MESSAGE, b"different payload", NOW, TTL)
+            .expect_err("conflicting resend is rejected");
+        let rendered = format!("{conflict:?} {conflict}");
+        assert!(!rendered.contains("top-secret"));
+        assert!(!rendered.contains("different payload"));
+
+        // A storage-layer error: injected commit failure while a secret
+        // payload is in flight. `DurableRelayError::Storage` wraps
+        // `rusqlite::Error`, which reports constraint/IO failures, not bound
+        // parameter values; this proves the wrapped Debug/Display honor
+        // that.
+        FAIL_NEXT_COMMIT.with(|flag| flag.set(true));
+        let storage_error = relay
+            .send(QUEUE, SENDER, MESSAGE_B, SECRET, NOW, TTL)
+            .expect_err("injected commit failure is returned");
+        let rendered = format!("{storage_error:?} {storage_error}");
+        assert!(!rendered.contains("top-secret"));
+    }
+
+    #[test]
     fn busy_timeout_is_bounded_and_classified() {
         let database = TestDatabase::new();
         let mut relay = open_with_queue(&database);

@@ -333,6 +333,52 @@ fn authentication_or_store_failure_never_sends_ack() {
 }
 
 #[test]
+fn client_error_debug_never_contains_plaintext_or_ciphertext() {
+    let events = Rc::new(RefCell::new(Vec::new()));
+    let state = Rc::new(RefCell::new(StoreState::default()));
+    let mut invalid = delivery();
+    let ciphertext = invalid.payload().as_bytes().to_vec();
+    let mut changed = ciphertext.clone();
+    *changed.last_mut().expect("tag byte") ^= 1;
+    invalid = Delivery::new(
+        invalid.message_id(),
+        Payload::new(changed.clone()).expect("bounded"),
+        invalid.expires_at(),
+    );
+    let mut transport = ScriptedTransport::new(
+        [Action::Respond(Response::Success(ResponseBody::Fetch(
+            Some(invalid),
+        )))],
+        events,
+    );
+    let mut store = DurableStore {
+        state,
+        events: Rc::new(RefCell::new(Vec::new())),
+        fail: false,
+    };
+    let error = recipient()
+        .poll(&mut transport, &mut store, &mut Ids(1))
+        .expect_err("tampered ciphertext fails authentication");
+    let rendered = format!("{error:?} {error}");
+    assert!(!rendered.contains("family update"), "plaintext leaked");
+    let hex = |bytes: &[u8]| {
+        use std::fmt::Write;
+        bytes.iter().fold(String::new(), |mut output, byte| {
+            let _ = write!(output, "{byte:02x}");
+            output
+        })
+    };
+    assert!(
+        !rendered.contains(&hex(&changed)),
+        "tampered ciphertext leaked"
+    );
+    assert!(
+        !rendered.contains(&hex(&ciphertext)),
+        "original ciphertext leaked"
+    );
+}
+
+#[test]
 fn empty_expired_disconnect_and_out_of_order_paths_are_deterministic() {
     let events = Rc::new(RefCell::new(Vec::new()));
     let state = Rc::new(RefCell::new(StoreState::default()));
