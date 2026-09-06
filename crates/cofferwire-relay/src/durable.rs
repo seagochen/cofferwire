@@ -249,7 +249,11 @@ impl DurableRelay {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let outcome = Self::create_queue_tx(&transaction, id, config)?;
+        #[cfg(test)]
+        crash_point("create_queue_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crash_point("create_queue_after_commit");
         Ok(outcome)
     }
 
@@ -554,7 +558,11 @@ impl DurableRelay {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         Self::delete_queue_tx(&transaction, queue_id, recipient)?;
+        #[cfg(test)]
+        crash_point("delete_queue_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crash_point("delete_queue_after_commit");
         Ok(())
     }
 
@@ -945,12 +953,24 @@ mod tests {
                     .acknowledge(QUEUE, RECIPIENT, MESSAGE, NOW)
                     .expect("configured crash point must terminate ack");
             }
+            "create_queue" => {
+                let limits = QueueLimits::new(2, 1024).expect("valid limits");
+                relay
+                    .create_queue(QUEUE, QueueConfig::new(SENDER, RECIPIENT, limits))
+                    .expect("configured crash point must terminate create_queue");
+            }
+            "delete_queue" => {
+                relay
+                    .delete_queue(QUEUE, RECIPIENT)
+                    .expect("configured crash point must terminate delete_queue");
+            }
             other => panic!("unknown crash action: {other}"),
         }
         panic!("crash worker passed its configured crash point");
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn hard_process_crashes_recover_at_every_command_commit_boundary() {
         let send_before = TestDatabase::new();
         drop(open_with_queue(&send_before));
@@ -1020,6 +1040,62 @@ mod tests {
             .fetch(QUEUE, RECIPIENT, NOW)
             .expect("fetch succeeds")
             .is_none());
+
+        let create_before = TestDatabase::new();
+        run_crashing_child(&create_before, "create_queue", "create_queue_before_commit");
+        let mut recovered = DurableRelay::open(create_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let limits = QueueLimits::new(2, 1024).expect("valid limits");
+        assert!(
+            matches!(
+                recovered.create_queue(QUEUE, QueueConfig::new(SENDER, RECIPIENT, limits)),
+                Ok(CreateQueueOutcome::Created)
+            ),
+            "crash before commit leaves no queue behind"
+        );
+
+        let create_after = TestDatabase::new();
+        run_crashing_child(&create_after, "create_queue", "create_queue_after_commit");
+        let mut recovered = DurableRelay::open(create_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let limits = QueueLimits::new(2, 1024).expect("valid limits");
+        assert!(
+            matches!(
+                recovered.create_queue(QUEUE, QueueConfig::new(SENDER, RECIPIENT, limits)),
+                Ok(CreateQueueOutcome::AlreadyExists)
+            ),
+            "crash after commit durably records the queue"
+        );
+
+        let delete_before = TestDatabase::new();
+        drop(open_with_queue(&delete_before));
+        run_crashing_child(&delete_before, "delete_queue", "delete_queue_before_commit");
+        let recovered = DurableRelay::open(delete_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        assert_eq!(
+            recovered
+                .connection
+                .query_row("SELECT count(*) FROM queues", [], |row| row
+                    .get::<_, i64>(0))
+                .expect("count reads"),
+            1,
+            "crash before commit leaves the queue behind"
+        );
+
+        let delete_after = TestDatabase::new();
+        drop(open_with_queue(&delete_after));
+        run_crashing_child(&delete_after, "delete_queue", "delete_queue_after_commit");
+        let recovered = DurableRelay::open(delete_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        assert_eq!(
+            recovered
+                .connection
+                .query_row("SELECT count(*) FROM queues", [], |row| row
+                    .get::<_, i64>(0))
+                .expect("count reads"),
+            0,
+            "crash after commit durably records the deletion"
+        );
     }
 
     #[test]
