@@ -1,0 +1,197 @@
+{
+  "artifacts": {
+    "codec_vectors_sha256": "96010c9e936674a2fb487ab80f971cbac4bf528527db1194aa03b7d225f892c6",
+    "crypto_vectors_sha256": "0643b6ba50ffeff1435fc3a736a86ae4f3f9f56dcc3480c979d8fa989139da0a",
+    "independent_source_sha256": "2c33c548928236b5025d36ef70bfaa5864f2a60f4869413734b22098acef451b",
+    "rust_line_relay_sha256": "83130272c33613ef1a1d4a911cc399aa41abe60092845d1d409b4f994d30f8d1",
+    "trace_sha256": "4b3966803c7717d20718b2dbc8f32c0594e53b424f4ce5d1d19666c78353b843"
+  },
+  "compatibility": {
+    "downgrade": "unregistered algorithms and versions fail closed",
+    "previous_current": {
+      "reason": "Queue v1 is the first registered version; spec/10-versioning.md registers no supported predecessor.",
+      "status": "not-applicable"
+    },
+    "unknown_version": "passed in every role implementation"
+  },
+  "differences": [],
+  "environment": {
+    "cargo": "cargo 1.84.1 (66221abde 2024-11-19)",
+    "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
+    "python": "3.14.4",
+    "rustc": "rustc 1.84.1 (e71f9a9a9 2025-01-27)"
+  },
+  "format": "cofferwire-interop-matrix-v1",
+  "matrix": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "cofferwired",
+        "-p",
+        "cofferwire-relay"
+      ],
+      "exit_code": 0,
+      "name": "rust-client__rust-relay",
+      "output_sha256": "eda433a60f591d86810dfce21b90128082edcfc934390ce32de1238eeb628d95",
+      "result": "passed",
+      "trace_ids": [
+        "QV1-TRACE-001",
+        "QV1-TRACE-002",
+        "QV1-TRACE-003",
+        "QV1-TRACE-004",
+        "QV1-TRACE-005",
+        "QV1-TRACE-006",
+        "QV1-TRACE-007",
+        "QV1-TRACE-008"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "independent.python.tests.test_independent.CrossImplementationTests.test_independent_client_to_rust_relay",
+        "-v"
+      ],
+      "exit_code": 0,
+      "name": "independent-client__rust-relay",
+      "output_sha256": "87206323ac887bca6277221195d1be1f78b132cfa764fda5ff5d20b049e24b80",
+      "result": "passed",
+      "trace_ids": [
+        "QV1-TRACE-001",
+        "QV1-TRACE-002",
+        "QV1-TRACE-003",
+        "QV1-TRACE-004",
+        "QV1-TRACE-005",
+        "QV1-TRACE-006",
+        "QV1-TRACE-007",
+        "QV1-TRACE-008"
+      ]
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "cofferwire-client",
+        "--test",
+        "python_interop"
+      ],
+      "exit_code": 0,
+      "name": "rust-client__independent-relay",
+      "output_sha256": "d8447baf1a4e7dce016b2ae8ace3a79ae8e08cb13978821a05fe536f07c60283",
+      "result": "passed",
+      "trace_ids": [
+        "QV1-TRACE-001",
+        "QV1-TRACE-002",
+        "QV1-TRACE-003",
+        "QV1-TRACE-004",
+        "QV1-TRACE-005",
+        "QV1-TRACE-006",
+        "QV1-TRACE-007",
+        "QV1-TRACE-008"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "independent.python.tests.test_independent.IndependentImplementationTests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "name": "independent-client__independent-relay",
+      "output_sha256": "91678f923a669a858ee4e26358925079abcfc0a078ffa064a734ed76456ad448",
+      "result": "passed",
+      "trace_ids": [
+        "QV1-TRACE-001",
+        "QV1-TRACE-002",
+        "QV1-TRACE-003",
+        "QV1-TRACE-004",
+        "QV1-TRACE-005",
+        "QV1-TRACE-006",
+        "QV1-TRACE-007",
+        "QV1-TRACE-008"
+      ]
+    }
+  ],
+  "overall": "passed",
+  "scope_revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+  "source_revision": "70bfea4b7906a0b09fc2127e65c12e27c977d315",
+  "trace_cases": [
+    {
+      "expectation": "CREATE_QUEUE, SEND, FETCH, ACK and DELETE_QUEUE succeed with correlated responses",
+      "id": "QV1-TRACE-001",
+      "name": "all_commands"
+    },
+    {
+      "expectation": "a lost response followed by the exact authenticated request returns the recorded response without duplicate state",
+      "id": "QV1-TRACE-002",
+      "name": "ambiguous_retry"
+    },
+    {
+      "expectation": "FETCH before ACK redelivers the same current message",
+      "id": "QV1-TRACE-003",
+      "name": "redelivery"
+    },
+    {
+      "expectation": "tampered authentication returns AUTH_INVALID without mutation",
+      "id": "QV1-TRACE-004",
+      "name": "authentication_failure"
+    },
+    {
+      "expectation": "forbidden or truncated CBOR returns MALFORMED_FRAME",
+      "id": "QV1-TRACE-005",
+      "name": "malformed_frame"
+    },
+    {
+      "expectation": "a v1 peer returns a readable v1 UNSUPPORTED_VERSION response without decoding the unknown payload",
+      "id": "QV1-TRACE-006",
+      "name": "unknown_version"
+    },
+    {
+      "expectation": "accepted messages and delivery state remain observable after relay restart",
+      "id": "QV1-TRACE-007",
+      "name": "durable_restart"
+    },
+    {
+      "expectation": "two accepted messages are fetched and acknowledged in their committed order",
+      "id": "QV1-TRACE-008",
+      "name": "message_reordering"
+    }
+  ],
+  "vector_evidence": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "cofferwire-codec",
+        "-p",
+        "cofferwire-crypto",
+        "-p",
+        "cofferwire-test"
+      ],
+      "exit_code": 0,
+      "name": "rust-public-vectors",
+      "output_sha256": "0b116f1edfda9cb335738055a7d06397e4d206040b01c5c1075e3475f099d0ff",
+      "result": "passed"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "independent.python.tests.test_independent.IndependentImplementationTests.test_public_codec_and_crypto_vectors",
+        "-v"
+      ],
+      "exit_code": 0,
+      "name": "independent-public-vectors",
+      "output_sha256": "8a572bd6092d38d0015def5b0e880c8f8d0208e25ce6c95ed6ed5fc6281de612",
+      "result": "passed"
+    }
+  ]
+}
