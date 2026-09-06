@@ -2,6 +2,10 @@
 
 #![forbid(unsafe_code)]
 
+mod rate_limit;
+
+use rate_limit::RateLimiter;
+
 use std::convert::Infallible;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
@@ -53,6 +57,23 @@ pub const MAX_WEBSOCKET_CONNECTIONS: usize = 128;
 pub const REQUEST_TIMEOUT: Duration = Duration::from_secs(10);
 /// Idle deadline while waiting for the next WebSocket frame.
 pub const WEBSOCKET_IDLE_TIMEOUT: Duration = Duration::from_secs(60);
+/// Rolling window over which queue-command requests are rate-limited per
+/// authenticated principal.
+pub const QUEUE_RATE_LIMIT_WINDOW_SECS: u64 = 60;
+/// Maximum queue-command requests one principal may make per
+/// [`QUEUE_RATE_LIMIT_WINDOW_SECS`]-second window.
+pub const QUEUE_RATE_LIMIT_MAX_REQUESTS: usize = 300;
+/// Rolling window over which blob-command requests are rate-limited per
+/// authenticated capability.
+pub const BLOB_RATE_LIMIT_WINDOW_SECS: u64 = 60;
+/// Maximum blob-command requests one capability may make per
+/// [`BLOB_RATE_LIMIT_WINDOW_SECS`]-second window. Higher than the queue
+/// budget because one legitimate large-object transfer issues one request
+/// per chunk under the same upload or download capability.
+pub const BLOB_RATE_LIMIT_MAX_REQUESTS: usize = 1_000;
+/// Maximum distinct principals or capabilities tracked at once by a rate
+/// limiter, bounding its memory under a flood of distinct identities.
+pub const RATE_LIMIT_MAX_TRACKED_KEYS: usize = 100_000;
 
 /// Acceptor layer that rejects TLS connections above a process-wide bound.
 #[derive(Clone, Debug)]
@@ -154,6 +175,8 @@ pub struct RelayService {
     relay: Arc<Mutex<relay::DurableRelay>>,
     commands: Arc<Semaphore>,
     websocket_connections: Arc<Semaphore>,
+    queue_rate_limiter: Arc<RateLimiter<Principal>>,
+    blob_rate_limiter: Arc<RateLimiter<cofferwire_types::blob::CapabilityId>>,
 }
 
 impl RelayService {
@@ -173,6 +196,16 @@ impl RelayService {
             relay: Arc::new(Mutex::new(relay)),
             commands: Arc::new(Semaphore::new(MAX_CONCURRENT_COMMANDS)),
             websocket_connections: Arc::new(Semaphore::new(MAX_WEBSOCKET_CONNECTIONS)),
+            queue_rate_limiter: Arc::new(RateLimiter::new(
+                QUEUE_RATE_LIMIT_WINDOW_SECS,
+                QUEUE_RATE_LIMIT_MAX_REQUESTS,
+                RATE_LIMIT_MAX_TRACKED_KEYS,
+            )),
+            blob_rate_limiter: Arc::new(RateLimiter::new(
+                BLOB_RATE_LIMIT_WINDOW_SECS,
+                BLOB_RATE_LIMIT_MAX_REQUESTS,
+                RATE_LIMIT_MAX_TRACKED_KEYS,
+            )),
         }
     }
 
@@ -243,6 +276,9 @@ impl RelayService {
                 Some(command),
                 Status::AuthInvalid,
             ));
+        }
+        if !self.queue_rate_limiter.admit(principal, now.as_secs()) {
+            return Err(ExchangeError::Overloaded);
         }
 
         if let Err(status) = validate_queue_request(request) {
@@ -315,6 +351,9 @@ impl RelayService {
                 Some(command),
                 BlobStatus::AuthInvalid,
             ));
+        }
+        if !self.blob_rate_limiter.admit(capability, now.as_secs()) {
+            return Err(ExchangeError::Overloaded);
         }
         let mut durable = self.relay.lock().map_err(|_| ExchangeError::Storage)?;
         if let Some((stored_request, stored_response)) = durable
@@ -1108,6 +1147,52 @@ mod tests {
         assert!(limiter.accept((), ()).await.is_err());
         drop(connection);
         assert!(limiter.accept((), ()).await.is_ok());
+    }
+
+    #[tokio::test]
+    async fn queue_rate_limit_returns_service_unavailable_once_exceeded() {
+        let database = TestDatabase::new();
+        let service = RelayService::open(database.path()).expect("relay opens");
+        let sender_key = RelaySigningKey::from_seed([2; 32]);
+        let recipient_key = RelaySigningKey::from_seed([3; 32]);
+        let create = Request::CreateQueue(CreateQueueRequest::new(
+            QUEUE,
+            sender_key.principal(),
+            recipient_key.principal(),
+            QueueLimits::new(4, 1024).expect("valid limits"),
+        ));
+        let request_id = RequestId::from_bytes([0x55; 16]);
+        // The same signed frame is replayed by request-id after the first
+        // call; each replay still passes through the rate limiter before the
+        // replay cache is consulted (`exchange_at`), so repeating one frame
+        // exercises the budget without needing a distinct request per call.
+        let frame = signed_frame(&sender_key, request_id, create);
+        let application = router(service);
+
+        for attempt in 0..QUEUE_RATE_LIMIT_MAX_REQUESTS {
+            let request = HttpRequest::post("/v1/frame")
+                .header(header::CONTENT_TYPE, FRAME_MEDIA_TYPE)
+                .body(Body::from(frame.clone()))
+                .expect("request builds");
+            let status = application
+                .clone()
+                .oneshot(request)
+                .await
+                .expect("router responds")
+                .status();
+            assert_eq!(status, HttpStatus::OK, "request {attempt} is within budget");
+        }
+
+        let over_budget = HttpRequest::post("/v1/frame")
+            .header(header::CONTENT_TYPE, FRAME_MEDIA_TYPE)
+            .body(Body::from(frame))
+            .expect("request builds");
+        let status = application
+            .oneshot(over_budget)
+            .await
+            .expect("router responds")
+            .status();
+        assert_eq!(status, HttpStatus::SERVICE_UNAVAILABLE);
     }
 
     #[tokio::test]
