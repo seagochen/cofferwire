@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 pub mod blob;
+pub mod receipt;
 
 use cofferwire_codec::{
     decode_request, decode_response, encode_authenticated_request, encode_request, DecodeError,

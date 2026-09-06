@@ -2,7 +2,8 @@
   "format": "cofferwire-conformance-registry-v1",
   "revisions": {
     "queue-v1": "CW-SCOPE-QUEUE-V1-2026-09-06",
-    "blob-v1": "CW-BLOB-1-DRAFT-2026-09-06"
+    "blob-v1": "CW-BLOB-1-DRAFT-2026-09-06",
+    "receipts-v1": "CW-RECEIPT-1-DRAFT-2026-09-06"
   },
   "tests": {
     "RUST-TYPES": {
@@ -64,6 +65,18 @@
       "category": "interoperability",
       "roles": ["client", "relay"],
       "security_properties": ["cross-implementation", "retry-safety", "version-rejection"]
+    },
+    "RUST-RECEIPT": {
+      "command": "cargo test -p cofferwire-crypto -p cofferwire-client",
+      "category": "crypto",
+      "roles": ["client"],
+      "security_properties": ["end-to-end-authentication", "device-binding", "replay-resistance"]
+    },
+    "RUST-RECEIPT-VECTORS": {
+      "command": "cargo test -p cofferwire-test --test receipt_vectors",
+      "category": "crypto",
+      "roles": ["client"],
+      "security_properties": ["positive-vectors", "tampered-rejection"]
     }
   },
   "mappings": [
@@ -76,7 +89,8 @@
     {"prefix": "CW-STORE-", "revision": "queue-v1", "tests": ["RUST-RELAY", "PYTHON-INDEPENDENT"]},
     {"prefix": "CW-TRANSPORT-", "revision": "queue-v1", "tests": ["RUST-TRANSPORT"]},
     {"prefix": "CW-VERSION-", "revision": "queue-v1", "tests": ["RUST-CODEC", "TRACEABILITY-SELFTEST", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
-    {"prefix": "CW-BLOB-", "revision": "blob-v1", "tests": ["RUST-BLOB-VECTORS", "TRACEABILITY-SELFTEST"]}
+    {"prefix": "CW-BLOB-", "revision": "blob-v1", "tests": ["RUST-BLOB-VECTORS", "TRACEABILITY-SELFTEST"]},
+    {"prefix": "CW-RECEIPT-", "revision": "receipts-v1", "tests": ["RUST-RECEIPT", "RUST-RECEIPT-VECTORS", "TRACEABILITY-SELFTEST"]}
   ],
   "should_exceptions": []
 }

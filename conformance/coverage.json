@@ -2,20 +2,20 @@
   "coverage_by_category": {
     "client": 39,
     "codec": 76,
-    "crypto": 56,
+    "crypto": 76,
     "independent": 106,
     "interoperability": 78,
-    "quality": 36,
+    "quality": 46,
     "relay": 43,
     "transport": 29
   },
   "coverage_by_role": {
-    "client": 420,
-    "relay": 424
+    "client": 450,
+    "relay": 434
   },
   "format": "cofferwire-conformance-coverage-v1",
   "registry_format": "cofferwire-conformance-registry-v1",
-  "requirement_count": 134,
+  "requirement_count": 144,
   "requirements": [
     {
       "id": "CW-TERM-001",
@@ -1780,6 +1780,152 @@
       ],
       "tests": [
         "RUST-BLOB-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-001",
+      "line": 27,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-002",
+      "line": 43,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-003",
+      "line": 51,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-004",
+      "line": 84,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-005",
+      "line": 99,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-006",
+      "line": 105,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-007",
+      "line": 110,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-008",
+      "line": 117,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-009",
+      "line": 123,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-RECEIPT-010",
+      "line": 131,
+      "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
+      "source": "spec/08-receipts.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-RECEIPT",
+        "RUST-RECEIPT-VECTORS",
         "TRACEABILITY-SELFTEST"
       ]
     },

@@ -8,6 +8,7 @@
 
 pub mod blob;
 mod error;
+pub mod receipt;
 
 use cofferwire_types::{Auth, MessageId, Payload, Principal, QueueId, MAX_MESSAGE_BYTES};
 use ed25519_dalek::{Signature, Signer as _, SigningKey, VerifyingKey};

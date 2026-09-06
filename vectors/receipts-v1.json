@@ -1,0 +1,40 @@
+{
+  "format": "cofferwire-receipts-v1",
+  "encoding": "lowercase hexadecimal",
+  "warning": "All secret keys are test-only and MUST NOT be used in production.",
+  "confirming_device_seed_hex": "4242424242424242424242424242424242424242424242424242424242424242",
+  "confirming_device_principal_hex": "2152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db12",
+  "confirmed_queue_id_hex": "1111111111111111111111111111111111111111111111111111111111111111",
+  "confirmed_sender_hex": "2222222222222222222222222222222222222222222222222222222222222222",
+  "confirmed_message_id_hex": "3333333333333333333333333333333333333333333333333333333333333333",
+  "applied_plaintext_hex": "66616d696c7920757064617465206170706c696564",
+  "applied_content_digest_hex": "071a032bb396bb5d21526d3bff0a2f08f3fc3795b73148af081da9294ee2e89e",
+  "applied_at_secs": 1700000000,
+  "receipt_hex": "4357523101111111111111111111111111111111111111111111111111111111111111111122222222222222222222222222222222222222222222222222222222222222222152f8d19b791d24453242e15f2eab6cb7cffa7b6a5ed30097960e069881db123333333333333333333333333333333333333333333333333333333333333333071a032bb396bb5d21526d3bff0a2f08f3fc3795b73148af081da9294ee2e89e000000006553f1009e69f1684fe83045939822f37f24bbfd12006074d606bfcbf1d4fae1d8a5d9e7d10cf1529d5660942be5c274c96e2e6c5bf3ef6807471f303c661b858026bd0e",
+  "negative": [
+    {
+      "name": "receipt_byte_tamper",
+      "operation": "For every byte offset in receipt_hex, xor the byte with 0x01 and require rejection (either malformed magic/type or authentication failure)."
+    },
+    {
+      "name": "wrong_confirming_device",
+      "operation": "Verify receipt_hex against a principal other than confirming_device_principal_hex and require authentication failure."
+    },
+    {
+      "name": "truncated_receipt",
+      "operation": "Remove the last byte of receipt_hex (236 bytes) and require rejection as malformed."
+    },
+    {
+      "name": "oversized_receipt",
+      "operation": "Append one extra 0x00 byte to receipt_hex (238 bytes) and require rejection as malformed."
+    },
+    {
+      "name": "wrong_receipt_type",
+      "operation": "Replace byte offset 4 (the receipt type, 0x01) with 0xff and require rejection as malformed."
+    },
+    {
+      "name": "wrong_confirmed_object",
+      "operation": "Verify with an expected confirmed object whose message identifier differs from confirmed_message_id_hex; the signature still verifies under confirming_device_principal_hex, but the caller MUST reject it as an object mismatch, not treat the signature check alone as sufficient."
+    }
+  ]
+}
