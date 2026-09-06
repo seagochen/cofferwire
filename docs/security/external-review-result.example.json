@@ -1,0 +1,32 @@
+{
+  "format": "cofferwire-external-review-v1",
+  "reviewed_revision": "0000000000000000000000000000000000000000",
+  "review_bundle_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "reviewer": {
+    "name_or_org": "REPLACE-ME",
+    "qualifications": "REPLACE-ME",
+    "independent": false,
+    "conflicts_disclosed": "REPLACE-ME"
+  },
+  "methodology": "REPLACE-ME",
+  "scope": {
+    "cryptographic_construction": "pending",
+    "capability_lifecycle": "pending",
+    "queue_blob_authorization": "pending",
+    "replay_rollback_downgrade": "pending",
+    "storage_deletion_retention": "pending",
+    "metadata_traffic_correlation": "pending",
+    "dos_abuse_controls": "pending",
+    "client_relay_implementation": "pending"
+  },
+  "private_reporting_used_for_unpatched_findings": true,
+  "findings": [],
+  "public_report": {
+    "path_or_url": "REPLACE-ME",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "project_response": {
+    "path_or_url": "REPLACE-ME",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

@@ -96,6 +96,9 @@ not production-ready security claims.
 - [docs/pilot/family-tree-v1-plan.md](docs/pilot/family-tree-v1-plan.md) —
   execution contract and validated public-evidence format for the required
   three-device, independently operated two-relay pilot
+- [docs/security/external-review-scope-v1.md](docs/security/external-review-scope-v1.md) —
+  frozen-input procedure, mandatory scope, and finding-disposition contract
+  for the independent version 1 security review
 
 ## License
 
