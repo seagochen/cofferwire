@@ -1,21 +1,11 @@
 # cofferwired
 
-`cofferwired` is the baseline durable relay daemon. It exposes the exact v1
-protocol frame through HTTPS and WebSocket while keeping TLS and connection
-state outside the authenticated envelope.
+提供 Cofferwire reference HTTPS/WebSocket Relay daemon 和 queue-v1 line transport。
+daemon 负责 bounded transport、严格解码、命令认证、按凭证限流和 SQLite Relay 调度，
+不解析 application content。
 
-Run it with a bind address, SQLite path, PEM certificate and PEM private key:
+- 设计与处理链：[`docs/detailed_design/50_Relay与守护进程.md`](../../docs/detailed_design/50_Relay与守护进程.md)
+- 网络接口：[`docs/detailed_design/70_外部接口.md`](../../docs/detailed_design/70_外部接口.md)
+- 参数、部署和运维：[`docs/detailed_design/80_配置参考.md`](../../docs/detailed_design/80_配置参考.md)、[`90_部署与运维.md`](../../docs/detailed_design/90_部署与运维.md)
 
-```console
-cargo run -p cofferwired -- 127.0.0.1:8443 relay.sqlite cert.pem key.pem
-```
-
-Endpoints:
-
-- `POST /v1/frame` with `Content-Type: application/cofferwire`;
-- `GET /v1/ws` with WebSocket subprotocol `cofferwire.v1`;
-- `GET /healthz` for a process liveness check.
-
-The daemon is a reference implementation, not a production deployment guide.
-Certificate issuance, process supervision, database backup, metrics and
-deployment-specific traffic controls remain operator responsibilities.
+本 daemon 是 reference implementation；当前安全支持边界见 [`SECURITY.md`](../../SECURITY.md)。

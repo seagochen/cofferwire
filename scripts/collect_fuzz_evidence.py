@@ -52,7 +52,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--output",
-        default=str(ROOT / "docs" / "conformance" / "fuzz-evidence-v1.json"),
+        default=str(ROOT / "conformance" / "evidence" / "fuzz-evidence-v1.json"),
     )
     parser.add_argument(
         "--this-run-seconds-per-target",

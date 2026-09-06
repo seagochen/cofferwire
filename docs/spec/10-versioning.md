@@ -2,8 +2,8 @@
 
 This document is the single allocation registry and compatibility policy for
 Cofferwire protocol profiles. The immutable queue-v1 scope revision is
-`CW-SCOPE-QUEUE-V1-2026-09-06`, accepted by
-`docs/adr/0001-version-1-scope.md`.
+`CW-SCOPE-QUEUE-V1-2026-09-06`; its accepted design decision and rationale are
+recorded in `docs/detailed_design/00_概述.md`.
 
 Normative terms are interpreted as described by RFC 2119 and RFC 8174.
 

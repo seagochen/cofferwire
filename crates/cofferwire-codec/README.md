@@ -1,8 +1,8 @@
 # cofferwire-codec
 
-Deterministic encoder and strict, allocation-bounded decoder for the Cofferwire
-v1 frame format. The implementation deliberately supports only the canonical
-CBOR subset in `spec/05-wire-format.md`; it is not a general-purpose CBOR codec.
+在 Cofferwire typed model 与严格 canonical frame bytes 之间作确定性转换，并向认证层暴露
+收到的原始 authenticated byte range。它只实现协议使用的 CBOR 子集。
 
-`decode_request` exposes the exact borrowed `preamble || payload` byte range so
-authentication never depends on decoding and re-encoding attacker input.
+设计见 [`docs/detailed_design/20_协议模型与编解码.md`](../../docs/detailed_design/20_协议模型与编解码.md)；
+exact wire 规则见 [`docs/spec/05-wire-format.md`](../../docs/spec/05-wire-format.md) 与
+[`docs/spec/07-blobs.md`](../../docs/spec/07-blobs.md)。

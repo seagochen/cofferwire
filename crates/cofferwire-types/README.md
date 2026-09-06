@@ -1,17 +1,6 @@
 # cofferwire-types
 
-Transport-independent protocol types for Cofferwire's v1 wire contract, as
-fixed by [`spec/05-wire-format.md`](../../spec/05-wire-format.md).
-
-This crate has no dependency on SQLite, HTTP, WebSocket or any relay
-storage engine. It defines bounded identifiers, the opaque message and
-`auth` byte strings, TTL and timestamp scalars, the `Version`, `Command`
-and `Status` wire enumerations, and request/response types for every v1
-command and error. Every constructor validates its invariants immediately, so a
-value that exists as this crate's public API can always be encoded; a
-codec, client or relay daemon built on top of these types inherits one
-shared definition of "valid" instead of redefining validation, defaults
-and error semantics independently.
-
-`Payload` and `Auth` carry potentially large or sensitive bytes; both
-implement `Debug` without printing their contents.
+定义 queue-v1 与独立 blob/1 profile 的传输无关类型和构造不变量，不依赖密码学、网络或
+存储。设计见
+[`docs/detailed_design/20_协议模型与编解码.md`](../../docs/detailed_design/20_协议模型与编解码.md)，
+规范性 wire 契约见 [`docs/spec/`](../../docs/spec/README.md)。

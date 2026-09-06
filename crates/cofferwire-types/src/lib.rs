@@ -2,7 +2,7 @@
 //!
 //! Every type here validates its invariants at construction, so a value
 //! that exists in this crate's public API can always be encoded onto the
-//! wire defined by `spec/05-wire-format.md`. This crate performs no CBOR
+//! wire defined by `docs/spec/05-wire-format.md`. This crate performs no CBOR
 //! encoding or decoding itself and does not depend on `SQLite`, HTTP,
 //! WebSocket or any relay storage engine; it exists so a codec, client and
 //! relay daemon share one definition of "valid" instead of each defining

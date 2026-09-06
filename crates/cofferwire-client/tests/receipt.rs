@@ -130,7 +130,7 @@ fn device(seed: u8) -> (RelaySigningKey, EncryptionSecretKey) {
 /// device) already durably committed the application message; generates a
 /// signed `receipt.applied`, sends it as an ordinary message on the
 /// independent reverse queue, and device A (the original sender) polls,
-/// verifies, and durably records it -- exactly the flow `spec/08-receipts.md`
+/// verifies, and durably records it -- exactly the flow `docs/spec/08-receipts.md`
 /// describes and acceptance criterion 5 of issue #17 requires.
 #[test]
 fn client_generates_and_verifies_a_receipt_after_local_durable_commit() {

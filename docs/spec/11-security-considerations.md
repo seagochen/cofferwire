@@ -59,7 +59,7 @@ decision; this document resolves only the rate-limiting half.
   rate-limit window/budget/capacity from `CW-SECURITY-002`–`CW-SECURITY-004`)
   MUST be published in a machine-readable catalog, and an automated test MUST
   fail if that catalog and the compiled constants it describes ever diverge.
-  See `docs/conformance/operational-limits-v1.json` and
+  See `conformance/evidence/operational-limits-v1.json` and
   `apps/cofferwired/tests/operational_limits.rs`.
 
 ## Secret redaction in diagnostics

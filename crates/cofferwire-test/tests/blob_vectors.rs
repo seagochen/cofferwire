@@ -6,7 +6,7 @@ use serde_json::Value;
 use sha2::{Digest, Sha256};
 
 const VECTOR_JSON: &str = include_str!("../../../vectors/blob-v1.json");
-const BLOB_CDDL: &str = include_str!("../../../spec/07-blobs.cddl");
+const BLOB_CDDL: &str = include_str!("../../../docs/spec/07-blobs.cddl");
 const AUTH_CDDL: &str = "request-auth = bstr .size 68";
 const KEY_INFO: &[u8] = b"cofferwire blob key v1\0";
 const CHUNK_DOMAIN: &[u8] = b"cofferwire blob chunk v1\0";

@@ -88,7 +88,7 @@ dependency boundaries are recorded in `independent/python/IMPLEMENTATION_NOTES.m
 
 Run the complete four-way matrix with
 `python3 scripts/run_interop_matrix.py --output
-docs/conformance/interop-matrix-v1.json`. The shared semantic catalog is
+conformance/evidence/interop-matrix-v1.json`. The shared semantic catalog is
 `vectors/queue-v1-traces.json`, and the checked-in JSON report records source,
 environment, commands, artifact digests, vector evidence and compatibility
 results.
@@ -140,7 +140,7 @@ Before version 1.0, an external review must cover:
 
 Security testing must not claim anonymity solely because payloads are encrypted. Separate experiments should record what a relay can correlate through IP addresses, timing, sizes, queue access and blob access.
 
-`spec/11-security-considerations.md` records the concrete bounded-work-before-authentication, rate-limiting and secret-redaction contract; `spec/12-privacy-considerations.md` records the per-profile relay-observable metadata catalog and states plainly which correlation experiments above have and have not actually been run.
+`docs/spec/11-security-considerations.md` records the concrete bounded-work-before-authentication, rate-limiting and secret-redaction contract; `docs/spec/12-privacy-considerations.md` records the per-profile relay-observable metadata catalog and states plainly which correlation experiments above have and have not actually been run.
 
 ## 9. Durability and recovery
 
@@ -166,7 +166,7 @@ Published limits must be enforced consistently:
 - maximum concurrent streams and connections;
 - bounded work before authentication.
 
-The reference daemon's concrete values are published in `docs/conformance/operational-limits-v1.json` and cross-checked against the compiled constants by `apps/cofferwired/tests/operational_limits.rs`, so the two cannot silently drift apart.
+The reference daemon's concrete values are published in `conformance/evidence/operational-limits-v1.json` and cross-checked against the compiled constants by `apps/cofferwired/tests/operational_limits.rs`, so the two cannot silently drift apart.
 
 ## 11. Platform and transport tests
 
@@ -197,7 +197,7 @@ A release candidate cannot become version 1.0 unless:
 
 These gates verify conformance to the documented protocol. They do not prove universal security; claims must remain limited to the threat model and evidence actually tested.
 
-`docs/release/release-process-v1.md` defines the single-revision evidence
+`docs/detailed_design/90_部署与运维.md` defines the single-revision evidence
 manifest, deterministic artifact set, two-environment binary comparison,
 signature, and final machine validation used to enforce these gates. An
 artifact rehearsal is not a release: `scripts/validate_release_candidate.py`

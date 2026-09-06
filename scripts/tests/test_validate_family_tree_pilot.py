@@ -15,7 +15,7 @@ SPEC.loader.exec_module(MODULE)
 
 def valid_evidence():
     document = json.loads(
-        (ROOT / "docs/pilot/family-tree-v1-result.example.json").read_text()
+        (ROOT / "scripts/fixtures/family-tree-v1-result.example.json").read_text()
     )
     document["candidate_revision"] = "a" * 40
     document["started_at_utc"] = "2026-09-06T00:00:00Z"

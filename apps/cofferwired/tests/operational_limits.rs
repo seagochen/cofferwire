@@ -1,4 +1,4 @@
-//! Cross-checks `docs/conformance/operational-limits-v1.json` against the
+//! Cross-checks `conformance/evidence/operational-limits-v1.json` against the
 //! real `pub const` values in the wire-type and reference-daemon crates
 //! (`CW-SECURITY-002`), so the published catalog cannot silently drift from
 //! the code that actually enforces it.
@@ -16,7 +16,7 @@ use cofferwired::{
 fn published_operational_limits_match_the_implementation() {
     let document = std::fs::read_to_string(concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../docs/conformance/operational-limits-v1.json"
+        "/../../conformance/evidence/operational-limits-v1.json"
     ))
     .expect("operational-limits-v1.json exists");
     let value: serde_json::Value =

@@ -150,7 +150,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--output",
-        default=str(ROOT / "docs" / "conformance" / "durability-evidence-v1.json"),
+        default=str(ROOT / "conformance" / "evidence" / "durability-evidence-v1.json"),
     )
     args = parser.parse_args()
 

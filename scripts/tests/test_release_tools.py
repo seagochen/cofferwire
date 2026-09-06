@@ -24,6 +24,17 @@ VALIDATOR = load("validate_release_candidate")
 
 
 class ReleaseToolTests(unittest.TestCase):
+    def test_tracked_paths_preserve_unicode_names(self):
+        self.assertIn(
+            "docs/detailed_design/00_概述.md", BUILDER.tracked_paths("HEAD")
+        )
+
+    def test_artifact_path_classification_tracks_published_evidence_and_decision(self):
+        self.assertFalse(BUILDER.selected("conformance/evidence/fuzz-evidence-v1.json", "source"))
+        self.assertTrue(BUILDER.selected("conformance/evidence/fuzz-evidence-v1.json", "conformance"))
+        self.assertTrue(BUILDER.selected("docs/detailed_design/00_概述.md", "spec"))
+        self.assertFalse(BUILDER.selected("docs/detailed_design/90_部署与运维.md", "spec"))
+
     def build(self, directory):
         binary = directory / "cofferwired"
         binary.write_bytes(b"deterministic-test-binary")
@@ -67,7 +78,7 @@ class ReleaseToolTests(unittest.TestCase):
                 VALIDATOR.validate_checksums(directory)
 
     def test_gate_manifest_requires_all_passed_same_revision(self):
-        value = json.loads((ROOT / "docs/release/gate-manifest-v1.example.json").read_text())
+        value = json.loads((ROOT / "scripts/fixtures/gate-manifest-v1.example.json").read_text())
         value["candidate_revision"] = "a" * 40
         for gate in value["gates"]:
             gate["status"] = "passed"
@@ -83,7 +94,7 @@ class ReleaseToolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             revision = BUILDER.resolve_revision("HEAD")
-            pilot = json.loads((ROOT / "docs/pilot/family-tree-v1-result.example.json").read_text())
+            pilot = json.loads((ROOT / "scripts/fixtures/family-tree-v1-result.example.json").read_text())
             pilot.update(candidate_revision=revision, started_at_utc="2026-09-06T00:00:00Z", ended_at_utc="2026-09-08T00:00:01Z")
             for index, device in enumerate(pilot["devices"]):
                 device["platform"] = f"test-os-{index}"
@@ -98,7 +109,7 @@ class ReleaseToolTests(unittest.TestCase):
             for index, attestation in enumerate(pilot["participant_attestations"]):
                 attestation.update(name_or_org=f"participant-{index}", statement="test fixture attestation")
 
-            review = json.loads((ROOT / "docs/security/external-review-result.example.json").read_text())
+            review = json.loads((ROOT / "scripts/fixtures/external-review-result.example.json").read_text())
             review.update(reviewed_revision=revision, review_bundle_sha256="1" * 64, methodology="test fixture method")
             review["reviewer"].update(name_or_org="Test Reviewer", qualifications="test qualification", independent=True, conflicts_disclosed="none")
             for topic in review["scope"]:
@@ -106,7 +117,7 @@ class ReleaseToolTests(unittest.TestCase):
             review["public_report"] = {"path_or_url": "report.pdf", "sha256": "2" * 64}
             review["project_response"] = {"path_or_url": "response.md", "sha256": "3" * 64}
 
-            gates = json.loads((ROOT / "docs/release/gate-manifest-v1.example.json").read_text())
+            gates = json.loads((ROOT / "scripts/fixtures/gate-manifest-v1.example.json").read_text())
             gates["candidate_revision"] = revision
             for gate in gates["gates"]:
                 gate.update(status="passed", evidence=f"gate-{gate['number']}.json", sha256=format(gate["number"], "064x"))

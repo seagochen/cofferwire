@@ -1,4 +1,4 @@
-//! Vector coverage for `cofferwire-offline/1` (`spec/13-offline-bundles.md`).
+//! Vector coverage for `cofferwire-offline/1` (`docs/spec/13-offline-bundles.md`).
 //!
 //! The HPKE construction sealing a bundle's payload is unchanged from
 //! ordinary application messages and is already independently vector-tested
@@ -50,7 +50,7 @@ fn open_envelope(
 }
 
 /// The inner plaintext's fields, independently decoded byte offset by byte
-/// offset per `spec/13-offline-bundles.md`'s wire format.
+/// offset per `docs/spec/13-offline-bundles.md`'s wire format.
 struct DecodedFields {
     bundle_type: u8,
     role: u8,

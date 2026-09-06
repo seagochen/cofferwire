@@ -57,5 +57,5 @@ Beyond these connection- and body-level bounds, the daemon also bounds the
 rate of accepted requests per authenticated queue principal or blob
 capability. `11-security-considerations.md` gives the ordering guarantee
 and the concrete window/budget/capacity contract; the numeric values
-themselves are published in `docs/conformance/operational-limits-v1.json`
+themselves are published in `conformance/evidence/operational-limits-v1.json`
 and cross-checked against the implementation by an automated test.

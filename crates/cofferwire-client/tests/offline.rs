@@ -100,7 +100,7 @@ impl BundleStore for Imports {
 /// A device that has fully recovered its identity from a bundle, with no
 /// runtime state beyond what the bundle and its own newly reconstructed
 /// keys provide, resumes an existing conversation and continues working
-/// unchanged after its relay is replaced -- the flow `spec/13-offline-
+/// unchanged after its relay is replaced -- the flow `docs/spec/13-offline-
 /// bundles.md` describes and acceptance criteria 3 and 4 of issue #18
 /// require.
 #[test]

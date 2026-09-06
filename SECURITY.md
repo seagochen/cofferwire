@@ -23,5 +23,5 @@ These are targets for a pre-1.0, single-maintainer project, not contractual guar
 
 ## Security claims
 
-Security claims must cite the applicable threat-model section and protocol version. End-to-end encryption does not automatically hide IP addresses, timing, message sizes, queue access patterns or blob access correlation. `spec/02-threat-model.md` states the general assumptions and limits; `spec/11-security-considerations.md` states the concrete bounded-work-before-authentication, rate-limiting and secret-redaction contract; `spec/12-privacy-considerations.md` states the concrete per-profile relay-observable metadata catalog.
+Security claims must cite the applicable threat-model section and protocol version. End-to-end encryption does not automatically hide IP addresses, timing, message sizes, queue access patterns or blob access correlation. `docs/spec/02-threat-model.md` states the general assumptions and limits; `docs/spec/11-security-considerations.md` states the concrete bounded-work-before-authentication, rate-limiting and secret-redaction contract; `docs/spec/12-privacy-considerations.md` states the concrete per-profile relay-observable metadata catalog.
 

@@ -1,6 +1,6 @@
 //! Signed end-to-end `receipt.applied` application receipts.
 //!
-//! See `spec/08-receipts.md`. A receipt is ordinary opaque application
+//! See `docs/spec/08-receipts.md`. A receipt is ordinary opaque application
 //! content: it travels inside a normal queue-v1 `SEND` payload and a relay
 //! never parses it. This module only builds and verifies the fixed 237-byte
 //! plaintext structure; delivering it is an ordinary `seal_message`/

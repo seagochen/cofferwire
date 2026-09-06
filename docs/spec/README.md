@@ -9,7 +9,6 @@ offline bundles are not part of queue v1.
 Specification documents:
 
 ```text
-00-overview.md
 01-terminology.md          protocol roles and objects
 02-threat-model.md         attackers, trust boundaries and security limits
 03-architecture.md         component responsibilities and message flows
@@ -36,6 +35,10 @@ draft until separately frozen and does not allocate queue-v1 identifiers.
 Application profiles built entirely on top of these core-protocol documents
 -- carrying their own content inside ordinary end-to-end messages, blobs, and
 receipts, without allocating a core-protocol identifier -- live in
-`../profiles/` instead of this directory, with their own independent
+`../../profiles/` instead of this directory, with their own independent
 identifier namespace not scanned by `scripts/check_conformance.py`. See
-`../profiles/family-tree-v1.md` for the first example.
+`../../profiles/family-tree-v1.md` for the first example.
+
+Implementation architecture and source-module mapping are intentionally kept
+outside this normative set, in
+[`../detailed_design/`](../detailed_design/00_概述.md).

@@ -1,5 +1,8 @@
 # Hostile-input fuzzing
 
+本目录在整体 hostile-input 与 release evidence 体系中的职责见
+[`docs/detailed_design/60_一致性验证与独立实现.md`](../docs/detailed_design/60_一致性验证与独立实现.md)。
+
 This directory is the executable inventory for every unauthenticated parser
 and attacker-controlled transition in v1.
 

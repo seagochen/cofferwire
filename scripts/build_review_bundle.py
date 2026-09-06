@@ -17,14 +17,13 @@ PREFIXES = (
     "apps/",
     "conformance/",
     "crates/",
-    "docs/adr/",
-    "docs/conformance/",
-    "docs/runbooks/",
+    "conformance/evidence/",
+    "docs/detailed_design/",
     "fuzz/",
     "independent/",
     "profiles/",
     "scripts/",
-    "spec/",
+    "docs/spec/",
     "vectors/",
 )
 ROOT_FILES = {
@@ -50,11 +49,11 @@ def resolve_revision(revision: str) -> str:
 
 
 def selected_paths(revision: str) -> list[str]:
-    paths = git("ls-tree", "-r", "--name-only", revision).decode().splitlines()
+    paths = git("ls-tree", "-r", "-z", "--name-only", revision).decode().split("\0")
     return sorted(
         path
         for path in paths
-        if path in ROOT_FILES or path.startswith(PREFIXES)
+        if path and (path in ROOT_FILES or path.startswith(PREFIXES))
     )
 
 

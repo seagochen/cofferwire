@@ -1,6 +1,6 @@
 //! Offline bootstrap and recovery bundles (`cofferwire-offline/1`).
 //!
-//! See `spec/13-offline-bundles.md`. A bundle is never sent to a relay; it is
+//! See `docs/spec/13-offline-bundles.md`. A bundle is never sent to a relay; it is
 //! a local export/import artifact. Its secret-bearing plaintext is sealed
 //! with the exact authenticated-HPKE construction already used for
 //! application messages (`seal_message`/`open_message`) -- no new

@@ -24,7 +24,7 @@ VALIDATOR = load("validate_external_review")
 
 def valid_review():
     value = json.loads(
-        (ROOT / "docs/security/external-review-result.example.json").read_text()
+        (ROOT / "scripts/fixtures/external-review-result.example.json").read_text()
     )
     value["reviewed_revision"] = "a" * 40
     value["review_bundle_sha256"] = "1" * 64
@@ -74,7 +74,9 @@ class ReviewToolTests(unittest.TestCase):
             with tarfile.open(first) as archive:
                 embedded = json.load(archive.extractfile("REVIEW-MANIFEST.json"))
             self.assertEqual(embedded, manifest)
-            self.assertIn("spec/04-cryptographic-profile.md", {entry["path"] for entry in manifest["files"]})
+            paths = {entry["path"] for entry in manifest["files"]}
+            self.assertIn("docs/spec/04-cryptographic-profile.md", paths)
+            self.assertIn("docs/detailed_design/00_概述.md", paths)
 
 
 if __name__ == "__main__":

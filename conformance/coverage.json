@@ -22,7 +22,7 @@
       "id": "CW-TERM-001",
       "line": 11,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/01-terminology.md",
+      "source": "docs/spec/01-terminology.md",
       "terms": [
         "MUST NOT"
       ],
@@ -36,7 +36,7 @@
       "id": "CW-TERM-002",
       "line": 12,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/01-terminology.md",
+      "source": "docs/spec/01-terminology.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -51,7 +51,7 @@
       "id": "CW-TERM-003",
       "line": 70,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/01-terminology.md",
+      "source": "docs/spec/01-terminology.md",
       "terms": [
         "MUST NOT"
       ],
@@ -65,7 +65,7 @@
       "id": "CW-TERM-004",
       "line": 71,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/01-terminology.md",
+      "source": "docs/spec/01-terminology.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -80,7 +80,7 @@
       "id": "CW-TERM-005",
       "line": 95,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/01-terminology.md",
+      "source": "docs/spec/01-terminology.md",
       "terms": [
         "MUST"
       ],
@@ -94,7 +94,7 @@
       "id": "CW-THREAT-001",
       "line": 19,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -110,7 +110,7 @@
       "id": "CW-THREAT-002",
       "line": 20,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -126,7 +126,7 @@
       "id": "CW-THREAT-003",
       "line": 37,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -142,7 +142,7 @@
       "id": "CW-THREAT-004",
       "line": 38,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -158,7 +158,7 @@
       "id": "CW-THREAT-005",
       "line": 39,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -174,7 +174,7 @@
       "id": "CW-THREAT-006",
       "line": 45,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -190,7 +190,7 @@
       "id": "CW-THREAT-007",
       "line": 46,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -206,7 +206,7 @@
       "id": "CW-THREAT-008",
       "line": 54,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -222,7 +222,7 @@
       "id": "CW-THREAT-009",
       "line": 55,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -238,7 +238,7 @@
       "id": "CW-THREAT-010",
       "line": 61,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -254,7 +254,7 @@
       "id": "CW-THREAT-011",
       "line": 62,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -270,7 +270,7 @@
       "id": "CW-THREAT-012",
       "line": 63,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -286,7 +286,7 @@
       "id": "CW-THREAT-013",
       "line": 69,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -302,7 +302,7 @@
       "id": "CW-THREAT-014",
       "line": 70,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
       ],
@@ -318,7 +318,7 @@
       "id": "CW-THREAT-015",
       "line": 77,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/02-threat-model.md",
+      "source": "docs/spec/02-threat-model.md",
       "terms": [
         "MUST"
       ],
@@ -334,7 +334,7 @@
       "id": "CW-ARCH-001",
       "line": 9,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -351,7 +351,7 @@
       "id": "CW-ARCH-002",
       "line": 10,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -368,7 +368,7 @@
       "id": "CW-ARCH-012",
       "line": 31,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -385,7 +385,7 @@
       "id": "CW-ARCH-003",
       "line": 50,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST"
       ],
@@ -401,7 +401,7 @@
       "id": "CW-ARCH-004",
       "line": 51,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST NOT"
       ],
@@ -417,7 +417,7 @@
       "id": "CW-ARCH-005",
       "line": 72,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST"
       ],
@@ -433,7 +433,7 @@
       "id": "CW-ARCH-006",
       "line": 73,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST"
       ],
@@ -449,7 +449,7 @@
       "id": "CW-ARCH-007",
       "line": 91,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST NOT"
       ],
@@ -465,7 +465,7 @@
       "id": "CW-ARCH-008",
       "line": 92,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST NOT"
       ],
@@ -481,7 +481,7 @@
       "id": "CW-ARCH-009",
       "line": 93,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST"
       ],
@@ -497,7 +497,7 @@
       "id": "CW-ARCH-010",
       "line": 94,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST NOT"
       ],
@@ -513,7 +513,7 @@
       "id": "CW-ARCH-011",
       "line": 112,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/03-architecture.md",
+      "source": "docs/spec/03-architecture.md",
       "terms": [
         "MUST"
       ],
@@ -529,7 +529,7 @@
       "id": "CW-CRYPTO-001",
       "line": 26,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -544,7 +544,7 @@
       "id": "CW-CRYPTO-002",
       "line": 31,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -558,7 +558,7 @@
       "id": "CW-CRYPTO-003",
       "line": 35,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [],
       "tests": [
         "RUST-CRYPTO",
@@ -570,7 +570,7 @@
       "id": "CW-CRYPTO-004",
       "line": 73,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -584,7 +584,7 @@
       "id": "CW-CRYPTO-005",
       "line": 77,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -598,7 +598,7 @@
       "id": "CW-CRYPTO-006",
       "line": 82,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MAY",
         "MUST"
@@ -613,7 +613,7 @@
       "id": "CW-CRYPTO-007",
       "line": 87,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MAY",
         "MUST NOT"
@@ -628,7 +628,7 @@
       "id": "CW-CRYPTO-008",
       "line": 90,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -642,7 +642,7 @@
       "id": "CW-CRYPTO-009",
       "line": 131,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -657,7 +657,7 @@
       "id": "CW-CRYPTO-010",
       "line": 137,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -671,7 +671,7 @@
       "id": "CW-CRYPTO-011",
       "line": 142,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -685,7 +685,7 @@
       "id": "CW-CRYPTO-012",
       "line": 146,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -700,7 +700,7 @@
       "id": "CW-CRYPTO-013",
       "line": 154,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -714,7 +714,7 @@
       "id": "CW-CRYPTO-014",
       "line": 158,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -729,7 +729,7 @@
       "id": "CW-CRYPTO-015",
       "line": 163,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -744,7 +744,7 @@
       "id": "CW-CRYPTO-016",
       "line": 177,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MAY",
         "MUST",
@@ -760,7 +760,7 @@
       "id": "CW-CRYPTO-017",
       "line": 180,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/04-cryptographic-profile.md",
+      "source": "docs/spec/04-cryptographic-profile.md",
       "terms": [
         "MUST"
       ],
@@ -774,7 +774,7 @@
       "id": "CW-WIRE-001",
       "line": 42,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -790,7 +790,7 @@
       "id": "CW-WIRE-002",
       "line": 47,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -805,7 +805,7 @@
       "id": "CW-WIRE-003",
       "line": 60,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -820,7 +820,7 @@
       "id": "CW-WIRE-004",
       "line": 77,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -835,7 +835,7 @@
       "id": "CW-WIRE-005",
       "line": 80,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MAY",
         "MUST NOT"
@@ -851,7 +851,7 @@
       "id": "CW-WIRE-006",
       "line": 86,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MAY",
         "MUST"
@@ -867,7 +867,7 @@
       "id": "CW-WIRE-007",
       "line": 94,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -882,7 +882,7 @@
       "id": "CW-WIRE-008",
       "line": 110,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -897,7 +897,7 @@
       "id": "CW-WIRE-009",
       "line": 112,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -913,7 +913,7 @@
       "id": "CW-WIRE-010",
       "line": 124,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -928,7 +928,7 @@
       "id": "CW-WIRE-011",
       "line": 128,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [],
       "tests": [
         "RUST-TYPES",
@@ -941,7 +941,7 @@
       "id": "CW-WIRE-012",
       "line": 150,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -956,7 +956,7 @@
       "id": "CW-WIRE-013",
       "line": 153,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -972,7 +972,7 @@
       "id": "CW-WIRE-014",
       "line": 162,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -988,7 +988,7 @@
       "id": "CW-WIRE-015",
       "line": 175,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1003,7 +1003,7 @@
       "id": "CW-WIRE-016",
       "line": 185,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1018,7 +1018,7 @@
       "id": "CW-WIRE-017",
       "line": 194,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1033,7 +1033,7 @@
       "id": "CW-WIRE-018",
       "line": 202,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1048,7 +1048,7 @@
       "id": "CW-WIRE-019",
       "line": 209,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1063,7 +1063,7 @@
       "id": "CW-WIRE-020",
       "line": 218,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MAY",
         "MUST"
@@ -1079,7 +1079,7 @@
       "id": "CW-WIRE-021",
       "line": 228,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MAY",
         "MUST",
@@ -1096,7 +1096,7 @@
       "id": "CW-WIRE-029",
       "line": 234,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1111,7 +1111,7 @@
       "id": "CW-WIRE-030",
       "line": 265,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MAY",
         "MUST"
@@ -1127,7 +1127,7 @@
       "id": "CW-WIRE-022",
       "line": 280,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1142,7 +1142,7 @@
       "id": "CW-WIRE-023",
       "line": 287,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [],
       "tests": [
         "RUST-TYPES",
@@ -1155,7 +1155,7 @@
       "id": "CW-WIRE-024",
       "line": 291,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [],
       "tests": [
         "RUST-TYPES",
@@ -1168,7 +1168,7 @@
       "id": "CW-WIRE-025",
       "line": 307,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1183,7 +1183,7 @@
       "id": "CW-WIRE-026",
       "line": 343,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1198,7 +1198,7 @@
       "id": "CW-WIRE-027",
       "line": 365,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST"
       ],
@@ -1213,7 +1213,7 @@
       "id": "CW-WIRE-028",
       "line": 371,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/05-wire-format.md",
+      "source": "docs/spec/05-wire-format.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1228,7 +1228,7 @@
       "id": "CW-QUEUE-001",
       "line": 14,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1243,7 +1243,7 @@
       "id": "CW-QUEUE-002",
       "line": 15,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1259,7 +1259,7 @@
       "id": "CW-QUEUE-003",
       "line": 16,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1274,7 +1274,7 @@
       "id": "CW-QUEUE-004",
       "line": 17,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1290,7 +1290,7 @@
       "id": "CW-QUEUE-005",
       "line": 18,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1306,7 +1306,7 @@
       "id": "CW-QUEUE-006",
       "line": 19,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [],
       "tests": [
         "RUST-RELAY",
@@ -1319,7 +1319,7 @@
       "id": "CW-QUEUE-007",
       "line": 20,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1334,7 +1334,7 @@
       "id": "CW-QUEUE-008",
       "line": 21,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1349,7 +1349,7 @@
       "id": "CW-STORE-001",
       "line": 37,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1363,7 +1363,7 @@
       "id": "CW-STORE-002",
       "line": 38,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1376,7 +1376,7 @@
       "id": "CW-STORE-003",
       "line": 39,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1389,7 +1389,7 @@
       "id": "CW-STORE-004",
       "line": 40,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1402,7 +1402,7 @@
       "id": "CW-STORE-005",
       "line": 41,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1415,7 +1415,7 @@
       "id": "CW-STORE-006",
       "line": 42,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1428,7 +1428,7 @@
       "id": "CW-STORE-007",
       "line": 43,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MAY",
         "MUST"
@@ -1442,7 +1442,7 @@
       "id": "CW-STORE-008",
       "line": 44,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST"
       ],
@@ -1455,7 +1455,7 @@
       "id": "CW-STORE-009",
       "line": 45,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/06-queues.md",
+      "source": "docs/spec/06-queues.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1469,7 +1469,7 @@
       "id": "CW-BLOB-001",
       "line": 33,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1483,7 +1483,7 @@
       "id": "CW-BLOB-002",
       "line": 37,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1497,7 +1497,7 @@
       "id": "CW-BLOB-023",
       "line": 54,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1510,7 +1510,7 @@
       "id": "CW-BLOB-003",
       "line": 80,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1523,7 +1523,7 @@
       "id": "CW-BLOB-004",
       "line": 85,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1537,7 +1537,7 @@
       "id": "CW-BLOB-005",
       "line": 110,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1550,7 +1550,7 @@
       "id": "CW-BLOB-006",
       "line": 113,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1563,7 +1563,7 @@
       "id": "CW-BLOB-007",
       "line": 116,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MAY",
         "MUST"
@@ -1577,7 +1577,7 @@
       "id": "CW-BLOB-024",
       "line": 144,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1591,7 +1591,7 @@
       "id": "CW-BLOB-008",
       "line": 150,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1604,7 +1604,7 @@
       "id": "CW-BLOB-009",
       "line": 154,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1617,7 +1617,7 @@
       "id": "CW-BLOB-010",
       "line": 176,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1630,7 +1630,7 @@
       "id": "CW-BLOB-011",
       "line": 180,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1643,7 +1643,7 @@
       "id": "CW-BLOB-012",
       "line": 184,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1657,7 +1657,7 @@
       "id": "CW-BLOB-013",
       "line": 189,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1671,7 +1671,7 @@
       "id": "CW-BLOB-014",
       "line": 192,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1685,7 +1685,7 @@
       "id": "CW-BLOB-015",
       "line": 195,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1698,7 +1698,7 @@
       "id": "CW-BLOB-025",
       "line": 205,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1712,7 +1712,7 @@
       "id": "CW-BLOB-016",
       "line": 208,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1725,7 +1725,7 @@
       "id": "CW-BLOB-017",
       "line": 212,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [],
       "tests": [
         "RUST-BLOB-VECTORS",
@@ -1736,7 +1736,7 @@
       "id": "CW-BLOB-018",
       "line": 217,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MAY"
       ],
@@ -1749,7 +1749,7 @@
       "id": "CW-BLOB-019",
       "line": 230,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1763,7 +1763,7 @@
       "id": "CW-BLOB-020",
       "line": 233,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1777,7 +1777,7 @@
       "id": "CW-BLOB-021",
       "line": 242,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1791,7 +1791,7 @@
       "id": "CW-BLOB-022",
       "line": 246,
       "revision": "CW-BLOB-1-DRAFT-2026-09-06",
-      "source": "spec/07-blobs.md",
+      "source": "docs/spec/07-blobs.md",
       "terms": [
         "MUST"
       ],
@@ -1804,7 +1804,7 @@
       "id": "CW-RECEIPT-001",
       "line": 27,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1819,7 +1819,7 @@
       "id": "CW-RECEIPT-002",
       "line": 43,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1834,7 +1834,7 @@
       "id": "CW-RECEIPT-003",
       "line": 51,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST"
       ],
@@ -1848,7 +1848,7 @@
       "id": "CW-RECEIPT-004",
       "line": 84,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST"
       ],
@@ -1862,7 +1862,7 @@
       "id": "CW-RECEIPT-005",
       "line": 99,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1877,7 +1877,7 @@
       "id": "CW-RECEIPT-006",
       "line": 105,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1892,7 +1892,7 @@
       "id": "CW-RECEIPT-007",
       "line": 110,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST"
       ],
@@ -1906,7 +1906,7 @@
       "id": "CW-RECEIPT-008",
       "line": 117,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1921,7 +1921,7 @@
       "id": "CW-RECEIPT-009",
       "line": 123,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -1936,7 +1936,7 @@
       "id": "CW-RECEIPT-010",
       "line": 131,
       "revision": "CW-RECEIPT-1-DRAFT-2026-09-06",
-      "source": "spec/08-receipts.md",
+      "source": "docs/spec/08-receipts.md",
       "terms": [
         "MUST"
       ],
@@ -1950,7 +1950,7 @@
       "id": "CW-TRANSPORT-001",
       "line": 13,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/09-transport-bindings.md",
+      "source": "docs/spec/09-transport-bindings.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1962,7 +1962,7 @@
       "id": "CW-TRANSPORT-002",
       "line": 17,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/09-transport-bindings.md",
+      "source": "docs/spec/09-transport-bindings.md",
       "terms": [],
       "tests": [
         "RUST-TRANSPORT"
@@ -1972,7 +1972,7 @@
       "id": "CW-TRANSPORT-003",
       "line": 20,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/09-transport-bindings.md",
+      "source": "docs/spec/09-transport-bindings.md",
       "terms": [
         "MUST NOT"
       ],
@@ -1984,7 +1984,7 @@
       "id": "CW-VERSION-001",
       "line": 23,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2000,7 +2000,7 @@
       "id": "CW-VERSION-002",
       "line": 27,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST"
       ],
@@ -2015,7 +2015,7 @@
       "id": "CW-VERSION-003",
       "line": 50,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST"
       ],
@@ -2030,7 +2030,7 @@
       "id": "CW-VERSION-004",
       "line": 52,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST"
       ],
@@ -2045,7 +2045,7 @@
       "id": "CW-VERSION-005",
       "line": 74,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2061,7 +2061,7 @@
       "id": "CW-VERSION-006",
       "line": 77,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [],
       "tests": [
         "RUST-CODEC",
@@ -2074,7 +2074,7 @@
       "id": "CW-VERSION-007",
       "line": 80,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST"
       ],
@@ -2089,7 +2089,7 @@
       "id": "CW-VERSION-008",
       "line": 83,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MAY",
         "MUST",
@@ -2106,7 +2106,7 @@
       "id": "CW-VERSION-009",
       "line": 86,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MAY",
         "MUST"
@@ -2122,7 +2122,7 @@
       "id": "CW-VERSION-010",
       "line": 90,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2138,7 +2138,7 @@
       "id": "CW-VERSION-011",
       "line": 94,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
+      "source": "docs/spec/10-versioning.md",
       "terms": [],
       "tests": [
         "RUST-CODEC",
@@ -2151,7 +2151,7 @@
       "id": "CW-SECURITY-001",
       "line": 22,
       "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
-      "source": "spec/11-security-considerations.md",
+      "source": "docs/spec/11-security-considerations.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2165,7 +2165,7 @@
       "id": "CW-SECURITY-002",
       "line": 37,
       "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
-      "source": "spec/11-security-considerations.md",
+      "source": "docs/spec/11-security-considerations.md",
       "terms": [
         "MUST"
       ],
@@ -2178,7 +2178,7 @@
       "id": "CW-SECURITY-003",
       "line": 43,
       "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
-      "source": "spec/11-security-considerations.md",
+      "source": "docs/spec/11-security-considerations.md",
       "terms": [
         "MUST"
       ],
@@ -2191,7 +2191,7 @@
       "id": "CW-SECURITY-004",
       "line": 48,
       "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
-      "source": "spec/11-security-considerations.md",
+      "source": "docs/spec/11-security-considerations.md",
       "terms": [],
       "tests": [
         "RUST-SECURITY",
@@ -2202,7 +2202,7 @@
       "id": "CW-SECURITY-005",
       "line": 57,
       "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
-      "source": "spec/11-security-considerations.md",
+      "source": "docs/spec/11-security-considerations.md",
       "terms": [
         "MUST"
       ],
@@ -2215,7 +2215,7 @@
       "id": "CW-SECURITY-006",
       "line": 67,
       "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
-      "source": "spec/11-security-considerations.md",
+      "source": "docs/spec/11-security-considerations.md",
       "terms": [
         "MAY",
         "MUST NOT"
@@ -2229,7 +2229,7 @@
       "id": "CW-PRIVACY-001",
       "line": 20,
       "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
-      "source": "spec/12-privacy-considerations.md",
+      "source": "docs/spec/12-privacy-considerations.md",
       "terms": [
         "MUST NOT"
       ],
@@ -2241,7 +2241,7 @@
       "id": "CW-PRIVACY-002",
       "line": 25,
       "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
-      "source": "spec/12-privacy-considerations.md",
+      "source": "docs/spec/12-privacy-considerations.md",
       "terms": [
         "MUST"
       ],
@@ -2253,7 +2253,7 @@
       "id": "CW-PRIVACY-003",
       "line": 40,
       "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
-      "source": "spec/12-privacy-considerations.md",
+      "source": "docs/spec/12-privacy-considerations.md",
       "terms": [
         "MUST NOT"
       ],
@@ -2265,7 +2265,7 @@
       "id": "CW-PRIVACY-004",
       "line": 46,
       "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
-      "source": "spec/12-privacy-considerations.md",
+      "source": "docs/spec/12-privacy-considerations.md",
       "terms": [
         "MAY"
       ],
@@ -2277,7 +2277,7 @@
       "id": "CW-OFFLINE-001",
       "line": 31,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST NOT"
       ],
@@ -2291,7 +2291,7 @@
       "id": "CW-OFFLINE-002",
       "line": 50,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2306,7 +2306,7 @@
       "id": "CW-OFFLINE-003",
       "line": 65,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST"
       ],
@@ -2320,7 +2320,7 @@
       "id": "CW-OFFLINE-004",
       "line": 69,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST"
       ],
@@ -2334,7 +2334,7 @@
       "id": "CW-OFFLINE-005",
       "line": 112,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST"
       ],
@@ -2348,7 +2348,7 @@
       "id": "CW-OFFLINE-006",
       "line": 119,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST"
       ],
@@ -2362,7 +2362,7 @@
       "id": "CW-OFFLINE-007",
       "line": 128,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2377,7 +2377,7 @@
       "id": "CW-OFFLINE-008",
       "line": 134,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST"
       ],
@@ -2391,7 +2391,7 @@
       "id": "CW-OFFLINE-009",
       "line": 138,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MAY",
         "MUST"
@@ -2406,7 +2406,7 @@
       "id": "CW-OFFLINE-010",
       "line": 145,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST",
         "MUST NOT"
@@ -2421,7 +2421,7 @@
       "id": "CW-OFFLINE-011",
       "line": 156,
       "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
-      "source": "spec/13-offline-bundles.md",
+      "source": "docs/spec/13-offline-bundles.md",
       "terms": [
         "MUST",
         "MUST NOT"

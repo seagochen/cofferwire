@@ -13,6 +13,6 @@
   ],
   "previous_version": {
     "status": "not-applicable",
-    "reason": "Queue v1 is the first registered version; spec/10-versioning.md registers no supported predecessor."
+    "reason": "Queue v1 is the first registered version; docs/spec/10-versioning.md registers no supported predecessor."
   }
 }

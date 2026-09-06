@@ -1,9 +1,7 @@
 # cofferwire-relay
 
-This crate contains Cofferwire's transport-independent queue state machine and a SQLite-backed durable implementation. It deliberately does not implement networking or cryptography yet.
+包含传输无关的内存语义参考和 SQLite queue/blob 事务实现。调用方必须在进入该层之前
+完成协议解码和认证；payload 对 Relay 保持 opaque。
 
-Callers must authenticate commands before passing the resulting queue-scoped principal to the state machine. Message payloads are opaque bytes and are expected to be encrypted by a higher layer.
-
-`Relay` is the in-memory semantic reference. `DurableRelay` executes each command in a SQLite rollback-journal transaction with full synchronous durability. A successful send is returned only after commit, ACK validation and deletion share one transaction, and uncommitted changes are discarded by recovery. The database carries schema version 1 and is refused without modification when its version is newer than this build understands.
-
-The test suite terminates child processes immediately before and after the `SEND`, `FETCH` and ACK commit boundaries, then reopens the same database and runs SQLite integrity and queue-state checks.
+当前 schema、replay、durability 和 daemon 分层设计见
+[`docs/detailed_design/50_Relay与守护进程.md`](../../docs/detailed_design/50_Relay与守护进程.md)。

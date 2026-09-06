@@ -1,6 +1,6 @@
 //! A minimal, deterministic per-key request-rate abuse control.
 //!
-//! See `spec/11-security-considerations.md`. This bounds request rate over
+//! See `docs/spec/11-security-considerations.md`. This bounds request rate over
 //! time, which is a different property from the existing concurrent-
 //! connection/concurrent-command semaphores (`ConnectionLimit`,
 //! `MAX_CONCURRENT_COMMANDS`): those bound how many requests are in flight

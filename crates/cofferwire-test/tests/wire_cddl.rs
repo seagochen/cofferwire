@@ -1,6 +1,6 @@
 use cddl::validate_cbor_from_slice;
 
-const WIRE_CDDL: &str = include_str!("../../../spec/05-wire-format.cddl");
+const WIRE_CDDL: &str = include_str!("../../../docs/spec/05-wire-format.cddl");
 const MAX_AUTH_BYTES: usize = 1024;
 const MAX_FRAME_BYTES: usize = 65_536;
 const MAX_MESSAGE_BYTES: usize = 64_374;

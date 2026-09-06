@@ -12,7 +12,7 @@ fn bytes(value: &Value, key: &str) -> Vec<u8> {
     hex::decode(value[key].as_str().expect("hex vector string")).expect("valid vector hex")
 }
 
-/// Independently reconstructs `spec/08-receipts.md`'s signed structure from
+/// Independently reconstructs `docs/spec/08-receipts.md`'s signed structure from
 /// raw primitives, without calling into `cofferwire_crypto::receipt`.
 #[test]
 fn receipt_positive_vector_reproduces_signed_structure() {

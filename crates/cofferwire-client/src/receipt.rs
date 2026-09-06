@@ -1,5 +1,5 @@
 //! Client-side generation, verification, and deduplication of
-//! `receipt.applied` application receipts. See `spec/08-receipts.md`.
+//! `receipt.applied` application receipts. See `docs/spec/08-receipts.md`.
 //!
 //! Generation and low-level verification are plain functions from
 //! `cofferwire_crypto::receipt`, re-exported here for convenience. This

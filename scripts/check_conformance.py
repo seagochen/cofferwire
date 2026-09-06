@@ -58,7 +58,7 @@ def scan_specs(spec_dir: Path) -> list[Requirement]:
                 return
             terms = tuple(sorted(set(NORMATIVE.findall(" ".join(active_text)))))
             requirements.append(
-                Requirement(active_id, f"spec/{path.name}", active_line, terms)
+                Requirement(active_id, f"docs/spec/{path.name}", active_line, terms)
             )
 
         in_code = False
@@ -86,7 +86,7 @@ def scan_specs(spec_dir: Path) -> list[Requirement]:
                 and "Normative terms such as" not in line
             ):
                 raise ConformanceError(
-                    f"unscoped normative keyword at spec/{path.name}:{line_number}"
+                    f"unscoped normative keyword at docs/spec/{path.name}:{line_number}"
                 )
         finish()
     return requirements
@@ -156,7 +156,7 @@ def encoded_report(report: dict) -> str:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--spec-dir", type=Path, default=Path("spec"))
+    parser.add_argument("--spec-dir", type=Path, default=Path("docs/spec"))
     parser.add_argument("--registry", type=Path, default=Path("conformance/registry.json"))
     parser.add_argument("--check-report", type=Path)
     parser.add_argument("--print-report", action="store_true")

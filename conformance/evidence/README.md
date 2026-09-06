@@ -1,5 +1,8 @@
 # Queue-v1 interoperability evidence
 
+验证体系的模块关系和统一入口见
+[`../../docs/detailed_design/60_一致性验证与独立实现.md`](../../docs/detailed_design/60_一致性验证与独立实现.md)。
+
 `interop-matrix-v1.json` is the machine-readable result of running
 `scripts/run_interop_matrix.py` against the frozen
 `CW-SCOPE-QUEUE-V1-2026-09-06` scope.
@@ -13,7 +16,7 @@ Run from a clean checkout with Python 3.11+, Rust 1.84, and the dependency in
 `independent/python/pyproject.toml` installed:
 
 ```console
-python3 scripts/run_interop_matrix.py --output docs/conformance/interop-matrix-v1.json
+python3 scripts/run_interop_matrix.py --output conformance/evidence/interop-matrix-v1.json
 ```
 
 Queue v1 is the first registered version, so there is no previous/current pair

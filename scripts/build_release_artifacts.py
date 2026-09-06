@@ -25,18 +25,21 @@ def resolve_revision(revision: str) -> str:
 
 
 def tracked_paths(revision: str) -> list[str]:
-    return sorted(git("ls-tree", "-r", "--name-only", revision).decode().splitlines())
+    paths = git("ls-tree", "-r", "-z", "--name-only", revision).decode().split("\0")
+    return sorted(path for path in paths if path)
 
 
 def selected(path: str, kind: str) -> bool:
     if kind == "source":
-        return not path.startswith(("docs/conformance/", "profiles/vectors/", "vectors/"))
+        return not path.startswith(("conformance/evidence/", "profiles/vectors/", "vectors/"))
     if kind == "spec":
-        return path.startswith(("spec/", "profiles/", "docs/adr/")) and "/vectors/" not in path
+        return (
+            path.startswith(("docs/spec/", "profiles/")) and "/vectors/" not in path
+        ) or path == "docs/detailed_design/00_概述.md"
     if kind == "vectors":
         return path.startswith(("vectors/", "profiles/vectors/"))
     if kind == "conformance":
-        return path.startswith("docs/conformance/") or path in {"conformance/coverage.json", "conformance/registry.json", "TESTING.md"}
+        return path.startswith("conformance/evidence/") or path in {"conformance/coverage.json", "conformance/registry.json", "TESTING.md"}
     raise ValueError(f"unknown artifact kind {kind}")
 
 

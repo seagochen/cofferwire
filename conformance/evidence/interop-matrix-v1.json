@@ -9,7 +9,7 @@
   "compatibility": {
     "downgrade": "unregistered algorithms and versions fail closed",
     "previous_current": {
-      "reason": "Queue v1 is the first registered version; spec/10-versioning.md registers no supported predecessor.",
+      "reason": "Queue v1 is the first registered version; docs/spec/10-versioning.md registers no supported predecessor.",
       "status": "not-applicable"
     },
     "unknown_version": "passed in every role implementation"

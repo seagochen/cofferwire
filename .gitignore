@@ -16,8 +16,10 @@ fuzz/artifacts/
 # Local state and test artifacts
 /.codex/
 /.cache/
+/.claude/
 /.tmp/
 /artifacts/
+/docs/temp/
 *.log
 *.pid
 core

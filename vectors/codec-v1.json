@@ -5,7 +5,7 @@
   "positive": [
     {
       "name": "send_request_empty_auth",
-      "description": "The normative SEND request from spec/05-wire-format.md.",
+      "description": "The normative SEND request from docs/spec/05-wire-format.md.",
       "frame_hex": "01aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa83000285582011111111111111111111111111111111111111111111111111111111111111115820222222222222222222222222222222222222222222222222222222222222222258203333333333333333333333333333333333333333333333333333333333333333426869183c40"
     },
     {
