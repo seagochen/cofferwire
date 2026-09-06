@@ -1,0 +1,46 @@
+{
+  "format": "cofferwire-offline-v1",
+  "encoding": "lowercase hexadecimal",
+  "warning": "All secret keys and deterministic RNG bytes are test-only and MUST NOT be used in production.",
+  "note": "The HPKE construction sealing this envelope's payload is unchanged from vectors/crypto-v1.json's hpke vectors; this file exercises the envelope header and inner plaintext framing this profile adds, not HPKE itself.",
+  "exporter_signing_seed_hex": "1111111111111111111111111111111111111111111111111111111111111111",
+  "exporter_encryption_ikm_hex": "1212121212121212121212121212121212121212121212121212121212121212",
+  "importer_encryption_ikm_hex": "1313131313131313131313131313131313131313131313131313131313131313",
+  "peer_encryption_ikm_hex": "1414141414141414141414141414141414141414141414141414141414141414",
+  "exporter_principal_hex": "d04ab232742bb4ab3a1368bd4615e4e6d0224ab71a016baf8520a332c9778737",
+  "importer_encryption_public_hex": "631ad3a32712f71a30ac6b96e1980d69ea651c6d958329767e62c52087711309",
+  "peer_encryption_public_hex": "1485143c801a1b6cb4267aca9f167ee882c9d6f50cb6ba5ee26a8de194bde725",
+  "queue_id_hex": "2121212121212121212121212121212121212121212121212121212121212121",
+  "bundle_id_hex": "2222222222222222222222222222222222222222222222222222222222222222",
+  "relay_hints": ["https://relay-a.example", "https://relay-b.example"],
+  "created_at_secs": 1700000000,
+  "role": "recipient",
+  "bundle_type": "recovery",
+  "envelope_hex": "43574f4201212121212121212121212121212121212121212121212121212121212121212122222222222222222222222222222222222222222222222222222222222222220001002000010003b1f1b840de7a3241b02748cf9b05b74dc8c5e8451298738817bd76aa8ebe8c2bfd551c76a8802392b801d12c40e0555666d257dceed9dbf8533bf9f21b886091d09d1d228c72375661428eff13914a3eecd254ec090d2bb46062219440a6a4b44f710352c84ef9b2bd2df7cebd063bf378fbafda0d9d4c7b687cc8159b14ea9c6682bb1dbac0a3335bc09ec26b358c76d7c378321cdfc764dab5a8730a50cec7e1536e69ab10478b336e7f2d842786d2b4842cdc90caef935af7c587cb60d45240a8d6bc05d331fb06bd06c7d41553eeb91b1d4fc67287f95e7db5adcb6e63d417157874a84c08a9232877debf",
+  "negative": [
+    {
+      "name": "envelope_byte_tamper",
+      "operation": "For every byte offset in envelope_hex, xor the byte with 0x01 and require rejection (malformed header or authentication failure)."
+    },
+    {
+      "name": "wrong_expected_exporter_encryption_key",
+      "operation": "Open with an encryption public key other than exporter_encryption_ikm_hex's derived public key and require authentication failure."
+    },
+    {
+      "name": "wrong_recipient",
+      "operation": "Open with an encryption secret key other than the one derived from importer_encryption_ikm_hex and require authentication failure."
+    },
+    {
+      "name": "unsupported_version",
+      "operation": "Replace byte offset 4 (the version byte, 0x01) with 0xff and require rejection before any decryption attempt."
+    },
+    {
+      "name": "truncated_envelope",
+      "operation": "Remove the last byte of envelope_hex and require rejection."
+    },
+    {
+      "name": "relay_hint_count_exceeds_bound",
+      "operation": "A plaintext whose relay-hint-count byte exceeds MAX_RELAY_HINTS (8) MUST be rejected as malformed, independent of whether the declared hints are present."
+    }
+  ]
+}

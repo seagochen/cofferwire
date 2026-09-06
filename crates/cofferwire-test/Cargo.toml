@@ -10,6 +10,9 @@ publish = false
 [dev-dependencies]
 cddl = "=0.10.2"
 chacha20poly1305 = "0.10.1"
+cofferwire-client = { path = "../cofferwire-client" }
+cofferwire-crypto = { path = "../cofferwire-crypto" }
+cofferwire-types = { path = "../cofferwire-types" }
 ed25519-dalek = "2.2.0"
 hex = "0.4.3"
 hkdf = "0.12.4"

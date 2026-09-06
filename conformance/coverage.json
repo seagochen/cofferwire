@@ -1,21 +1,21 @@
 {
   "coverage_by_category": {
-    "client": 39,
+    "client": 50,
     "codec": 76,
-    "crypto": 76,
+    "crypto": 87,
     "independent": 106,
     "interoperability": 78,
-    "quality": 46,
+    "quality": 57,
     "relay": 43,
     "transport": 29
   },
   "coverage_by_role": {
-    "client": 450,
-    "relay": 434
+    "client": 483,
+    "relay": 445
   },
   "format": "cofferwire-conformance-coverage-v1",
   "registry_format": "cofferwire-conformance-registry-v1",
-  "requirement_count": 144,
+  "requirement_count": 155,
   "requirements": [
     {
       "id": "CW-TERM-001",
@@ -1965,7 +1965,7 @@
     },
     {
       "id": "CW-VERSION-001",
-      "line": 21,
+      "line": 23,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -1981,7 +1981,7 @@
     },
     {
       "id": "CW-VERSION-002",
-      "line": 25,
+      "line": 27,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -1996,21 +1996,6 @@
     },
     {
       "id": "CW-VERSION-003",
-      "line": 48,
-      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
-      "source": "spec/10-versioning.md",
-      "terms": [
-        "MUST"
-      ],
-      "tests": [
-        "RUST-CODEC",
-        "TRACEABILITY-SELFTEST",
-        "PYTHON-INDEPENDENT",
-        "QUEUE-V1-INTEROP-MATRIX"
-      ]
-    },
-    {
-      "id": "CW-VERSION-004",
       "line": 50,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
@@ -2025,8 +2010,23 @@
       ]
     },
     {
+      "id": "CW-VERSION-004",
+      "line": 52,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/10-versioning.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-CODEC",
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT",
+        "QUEUE-V1-INTEROP-MATRIX"
+      ]
+    },
+    {
       "id": "CW-VERSION-005",
-      "line": 72,
+      "line": 74,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -2042,7 +2042,7 @@
     },
     {
       "id": "CW-VERSION-006",
-      "line": 75,
+      "line": 77,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [],
@@ -2055,7 +2055,7 @@
     },
     {
       "id": "CW-VERSION-007",
-      "line": 78,
+      "line": 80,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -2070,7 +2070,7 @@
     },
     {
       "id": "CW-VERSION-008",
-      "line": 81,
+      "line": 83,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -2087,7 +2087,7 @@
     },
     {
       "id": "CW-VERSION-009",
-      "line": 84,
+      "line": 86,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -2103,7 +2103,7 @@
     },
     {
       "id": "CW-VERSION-010",
-      "line": 88,
+      "line": 90,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [
@@ -2119,7 +2119,7 @@
     },
     {
       "id": "CW-VERSION-011",
-      "line": 92,
+      "line": 94,
       "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
       "source": "spec/10-versioning.md",
       "terms": [],
@@ -2128,6 +2128,165 @@
         "TRACEABILITY-SELFTEST",
         "PYTHON-INDEPENDENT",
         "QUEUE-V1-INTEROP-MATRIX"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-001",
+      "line": 31,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-002",
+      "line": 50,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-003",
+      "line": 65,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-004",
+      "line": 69,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-005",
+      "line": 112,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-006",
+      "line": 119,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-007",
+      "line": 128,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-008",
+      "line": 134,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-009",
+      "line": 138,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MAY",
+        "MUST"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-010",
+      "line": 145,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-OFFLINE-011",
+      "line": 156,
+      "revision": "CW-OFFLINE-1-DRAFT-2026-09-06",
+      "source": "spec/13-offline-bundles.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-OFFLINE",
+        "RUST-OFFLINE-VECTORS",
+        "TRACEABILITY-SELFTEST"
       ]
     }
   ],

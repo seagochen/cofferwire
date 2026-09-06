@@ -99,5 +99,6 @@ fetch -> authenticate -> local durable commit -> relay ACK
 - wire representations for identifiers, principals, time and errors;
 - authentication proof and capability representation;
 - clock source, skew policy and TTL bounds;
-- device enrollment, queue invitation and queue rotation terminology;
-- application message and application receipt schemas.
+- device enrollment and queue rotation terminology beyond one existing
+  relationship's bootstrap and recovery (`13-offline-bundles.md`);
+- application message schema.

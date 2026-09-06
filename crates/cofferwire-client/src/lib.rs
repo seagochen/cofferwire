@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 pub mod blob;
+pub mod offline;
 pub mod receipt;
 
 use cofferwire_codec::{

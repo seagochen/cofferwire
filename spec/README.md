@@ -18,11 +18,12 @@ Specification documents:
 06-queues.md               executable queue and persistence semantics
 07-blobs.md               independent encrypted blob/1 profile
 07-blobs.cddl             blob/1 structural frame schema
-08-receipts.md
+08-receipts.md             end-to-end signed application receipts
 09-transport-bindings.md
 10-versioning.md          scope, allocation registry and compatibility rules
 11-security-considerations.md
 12-privacy-considerations.md
+13-offline-bundles.md      independent offline bootstrap/recovery bundle profile
 ```
 
 Normative terms such as **MUST**, **MUST NOT**, **SHOULD** and **MAY** will be used consistently with RFC 2119/RFC 8174 conventions. Every normative requirement will receive a stable conformance ID and a corresponding entry in the test suite.

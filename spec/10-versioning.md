@@ -13,6 +13,8 @@ Normative terms are interpreted as described by RFC 2119 and RFC 8174.
 |---|---:|---|---|---|
 | queue | 1 | `CW-SCOPE-QUEUE-V1-2026-09-06` | scope and allocations frozen; pre-1.0 | `01-terminology.md`, `02-threat-model.md`, `03-architecture.md`, `04-cryptographic-profile.md`, `05-wire-format.md`, `05-wire-format.cddl`, `06-queues.md`, `09-transport-bindings.md`, `vectors/codec-v1.json`, `vectors/crypto-v1.json` |
 | blob | 1 | `CW-BLOB-1-DRAFT-2026-09-06` | draft, independent | `07-blobs.md`, `07-blobs.cddl`, `vectors/blob-v1.json` |
+| receipts | 1 | `CW-RECEIPT-1-DRAFT-2026-09-06` | draft, independent | `08-receipts.md`, `vectors/receipts-v1.json` |
+| offline | 1 | `CW-OFFLINE-1-DRAFT-2026-09-06` | draft, independent | `13-offline-bundles.md`, `vectors/offline-v1.json` |
 
 Queue v1 carries small asynchronous messages only. Blob delivery, application
 receipts, and offline bundles are outside its scope. Blob/1 is independently

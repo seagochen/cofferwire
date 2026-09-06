@@ -52,7 +52,7 @@ The relay authenticates queue-scoped commands, enforces resource policy and dura
 
 ## Queue provisioning
 
-A receiving device obtains an independent queue identifier and recipient authority. It conveys the corresponding sender authority to an intended sender through invitation or bootstrap material. The representation, authentication and rotation of that material remain open decisions.
+A receiving device obtains an independent queue identifier and recipient authority. It conveys the corresponding sender authority to an intended sender through invitation or bootstrap material. The representation and authentication of that material, and the relay-replacement flow that reaches a queue through different relay hints over time, are defined by `13-offline-bundles.md`; key-rotation policy beyond one relationship's bootstrap and recovery remains open.
 
 The relay stores only queue-scoped authorization and resource policy. It does not need an application account or contact graph.
 
@@ -93,7 +93,7 @@ transport FETCH
 - **CW-ARCH-009:** Failure before relay ACK commits MUST leave the relay message eligible for redelivery until expiry.
 - **CW-ARCH-010:** Duplicate delivery MUST NOT imply duplicate application of the same authenticated application message.
 
-Application receipts, when defined, travel through the same end-to-end message path in the reverse logical direction. They do not replace relay ACK.
+Application receipts (`08-receipts.md`) travel through the same end-to-end message path in the reverse logical direction. They do not replace relay ACK.
 
 ## State ownership
 
@@ -127,10 +127,9 @@ Public Rust APIs are implementation details. Normative behavior is defined by sp
 
 ## Open decisions
 
-- queue invitation and concrete authentication/key-rotation suite;
+- concrete key-rotation suite beyond one relationship's bootstrap and recovery;
 - canonical wire encoding, framing and version negotiation;
 - cryptographic profile and key lifecycle;
 - application-message identity and local deduplication representation;
 - exact message, TTL and queue limits;
-- baseline transport binding and authentication;
-- relay replacement and offline bootstrap flows.
+- baseline transport binding and authentication.

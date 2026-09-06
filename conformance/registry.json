@@ -3,7 +3,8 @@
   "revisions": {
     "queue-v1": "CW-SCOPE-QUEUE-V1-2026-09-06",
     "blob-v1": "CW-BLOB-1-DRAFT-2026-09-06",
-    "receipts-v1": "CW-RECEIPT-1-DRAFT-2026-09-06"
+    "receipts-v1": "CW-RECEIPT-1-DRAFT-2026-09-06",
+    "offline-v1": "CW-OFFLINE-1-DRAFT-2026-09-06"
   },
   "tests": {
     "RUST-TYPES": {
@@ -77,6 +78,18 @@
       "category": "crypto",
       "roles": ["client"],
       "security_properties": ["positive-vectors", "tampered-rejection"]
+    },
+    "RUST-OFFLINE": {
+      "command": "cargo test -p cofferwire-client",
+      "category": "client",
+      "roles": ["client"],
+      "security_properties": ["confidentiality", "device-binding", "idempotent-import", "relay-independence"]
+    },
+    "RUST-OFFLINE-VECTORS": {
+      "command": "cargo test -p cofferwire-test --test offline_vectors",
+      "category": "crypto",
+      "roles": ["client"],
+      "security_properties": ["positive-vectors", "tampered-rejection"]
     }
   },
   "mappings": [
@@ -90,7 +103,8 @@
     {"prefix": "CW-TRANSPORT-", "revision": "queue-v1", "tests": ["RUST-TRANSPORT"]},
     {"prefix": "CW-VERSION-", "revision": "queue-v1", "tests": ["RUST-CODEC", "TRACEABILITY-SELFTEST", "PYTHON-INDEPENDENT", "QUEUE-V1-INTEROP-MATRIX"]},
     {"prefix": "CW-BLOB-", "revision": "blob-v1", "tests": ["RUST-BLOB-VECTORS", "TRACEABILITY-SELFTEST"]},
-    {"prefix": "CW-RECEIPT-", "revision": "receipts-v1", "tests": ["RUST-RECEIPT", "RUST-RECEIPT-VECTORS", "TRACEABILITY-SELFTEST"]}
+    {"prefix": "CW-RECEIPT-", "revision": "receipts-v1", "tests": ["RUST-RECEIPT", "RUST-RECEIPT-VECTORS", "TRACEABILITY-SELFTEST"]},
+    {"prefix": "CW-OFFLINE-", "revision": "offline-v1", "tests": ["RUST-OFFLINE", "RUST-OFFLINE-VECTORS", "TRACEABILITY-SELFTEST"]}
   ],
   "should_exceptions": []
 }
