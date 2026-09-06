@@ -1543,6 +1543,63 @@ mod tests {
     }
 
     #[test]
+    fn clock_jumps_never_fabricate_or_silently_lose_an_accepted_message() {
+        let database = TestDatabase::new();
+        let mut relay = open_with_queue(&database);
+        relay
+            .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+            .expect("send commits");
+
+        // A large backward jump must not treat the unexpired message as
+        // already gone, nor let a conflicting resend through as if it were
+        // a fresh, never-seen message identifier.
+        let far_past = Timestamp::from_secs(0);
+        assert!(
+            relay
+                .fetch(QUEUE, RECIPIENT, far_past)
+                .expect("fetch succeeds")
+                .is_some(),
+            "a backward clock jump must not fabricate an expiry for an unexpired message"
+        );
+        assert!(matches!(
+            relay.send(QUEUE, SENDER, MESSAGE, b"changed", far_past, TTL),
+            Err(DurableRelayError::Relay(RelayError::MessageIdConflict))
+        ));
+
+        // A large forward jump must discard the now-ancient message and
+        // release its capacity, without corrupting unrelated state.
+        let far_future = Timestamp::from_secs(NOW.as_secs() + TTL.as_secs() + 1_000_000);
+        assert!(
+            relay
+                .fetch(QUEUE, RECIPIENT, far_future)
+                .expect("fetch succeeds")
+                .is_none(),
+            "a forward clock jump discards the expired message rather than fabricating a delivery"
+        );
+        assert!(
+            matches!(
+                relay.send(QUEUE, SENDER, MESSAGE_B, b"new", far_future, TTL),
+                Ok(SendOutcome::Accepted)
+            ),
+            "capacity is correctly released after the forward jump"
+        );
+        assert_database_integrity(&relay);
+
+        // Jumping back again must not resurrect the message already purged
+        // at a later time, nor duplicate the newly accepted one.
+        let delivery = relay
+            .fetch(QUEUE, RECIPIENT, NOW)
+            .expect("fetch succeeds")
+            .expect("the newly accepted message is still deliverable");
+        assert_eq!(
+            delivery.id(),
+            MESSAGE_B,
+            "a further backward jump does not resurrect the message purged earlier"
+        );
+        assert_database_integrity(&relay);
+    }
+
+    #[test]
     fn busy_timeout_is_bounded_and_classified() {
         let database = TestDatabase::new();
         let mut relay = open_with_queue(&database);
