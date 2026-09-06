@@ -14,6 +14,7 @@ fuzz/target/
 fuzz/artifacts/
 
 # Local state and test artifacts
+/.codex/
 /.cache/
 /.tmp/
 /artifacts/

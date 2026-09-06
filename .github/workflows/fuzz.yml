@@ -1,0 +1,32 @@
+name: continuous-fuzz
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hostile-inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - run: cargo install cargo-fuzz --locked
+      - name: Run bounded release fuzz budget
+        env:
+          COFFERWIRE_FUZZ_SECONDS: "900"
+          COFFERWIRE_FUZZ_RSS_MB: "1024"
+          COFFERWIRE_FUZZ_TIMEOUT_SECONDS: "10"
+        run: scripts/fuzz_smoke.sh
+      - name: Archive crash and timeout inputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-artifacts-${{ github.sha }}
+          path: fuzz/artifacts/
+          if-no-files-found: ignore
+          retention-days: 30

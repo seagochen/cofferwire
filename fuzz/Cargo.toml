@@ -9,11 +9,36 @@ cargo-fuzz = true
 
 [dependencies]
 cofferwire-codec = { path = "../crates/cofferwire-codec" }
+cofferwire-crypto = { path = "../crates/cofferwire-crypto" }
+cofferwire-relay = { path = "../crates/cofferwire-relay" }
+cofferwire-types = { path = "../crates/cofferwire-types" }
 libfuzzer-sys = "0.4"
+sha2 = "=0.10.9"
 
 [[bin]]
-name = "decode_frames"
+name = "decode-frames"
 path = "fuzz_targets/decode_frames.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "decode-blob-frames"
+path = "fuzz_targets/decode_blob_frames.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "verify-hostile-proofs"
+path = "fuzz_targets/verify_hostile_proofs.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "relay-transitions"
+path = "fuzz_targets/relay_transitions.rs"
 test = false
 doc = false
 bench = false
