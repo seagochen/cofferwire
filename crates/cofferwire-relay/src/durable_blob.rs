@@ -170,7 +170,11 @@ impl DurableRelay {
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let outcome =
             Self::begin_blob_upload_tx(&transaction, upload_id, caps, manifest, now, ttl)?;
+        #[cfg(test)]
+        crate::durable::crash_point("begin_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crate::durable::crash_point("begin_after_commit");
         Ok(outcome)
     }
 
@@ -230,7 +234,11 @@ impl DurableRelay {
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let outcome =
             Self::put_blob_chunk_tx(&transaction, upload_id, cap, index, ciphertext, now)?;
+        #[cfg(test)]
+        crate::durable::crash_point("put_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crate::durable::crash_point("put_after_commit");
         Ok(outcome)
     }
 
@@ -301,7 +309,11 @@ impl DurableRelay {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let outcome = Self::commit_blob_tx(&transaction, upload_id, cap, requested, now)?;
+        #[cfg(test)]
+        crate::durable::crash_point("publish_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crate::durable::crash_point("publish_after_commit");
         Ok(outcome)
     }
 
@@ -507,7 +519,11 @@ impl DurableRelay {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let outcome = Self::renew_blob_tx(&transaction, id, cap, now, ttl)?;
+        #[cfg(test)]
+        crate::durable::crash_point("renew_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crate::durable::crash_point("renew_after_commit");
         Ok(outcome)
     }
 
@@ -556,7 +572,11 @@ impl DurableRelay {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         Self::delete_blob_tx(&transaction, id, cap, now)?;
+        #[cfg(test)]
+        crate::durable::crash_point("delete_before_commit");
         commit(transaction)?;
+        #[cfg(test)]
+        crate::durable::crash_point("delete_after_commit");
         Ok(())
     }
 
@@ -674,6 +694,7 @@ fn identify(manifest: &BlobManifest) -> BlobId {
 mod tests {
     use std::fs;
     use std::path::{Path, PathBuf};
+    use std::process::Command;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     use rusqlite::Connection;
@@ -684,6 +705,9 @@ mod tests {
     const NOW: Timestamp = Timestamp::from_secs(1_000);
     const CAP: CapabilityId = CapabilityId::from_bytes([7; 32]);
     const REQUEST_ID: RequestId = RequestId::from_bytes([9; 16]);
+    const CRASH_DATABASE_ENV: &str = "COFFERWIRE_TEST_BLOB_CRASH_DATABASE";
+    const CRASH_ACTION_ENV: &str = "COFFERWIRE_TEST_BLOB_CRASH_ACTION";
+    const CRASH_POINT_ENV: &str = "COFFERWIRE_TEST_CRASH_POINT";
 
     struct TestDatabase(PathBuf);
 
@@ -744,6 +768,32 @@ mod tests {
         let upload_id = UploadId::from_bytes([42; 32]);
         let blob_id = identify(&manifest);
         (upload_id, caps, manifest, chunks, blob_id)
+    }
+
+    /// A single-chunk fixture whose ciphertext is large enough to force real
+    /// page growth, for tests that need a write too big to fit in whatever
+    /// free-space slack a fresh database happens to have.
+    fn large_chunk_fixture() -> (UploadId, BlobCapabilities, BlobManifest, Vec<u8>, BlobId) {
+        let chunk_size: u32 = 128 * 1024;
+        let ciphertext = vec![0x5A_u8; chunk_size as usize + 16];
+        let mut manifest = b"CWB1".to_vec();
+        manifest.extend_from_slice(&1_u16.to_be_bytes());
+        manifest.extend_from_slice(&1_u16.to_be_bytes());
+        manifest.extend_from_slice(&[0x77; 16]);
+        manifest.extend_from_slice(&u64::from(chunk_size).to_be_bytes());
+        manifest.extend_from_slice(&chunk_size.to_be_bytes());
+        manifest.extend_from_slice(&1_u32.to_be_bytes());
+        manifest.extend_from_slice(&Sha256::digest(&ciphertext));
+        let manifest = BlobManifest::parse(manifest).expect("large fixture manifest is valid");
+        let caps = BlobCapabilities {
+            upload: CapabilityId::from_bytes([11; 32]),
+            download: CapabilityId::from_bytes([12; 32]),
+            renew: CapabilityId::from_bytes([13; 32]),
+            delete: CapabilityId::from_bytes([14; 32]),
+        };
+        let upload_id = UploadId::from_bytes([43; 32]);
+        let blob_id = identify(&manifest);
+        (upload_id, caps, manifest, ciphertext, blob_id)
     }
 
     fn replay_response(result: Result<u8, BlobRelayError>) -> Vec<u8> {
@@ -888,6 +938,190 @@ mod tests {
                 Ok(0)
             ),
             "effect rolled back with the replay record"
+        );
+    }
+
+    fn assert_database_integrity(relay: &DurableRelay) {
+        let result: String = relay
+            .connection
+            .query_row("PRAGMA integrity_check", [], |row| row.get(0))
+            .expect("integrity check executes");
+        assert_eq!(result, "ok");
+    }
+
+    fn run_crashing_child(database: &TestDatabase, action: &str, point: &str) {
+        let output = Command::new(std::env::current_exe().expect("test executable is available"))
+            .args([
+                "--exact",
+                "durable_blob::tests::crash_worker",
+                "--test-threads=1",
+            ])
+            .env(CRASH_DATABASE_ENV, database.path())
+            .env(CRASH_ACTION_ENV, action)
+            .env(CRASH_POINT_ENV, point)
+            .output()
+            .expect("crash worker starts");
+        assert!(
+            !output.status.success(),
+            "crash worker unexpectedly returned normally:\n{}\n{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
+    #[test]
+    fn crash_worker() {
+        let Some(path) = std::env::var_os(CRASH_DATABASE_ENV) else {
+            return;
+        };
+        let action = std::env::var(CRASH_ACTION_ENV).expect("crash action is supplied");
+        let mut relay = DurableRelay::open(path).expect("crash worker opens database");
+        let (upload_id, caps, manifest, ..) = fixture();
+        match action.as_str() {
+            "begin" => {
+                relay
+                    .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+                    .expect("configured crash point must terminate begin");
+            }
+            "publish" => {
+                let (upload_id, caps, manifest, chunks, blob_id) = fixture();
+                relay
+                    .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+                    .expect("begin commits before the targeted crash point");
+                for (index, chunk) in chunks.iter().enumerate() {
+                    relay
+                        .put_blob_chunk(
+                            upload_id,
+                            caps.upload,
+                            u32::try_from(index).expect("index fits"),
+                            chunk,
+                            NOW,
+                        )
+                        .expect("chunk commits before the targeted crash point");
+                }
+                relay
+                    .commit_blob(upload_id, caps.upload, blob_id, NOW)
+                    .expect("configured crash point must terminate commit");
+            }
+            other => panic!("unknown crash action: {other}"),
+        }
+        panic!("crash worker passed its configured crash point");
+    }
+
+    #[test]
+    fn hard_process_crashes_recover_at_blob_begin_and_publish_boundaries() {
+        let begin_before = TestDatabase::new();
+        run_crashing_child(&begin_before, "begin", "begin_before_commit");
+        let mut recovered = DurableRelay::open(begin_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (upload_id, caps, manifest, ..) = fixture();
+        assert!(
+            matches!(
+                recovered.begin_blob_upload(upload_id, caps, &manifest, NOW, 100),
+                Ok(0)
+            ),
+            "crash before commit leaves no staged upload behind"
+        );
+
+        let begin_after = TestDatabase::new();
+        run_crashing_child(&begin_after, "begin", "begin_after_commit");
+        let mut recovered = DurableRelay::open(begin_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (upload_id, caps, manifest, ..) = fixture();
+        assert!(
+            matches!(
+                recovered.begin_blob_upload(upload_id, caps, &manifest, NOW, 100),
+                Ok(1)
+            ),
+            "crash after commit durably records the staged upload"
+        );
+
+        let publish_before = TestDatabase::new();
+        run_crashing_child(&publish_before, "publish", "publish_before_commit");
+        let mut recovered = DurableRelay::open(publish_before.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (_, caps, _, _, blob_id) = fixture();
+        assert!(
+            matches!(
+                recovered.get_blob_manifest(blob_id, caps.download, NOW),
+                Err(BlobRelayResult::Protocol(BlobRelayError::NotFound))
+            ),
+            "crash before the publish commit leaves the object unavailable"
+        );
+
+        let publish_after = TestDatabase::new();
+        run_crashing_child(&publish_after, "publish", "publish_after_commit");
+        let mut recovered = DurableRelay::open(publish_after.path()).expect("database recovers");
+        assert_database_integrity(&recovered);
+        let (_, caps, manifest, _, blob_id) = fixture();
+        let (stored, _expiry) = recovered
+            .get_blob_manifest(blob_id, caps.download, NOW)
+            .expect("crash after the publish commit leaves the object available");
+        assert_eq!(stored, manifest);
+    }
+
+    #[test]
+    fn blob_storage_faults_roll_back_without_false_success_or_partial_state() {
+        let readonly_database = TestDatabase::new();
+        let (upload_id, caps, manifest, ..) = fixture();
+        let mut readonly = DurableRelay::open(readonly_database.path()).expect("database opens");
+        readonly
+            .connection
+            .pragma_update(None, "query_only", true)
+            .expect("query-only mode enabled");
+        let error = readonly
+            .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+            .expect_err("read-only write fails");
+        assert!(matches!(error, BlobRelayResult::Storage(_)));
+        readonly
+            .connection
+            .pragma_update(None, "query_only", false)
+            .expect("query-only mode disabled");
+        assert_database_integrity(&readonly);
+        assert!(matches!(
+            readonly.begin_blob_upload(upload_id, caps, &manifest, NOW, 100),
+            Ok(0)
+        ));
+
+        let full_database = TestDatabase::new();
+        let mut full = DurableRelay::open(full_database.path()).expect("database opens");
+        let (upload_id, caps, manifest, ciphertext, _) = large_chunk_fixture();
+        full.begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+            .expect("begin commits before the page limit is fixed");
+        let page_count: i64 = full
+            .connection
+            .query_row("PRAGMA page_count", [], |row| row.get(0))
+            .expect("page count reads");
+        full.connection
+            .pragma_update(None, "max_page_count", page_count)
+            .expect("page limit fixed at current size");
+        let error = full
+            .put_blob_chunk(upload_id, caps.upload, 0, &ciphertext, NOW)
+            .expect_err("page limit makes the oversized chunk insert fail");
+        assert!(matches!(error, BlobRelayResult::Storage(_)));
+        assert_database_integrity(&full);
+        assert!(
+            full.put_blob_chunk(upload_id, caps.upload, 0, &ciphertext, NOW)
+                .is_err(),
+            "still fails consistently rather than leaving partial chunk state"
+        );
+
+        let commit_database = TestDatabase::new();
+        let mut commit_failure =
+            DurableRelay::open(commit_database.path()).expect("database opens");
+        let (upload_id, caps, manifest, ..) = fixture();
+        FAIL_NEXT_COMMIT.with(|flag| flag.set(true));
+        let error = commit_failure
+            .begin_blob_upload(upload_id, caps, &manifest, NOW, 100)
+            .expect_err("injected commit failure is returned");
+        assert!(matches!(error, BlobRelayResult::Storage(_)));
+        assert_database_integrity(&commit_failure);
+        assert!(
+            matches!(
+                commit_failure.begin_blob_upload(upload_id, caps, &manifest, NOW, 100),
+                Ok(0)
+            ),
+            "rolled-back commit leaves no staged upload behind"
         );
     }
 

@@ -806,7 +806,7 @@ thread_local! {
 }
 
 #[cfg(test)]
-fn crash_point(point: &str) {
+pub(crate) fn crash_point(point: &str) {
     if std::env::var("COFFERWIRE_TEST_CRASH_POINT").as_deref() == Ok(point) {
         std::process::abort();
     }
@@ -1359,6 +1359,187 @@ mod tests {
             .into_iter()
             .map(|worker| worker.join().expect("worker does not panic"))
             .collect()
+    }
+
+    #[test]
+    fn concurrent_fetch_and_acknowledge_never_apply_twice_or_lose_the_message() {
+        let database = TestDatabase::new();
+        {
+            let mut relay = open_with_queue(&database);
+            relay
+                .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+                .expect("send commits");
+        }
+        let barrier = Arc::new(Barrier::new(3));
+        let path = database.path().to_owned();
+        let mut workers = Vec::new();
+        for _ in 0..2 {
+            let path = path.clone();
+            let barrier = Arc::clone(&barrier);
+            workers.push(thread::spawn(move || {
+                let mut relay = DurableRelay::open(path).expect("worker opens database");
+                barrier.wait();
+                let fetched = relay.fetch(QUEUE, RECIPIENT, NOW).expect("fetch succeeds");
+                fetched.map(|delivery| relay.acknowledge(QUEUE, RECIPIENT, delivery.id(), NOW))
+            }));
+        }
+        barrier.wait();
+        let results: Vec<_> = workers
+            .into_iter()
+            .map(|worker| worker.join().expect("worker does not panic"))
+            .collect();
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| matches!(result, Some(Ok(()))))
+                .count(),
+            1,
+            "exactly one concurrent ack applies the deletion: {results:?}"
+        );
+        // The other worker either lost the fetch race entirely (the first
+        // worker's fetch-then-ack pair both completed before this worker's
+        // fetch ran, so it saw an empty queue) or fetched the same message
+        // and then lost the ack race with AckMismatch. Both are correct,
+        // consistent outcomes; anything else indicates corruption.
+        for result in &results {
+            match result {
+                Some(Ok(()) | Err(DurableRelayError::Relay(RelayError::AckMismatch))) | None => {}
+                other => panic!("unexpected concurrent fetch/ack outcome: {other:?}"),
+            }
+        }
+
+        let mut recovered = DurableRelay::open(database.path()).expect("database reopens");
+        assert!(
+            recovered
+                .fetch(QUEUE, RECIPIENT, NOW)
+                .expect("fetch succeeds")
+                .is_none(),
+            "the message is gone exactly once, never duplicated or stuck"
+        );
+        assert_database_integrity(&recovered);
+    }
+
+    #[test]
+    fn concurrent_delete_queue_applies_exactly_once() {
+        let database = TestDatabase::new();
+        drop(open_with_queue(&database));
+        let barrier = Arc::new(Barrier::new(3));
+        let path = database.path().to_owned();
+        let mut workers = Vec::new();
+        for _ in 0..2 {
+            let path = path.clone();
+            let barrier = Arc::clone(&barrier);
+            workers.push(thread::spawn(move || {
+                let mut relay = DurableRelay::open(path).expect("worker opens database");
+                barrier.wait();
+                relay.delete_queue(QUEUE, RECIPIENT)
+            }));
+        }
+        barrier.wait();
+        let results: Vec<_> = workers
+            .into_iter()
+            .map(|worker| worker.join().expect("worker does not panic"))
+            .collect();
+        assert_eq!(
+            results.iter().filter(|result| result.is_ok()).count(),
+            1,
+            "exactly one concurrent delete succeeds: {results:?}"
+        );
+        assert_eq!(
+            results
+                .iter()
+                .filter(|result| matches!(
+                    result,
+                    Err(DurableRelayError::Relay(RelayError::QueueNotFound))
+                ))
+                .count(),
+            1,
+            "the losing delete observes the queue is already gone, not partial state: {results:?}"
+        );
+        let recovered = DurableRelay::open(database.path()).expect("database reopens");
+        assert_database_integrity(&recovered);
+    }
+
+    #[test]
+    fn concurrent_fetch_across_the_expiry_boundary_never_yields_an_expired_message() {
+        let database = TestDatabase::new();
+        {
+            let mut relay = open_with_queue(&database);
+            relay
+                .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+                .expect("send commits");
+        }
+        let expiry = Timestamp::from_secs(NOW.as_secs() + TTL.as_secs());
+        let barrier = Arc::new(Barrier::new(3));
+        let path = database.path().to_owned();
+        let before_worker = {
+            let path = path.clone();
+            let barrier = Arc::clone(&barrier);
+            thread::spawn(move || {
+                let mut relay = DurableRelay::open(path).expect("worker opens database");
+                barrier.wait();
+                relay.fetch(QUEUE, RECIPIENT, NOW)
+            })
+        };
+        let after_worker = {
+            let barrier = Arc::clone(&barrier);
+            thread::spawn(move || {
+                let mut relay = DurableRelay::open(path).expect("worker opens database");
+                barrier.wait();
+                relay.fetch(QUEUE, RECIPIENT, expiry)
+            })
+        };
+        barrier.wait();
+        let before_result = before_worker.join().expect("worker does not panic");
+        let after_result = after_worker.join().expect("worker does not panic");
+        // Whichever transaction commits first, an expiry-time fetch never
+        // observes the message: either it purges the not-yet-delivered
+        // message itself, or the pre-expiry racer already committed first
+        // and the message is simply gone by the time expiry-time cleanup
+        // runs. A pre-expiry fetch may or may not still see it, but the
+        // expiry-time fetch's result is deterministic regardless of
+        // interleaving.
+        assert!(
+            after_result.expect("fetch succeeds").is_none(),
+            "an expiry-time fetch never returns an expired message under a race"
+        );
+        let _ = before_result.expect("fetch succeeds");
+
+        let mut recovered = DurableRelay::open(database.path()).expect("database reopens");
+        assert!(recovered
+            .fetch(QUEUE, RECIPIENT, expiry)
+            .expect("fetch succeeds")
+            .is_none());
+        assert_database_integrity(&recovered);
+    }
+
+    #[test]
+    fn file_copy_backup_restores_correctly_in_a_fresh_process() {
+        let source = TestDatabase::new();
+        {
+            let mut relay = open_with_queue(&source);
+            relay
+                .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+                .expect("send commits");
+        }
+        // This schema uses SQLite's rollback journal (not WAL), so a plain
+        // file copy taken after every writer has closed is a valid backup:
+        // there is no separate WAL/shm file holding uncommitted data.
+        let backup = TestDatabase::new();
+        fs::copy(source.path(), backup.path()).expect("file-level backup copies committed state");
+        drop(source);
+
+        let mut restored =
+            DurableRelay::open(backup.path()).expect("backup opens in a fresh process");
+        assert_database_integrity(&restored);
+        let delivery = restored
+            .fetch(QUEUE, RECIPIENT, NOW)
+            .expect("fetch succeeds")
+            .expect("backed-up message survives restore");
+        assert_eq!(delivery.payload(), b"ciphertext");
+        restored
+            .acknowledge(QUEUE, RECIPIENT, delivery.id(), NOW)
+            .expect("restored database accepts further commands");
     }
 
     #[test]
