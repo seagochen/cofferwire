@@ -2,6 +2,7 @@
 
 #![forbid(unsafe_code)]
 
+use std::collections::HashMap;
 use std::convert::Infallible;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
@@ -142,6 +143,7 @@ where
 #[derive(Clone, Debug)]
 pub struct RelayService {
     relay: Arc<Mutex<relay::DurableRelay>>,
+    replays: Arc<Mutex<HashMap<(Principal, RequestId), ReplayEntry>>>,
     commands: Arc<Semaphore>,
     websocket_connections: Arc<Semaphore>,
 }
@@ -161,9 +163,29 @@ impl RelayService {
     pub fn new(relay: relay::DurableRelay) -> Self {
         Self {
             relay: Arc::new(Mutex::new(relay)),
+            replays: Arc::new(Mutex::new(HashMap::new())),
             commands: Arc::new(Semaphore::new(MAX_CONCURRENT_COMMANDS)),
             websocket_connections: Arc::new(Semaphore::new(MAX_WEBSOCKET_CONNECTIONS)),
         }
+    }
+
+    /// Exchanges one frame at a caller-supplied relay time.
+    ///
+    /// This deterministic entry point exists for transport-neutral conformance
+    /// and cross-implementation runners. Production transports sample their own
+    /// clock through the private asynchronous exchange path.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`FrameExchangeError`] when durable storage cannot complete the
+    /// command.
+    pub fn exchange_frame_at(
+        &self,
+        bytes: &[u8],
+        now_seconds: u64,
+    ) -> Result<Vec<u8>, FrameExchangeError> {
+        self.exchange_at(bytes, relay::Timestamp::from_secs(now_seconds))
+            .map_err(|_| FrameExchangeError)
     }
 
     async fn exchange(&self, bytes: Vec<u8>) -> Result<Vec<u8>, ExchangeError> {
@@ -202,6 +224,20 @@ impl RelayService {
             ));
         }
 
+        let replay_key = (principal, request_id);
+        let mut replays = self.replays.lock().map_err(|_| ExchangeError::Storage)?;
+        if let Some(existing) = replays.get(&replay_key) {
+            return if existing.request == bytes {
+                Ok(existing.response.clone())
+            } else {
+                Ok(error_response(
+                    request_id,
+                    Some(command),
+                    Status::AuthReplay,
+                ))
+            };
+        }
+
         let response = match self.execute(request, now) {
             Ok(response) => response,
             Err(ExecuteError::Protocol(status)) => Response::Error(
@@ -209,7 +245,15 @@ impl RelayService {
             ),
             Err(ExecuteError::Storage) => return Err(ExchangeError::Storage),
         };
-        Ok(encode_response(&ResponseFrame::new(request_id, response)))
+        let response = encode_response(&ResponseFrame::new(request_id, response));
+        replays.insert(
+            replay_key,
+            ReplayEntry {
+                request: bytes.to_vec(),
+                response: response.clone(),
+            },
+        );
+        Ok(response)
     }
 
     fn execute(&self, request: &Request, now: relay::Timestamp) -> Result<Response, ExecuteError> {
@@ -291,6 +335,12 @@ impl RelayService {
     }
 }
 
+#[derive(Clone, Debug)]
+struct ReplayEntry {
+    request: Vec<u8>,
+    response: Vec<u8>,
+}
+
 /// Builds the bounded HTTPS/WebSocket application router.
 pub fn router(service: RelayService) -> Router {
     Router::new()
@@ -370,6 +420,18 @@ enum ExchangeError {
     Storage,
     Internal,
 }
+
+/// A storage failure at the deterministic conformance exchange boundary.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct FrameExchangeError;
+
+impl std::fmt::Display for FrameExchangeError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("relay frame exchange failed")
+    }
+}
+
+impl std::error::Error for FrameExchangeError {}
 
 #[derive(Debug)]
 enum ExecuteError {
@@ -657,6 +719,40 @@ mod tests {
     }
 
     #[test]
+    fn authenticated_request_replay_is_consistent_and_conflicts_fail() {
+        let database = TestDatabase::new();
+        let service = RelayService::open(database.path()).expect("relay opens");
+        let sender_key = RelaySigningKey::from_seed([2; 32]);
+        let recipient_key = RelaySigningKey::from_seed([3; 32]);
+        let request_id = RequestId::from_bytes([0x44; 16]);
+        let create = |max_messages| {
+            Request::CreateQueue(CreateQueueRequest::new(
+                QUEUE,
+                sender_key.principal(),
+                recipient_key.principal(),
+                QueueLimits::new(max_messages, 1024).expect("valid limits"),
+            ))
+        };
+        let request = signed_frame(&sender_key, request_id, create(4));
+        let first = service
+            .exchange_frame_at(&request, 1_000)
+            .expect("first exchange");
+        let retry = service
+            .exchange_frame_at(&request, 1_001)
+            .expect("retry exchange");
+        assert_eq!(retry, first);
+
+        let conflict = signed_frame(&sender_key, request_id, create(5));
+        let response = service
+            .exchange_frame_at(&conflict, 1_002)
+            .expect("conflicting exchange");
+        assert!(matches!(
+            decode_response(&response).expect("response decodes").response(),
+            Response::Error(error) if error.status() == Status::AuthReplay
+        ));
+    }
+
+    #[test]
     fn invalid_authentication_never_reaches_storage() {
         let database = TestDatabase::new();
         let service = RelayService::open(database.path()).expect("relay opens");
@@ -815,7 +911,7 @@ mod tests {
             sender
                 .send(&prepared, &mut reconnected)
                 .expect("exact retry succeeds"),
-            SendCompletion::Duplicate
+            SendCompletion::Accepted
         );
         drop(reconnected);
         drop(sender);

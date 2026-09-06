@@ -3,13 +3,14 @@
     "client": 39,
     "codec": 76,
     "crypto": 56,
+    "independent": 106,
     "quality": 36,
     "relay": 43,
     "transport": 29
   },
   "coverage_by_role": {
-    "client": 236,
-    "relay": 240
+    "client": 342,
+    "relay": 346
   },
   "format": "cofferwire-conformance-coverage-v1",
   "registry_format": "cofferwire-conformance-registry-v1",
@@ -25,7 +26,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -39,7 +41,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -52,7 +55,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -66,7 +70,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -79,7 +84,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -94,7 +100,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -109,7 +116,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -124,7 +132,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -139,7 +148,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -154,7 +164,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -169,7 +180,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -184,7 +196,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -199,7 +212,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -214,7 +228,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -229,7 +244,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -244,7 +260,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -259,7 +276,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -274,7 +292,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -289,7 +308,8 @@
         "RUST-CRYPTO",
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -304,7 +324,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -319,7 +340,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -334,7 +356,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -348,7 +371,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -362,7 +386,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -376,7 +401,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -390,7 +416,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -404,7 +431,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -418,7 +446,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -432,7 +461,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -446,7 +476,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -460,7 +491,8 @@
       "tests": [
         "RUST-CLIENT",
         "RUST-RELAY",
-        "RUST-TRANSPORT"
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -473,7 +505,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -485,7 +518,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -495,7 +529,8 @@
       "source": "spec/04-cryptographic-profile.md",
       "terms": [],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -507,7 +542,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -519,7 +555,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -532,7 +569,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -545,7 +583,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -557,7 +596,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -570,7 +610,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -582,7 +623,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -594,7 +636,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -607,7 +650,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -619,7 +663,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -632,7 +677,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -645,7 +691,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -659,7 +706,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -671,7 +719,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-CRYPTO"
+        "RUST-CRYPTO",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -685,7 +734,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -698,7 +748,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -711,7 +762,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -724,7 +776,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -738,7 +791,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -752,7 +806,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -765,7 +820,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -778,7 +834,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -792,7 +849,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -805,7 +863,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -816,7 +875,8 @@
       "terms": [],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -829,7 +889,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -843,7 +904,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -857,7 +919,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -870,7 +933,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -883,7 +947,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -896,7 +961,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -909,7 +975,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -922,7 +989,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -936,7 +1004,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -951,7 +1020,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -964,7 +1034,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -978,7 +1049,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -991,7 +1063,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1002,7 +1075,8 @@
       "terms": [],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1013,7 +1087,8 @@
       "terms": [],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1026,7 +1101,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1039,7 +1115,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1052,7 +1129,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1065,7 +1143,8 @@
       ],
       "tests": [
         "RUST-TYPES",
-        "RUST-CODEC"
+        "RUST-CODEC",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1078,7 +1157,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1092,7 +1172,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1105,7 +1186,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1119,7 +1201,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1133,7 +1216,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1144,7 +1228,8 @@
       "terms": [],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1157,7 +1242,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1170,7 +1256,8 @@
       ],
       "tests": [
         "RUST-RELAY",
-        "RUST-CLIENT"
+        "RUST-CLIENT",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1183,7 +1270,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1195,7 +1283,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1207,7 +1296,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1219,7 +1309,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1231,7 +1322,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1243,7 +1335,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1256,7 +1349,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1268,7 +1362,8 @@
         "MUST"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1281,7 +1376,8 @@
         "MUST NOT"
       ],
       "tests": [
-        "RUST-RELAY"
+        "RUST-RELAY",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1664,7 +1760,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1677,7 +1774,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1690,7 +1788,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1703,7 +1802,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1717,7 +1817,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1728,7 +1829,8 @@
       "terms": [],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1741,7 +1843,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1756,7 +1859,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1770,7 +1874,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1784,7 +1889,8 @@
       ],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     },
     {
@@ -1795,7 +1901,8 @@
       "terms": [],
       "tests": [
         "RUST-CODEC",
-        "TRACEABILITY-SELFTEST"
+        "TRACEABILITY-SELFTEST",
+        "PYTHON-INDEPENDENT"
       ]
     }
   ],

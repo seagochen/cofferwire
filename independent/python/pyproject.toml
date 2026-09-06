@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools==78.1.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cofferwire-independent"
+version = "0.1.0"
+description = "Independent Python implementation of the Cofferwire queue-v1 profile"
+requires-python = ">=3.11"
+dependencies = ["cryptography==46.0.5"]
+
+[tool.setuptools]
+py-modules = ["cofferwire_v1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

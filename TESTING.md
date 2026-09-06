@@ -81,6 +81,11 @@ a separate matrix and is never inferred from queue-v1 support.
 
 The second implementation must be written from the public specification and vectors, preferably in another language and without importing reference implementation code. Any ambiguity it finds is a specification bug.
 
+The independent Python client and SQLite relay live in `independent/python`.
+Their local codec, Ed25519, HPKE-vector and queue tests run with
+`python3 -m unittest discover -s independent/python/tests -v`; independence and
+dependency boundaries are recorded in `independent/python/IMPLEMENTATION_NOTES.md`.
+
 ## 6. Parser fuzzing and hostile input
 
 Continuous fuzz targets cover every unauthenticated parser and state transition. Corpora include valid vectors, boundary sizes and captured interoperability traces.

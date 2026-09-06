@@ -51,6 +51,8 @@ separate transport-independent crates.
 - [`crates/cofferwire-test`](crates/cofferwire-test) — structural conformance tests and public-vector harnesses.
 - [`apps/cofferwired`](apps/cofferwired) — bounded reference HTTPS/WebSocket
   daemon backed by the SQLite relay.
+- [`independent/python`](independent/python) — clean-room Python queue-v1 client
+  and durable relay built only from the public specification and vectors.
 
 The network daemon and client crates are reference implementations pending
 independent interoperability testing and external security review; they are
