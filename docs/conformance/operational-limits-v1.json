@@ -1,0 +1,26 @@
+{
+  "format": "cofferwire-operational-limits-v1",
+  "notes": "Every value here is cross-checked against the corresponding pub const in the reference implementation by apps/cofferwired/tests/operational_limits.rs, which fails if the code and this document ever disagree. This is an operational deployment default of the reference daemon, not a normative protocol requirement; a deployment MAY choose different values (CW-SECURITY-002).",
+  "queue_v1": {
+    "max_frame_bytes": 65536,
+    "max_auth_bytes": 1024,
+    "max_message_bytes": 64374
+  },
+  "blob_v1": {
+    "max_blob_frame_bytes": 1049600,
+    "max_chunk_bytes": 1048576,
+    "max_padded_bytes": 1073741824
+  },
+  "reference_daemon": {
+    "max_connections": 256,
+    "max_websocket_connections": 128,
+    "max_concurrent_commands": 64,
+    "request_timeout_secs": 10,
+    "websocket_idle_timeout_secs": 60,
+    "queue_rate_limit_window_secs": 60,
+    "queue_rate_limit_max_requests": 300,
+    "blob_rate_limit_window_secs": 60,
+    "blob_rate_limit_max_requests": 1000,
+    "rate_limit_max_tracked_keys": 100000
+  }
+}
