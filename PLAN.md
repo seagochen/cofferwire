@@ -100,7 +100,8 @@ not extend the frozen queue-v1 command, status or transport namespaces (ADR
 
 ### M6 — Family-tree application profile
 
-- define how family-tree bundles and signed receipts use Cofferwire;
+- define how family-tree bundles and signed receipts use Cofferwire
+  (`profiles/family-tree-v1.md`, `profiles/vectors/family-tree-v1.json`);
 - integrate the family-tree project without adding family semantics to the core protocol;
 - validate long-offline members, history recovery and relay replacement;
 - collect operational metrics that do not expose application content.

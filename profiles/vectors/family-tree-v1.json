@@ -1,0 +1,86 @@
+{
+  "format": "cofferwire-family-tree-v1",
+  "encoding": "lowercase hexadecimal",
+  "warning": "All secret keys are test-only and MUST NOT be used in production.",
+  "note": "A worked object history: U1 creates a person, U2 is a fast-forward edit, U3a/U3b are a concurrent (conflicting) edit pair sharing parent U2, and U4 is a merge resolving them. Field tags: 1=given-name, 2=family-name, 3=birth-date, 4=note.",
+  "author_a_seed_hex": "3131313131313131313131313131313131313131313131313131313131313131",
+  "author_a_key_hex": "48075a597e721a156e2e0799de5cc0c5324dc6e7eaf1cdd46250868ec53215dd",
+  "author_b_seed_hex": "3232323232323232323232323232323232323232323232323232323232323232",
+  "author_b_key_hex": "5e212c0980e4b39fc09721134aa02109374edfd260c0d3d03cb501c8d65457a9",
+  "object_id_hex": "4040404040404040404040404040404040404040404040404040404040404040",
+  "updates": [
+    {
+      "name": "U1_creation",
+      "revision_id_hex": "9e0692846ce263115cd7a736b2ac0a1751ee8cf4415096e19e1b6563039f661f",
+      "parents": [],
+      "author": "a",
+      "expect_after_apply": {
+        "leaves": ["U1_creation"],
+        "conflict": false
+      },
+      "update_hex": "46545531010140404040404040404040404040404040404040404040404040404040404040409e0692846ce263115cd7a736b2ac0a1751ee8cf4415096e19e1b6563039f661f0048075a597e721a156e2e0799de5cc0c5324dc6e7eaf1cdd46250868ec53215dd000000006553f10001010005416c69636514fe368d54c2299732bb25b8cb8f55c345fd8e58a13aee02f2a8517d8acb786b5f8bac6e3f458022cd951ac9dfb5c80f9026fd72b16df5ae7a9c66f079d18501"
+    },
+    {
+      "name": "U2_fast_forward",
+      "revision_id_hex": "454d377459df3a19f85b2570068ad2698617d4505dbb17c01389f5a5e018ff18",
+      "parents": ["U1_creation"],
+      "author": "a",
+      "expect_after_apply": {
+        "leaves": ["U2_fast_forward"],
+        "conflict": false
+      },
+      "update_hex": "4654553101014040404040404040404040404040404040404040404040404040404040404040454d377459df3a19f85b2570068ad2698617d4505dbb17c01389f5a5e018ff18019e0692846ce263115cd7a736b2ac0a1751ee8cf4415096e19e1b6563039f661f48075a597e721a156e2e0799de5cc0c5324dc6e7eaf1cdd46250868ec53215dd000000006553f16402010005416c696365020005536d697468279e883797b73eb2dfb993fc76859a0610be24ad5674b2a3a6cd8d502ab5ff0a4d9788795866ba6f85a073ea28c1d5db0ad6a68af56fd5a36232ec1e9dbd6109"
+    },
+    {
+      "name": "U3a_concurrent_edit",
+      "revision_id_hex": "75f6cb274113b3d5bee0742e88914a3d7ab0b303d2372d6b500773e61704d11f",
+      "parents": ["U2_fast_forward"],
+      "author": "a",
+      "expect_after_apply": {
+        "leaves": ["U3a_concurrent_edit"],
+        "conflict": false
+      },
+      "update_hex": "465455310101404040404040404040404040404040404040404040404040404040404040404075f6cb274113b3d5bee0742e88914a3d7ab0b303d2372d6b500773e61704d11f01454d377459df3a19f85b2570068ad2698617d4505dbb17c01389f5a5e018ff1848075a597e721a156e2e0799de5cc0c5324dc6e7eaf1cdd46250868ec53215dd000000006553f1c803010005416c696365020005536d69746803000a313935302d30312d3031f943231e7ad95188b0765e61e9f043b142db8198ee06f68113a6169600daf7d329fe9856ceef70bba5406af18fbddbd5b5af2f19f5185cd7c6d899a53c321a04"
+    },
+    {
+      "name": "U3b_concurrent_edit",
+      "revision_id_hex": "ed592f90553ee62b7b245af1c1edebfeb8031c5c2275e98d24aa0842bacad898",
+      "parents": ["U2_fast_forward"],
+      "author": "b",
+      "expect_after_apply": {
+        "leaves": ["U3a_concurrent_edit", "U3b_concurrent_edit"],
+        "conflict": true
+      },
+      "update_hex": "4654553101014040404040404040404040404040404040404040404040404040404040404040ed592f90553ee62b7b245af1c1edebfeb8031c5c2275e98d24aa0842bacad89801454d377459df3a19f85b2570068ad2698617d4505dbb17c01389f5a5e018ff185e212c0980e4b39fc09721134aa02109374edfd260c0d3d03cb501c8d65457a9000000006553f1fa03010005416c696365020005536d69746804000b676f657320627920416c691c17f3308deecd29bca4e12177b97f0769ccd3affb46363f95071aece202c9e292bae3ef79497d7551d1ac7167f012d7b4a91ff8ed54ec0d3fd7509d19672909"
+    },
+    {
+      "name": "U4_merge",
+      "revision_id_hex": "0425ca9fcc8a0b793198f0fbe1991c4a4c7498a6db630db774cd271be38de34d",
+      "parents": ["U3a_concurrent_edit", "U3b_concurrent_edit"],
+      "author": "a",
+      "expect_after_apply": {
+        "leaves": ["U4_merge"],
+        "conflict": false
+      },
+      "update_hex": "46545531010140404040404040404040404040404040404040404040404040404040404040400425ca9fcc8a0b793198f0fbe1991c4a4c7498a6db630db774cd271be38de34d0275f6cb274113b3d5bee0742e88914a3d7ab0b303d2372d6b500773e61704d11fed592f90553ee62b7b245af1c1edebfeb8031c5c2275e98d24aa0842bacad89848075a597e721a156e2e0799de5cc0c5324dc6e7eaf1cdd46250868ec53215dd000000006553f22c04010005416c696365020005536d69746803000a313935302d30312d303104000b676f657320627920416c69134b67f96080cbc8719b20d9e9b7d95ad331bc1529117cc31b118dba13a505ee3b14bc8fc7dfa144c1a77a7ae737ac0b408e669a2f80791397e96d8d99490a05"
+    }
+  ],
+  "negative": [
+    {
+      "name": "update_byte_tamper",
+      "operation": "For every byte offset in each update_hex, xor the byte with 0x01 and require signature verification failure."
+    },
+    {
+      "name": "duplicate_creation",
+      "operation": "Applying U1_creation a second time after it (or any later update for the same object) has already been applied MUST be rejected as a duplicate creation (FT-CONFLICT-001), not treated as a fresh object."
+    },
+    {
+      "name": "merge_with_non_leaf_parent",
+      "operation": "A merge update naming a parent that is not a current leaf (for example, one naming U2_fast_forward after U3a/U3b already superseded it) MUST be rejected rather than partially resolving the conflict (FT-CONFLICT-004)."
+    },
+    {
+      "name": "wrong_author_key_signature",
+      "operation": "Verifying any update_hex against a public key other than its stated author's MUST fail (FT-UPDATE-002)."
+    }
+  ]
+}
