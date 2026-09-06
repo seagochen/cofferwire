@@ -140,6 +140,8 @@ Before version 1.0, an external review must cover:
 
 Security testing must not claim anonymity solely because payloads are encrypted. Separate experiments should record what a relay can correlate through IP addresses, timing, sizes, queue access and blob access.
 
+`spec/11-security-considerations.md` records the concrete bounded-work-before-authentication, rate-limiting and secret-redaction contract; `spec/12-privacy-considerations.md` records the per-profile relay-observable metadata catalog and states plainly which correlation experiments above have and have not actually been run.
+
 ## 9. Durability and recovery
 
 Crash tests terminate the relay/client at all persistence boundaries, reopen the same storage and verify invariants. Backups are restored into fresh processes. Migration tests upgrade real databases from every supported version.
@@ -163,6 +165,8 @@ Published limits must be enforced consistently:
 - TTL/lease bounds;
 - maximum concurrent streams and connections;
 - bounded work before authentication.
+
+The reference daemon's concrete values are published in `docs/conformance/operational-limits-v1.json` and cross-checked against the compiled constants by `apps/cofferwired/tests/operational_limits.rs`, so the two cannot silently drift apart.
 
 ## 11. Platform and transport tests
 

@@ -1,21 +1,22 @@
 {
   "coverage_by_category": {
-    "client": 50,
+    "client": 51,
     "codec": 76,
-    "crypto": 87,
-    "independent": 106,
+    "crypto": 88,
+    "independent": 107,
     "interoperability": 78,
-    "quality": 57,
-    "relay": 43,
-    "transport": 29
+    "quality": 67,
+    "relay": 44,
+    "security": 6,
+    "transport": 30
   },
   "coverage_by_role": {
-    "client": 483,
-    "relay": 445
+    "client": 503,
+    "relay": 465
   },
   "format": "cofferwire-conformance-coverage-v1",
   "registry_format": "cofferwire-conformance-registry-v1",
-  "requirement_count": 155,
+  "requirement_count": 166,
   "requirements": [
     {
       "id": "CW-TERM-001",
@@ -304,6 +305,22 @@
       "source": "spec/02-threat-model.md",
       "terms": [
         "MUST NOT"
+      ],
+      "tests": [
+        "RUST-CRYPTO",
+        "RUST-CLIENT",
+        "RUST-RELAY",
+        "RUST-TRANSPORT",
+        "PYTHON-INDEPENDENT"
+      ]
+    },
+    {
+      "id": "CW-THREAT-015",
+      "line": 77,
+      "revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+      "source": "spec/02-threat-model.md",
+      "terms": [
+        "MUST"
       ],
       "tests": [
         "RUST-CRYPTO",
@@ -2128,6 +2145,132 @@
         "TRACEABILITY-SELFTEST",
         "PYTHON-INDEPENDENT",
         "QUEUE-V1-INTEROP-MATRIX"
+      ]
+    },
+    {
+      "id": "CW-SECURITY-001",
+      "line": 22,
+      "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
+      "source": "spec/11-security-considerations.md",
+      "terms": [
+        "MUST",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-SECURITY",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-SECURITY-002",
+      "line": 37,
+      "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
+      "source": "spec/11-security-considerations.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-SECURITY",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-SECURITY-003",
+      "line": 43,
+      "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
+      "source": "spec/11-security-considerations.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-SECURITY",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-SECURITY-004",
+      "line": 48,
+      "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
+      "source": "spec/11-security-considerations.md",
+      "terms": [],
+      "tests": [
+        "RUST-SECURITY",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-SECURITY-005",
+      "line": 57,
+      "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
+      "source": "spec/11-security-considerations.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "RUST-SECURITY",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-SECURITY-006",
+      "line": 67,
+      "revision": "CW-SECURITY-1-DRAFT-2026-09-06",
+      "source": "spec/11-security-considerations.md",
+      "terms": [
+        "MAY",
+        "MUST NOT"
+      ],
+      "tests": [
+        "RUST-SECURITY",
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-PRIVACY-001",
+      "line": 20,
+      "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
+      "source": "spec/12-privacy-considerations.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-PRIVACY-002",
+      "line": 25,
+      "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
+      "source": "spec/12-privacy-considerations.md",
+      "terms": [
+        "MUST"
+      ],
+      "tests": [
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-PRIVACY-003",
+      "line": 40,
+      "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
+      "source": "spec/12-privacy-considerations.md",
+      "terms": [
+        "MUST NOT"
+      ],
+      "tests": [
+        "TRACEABILITY-SELFTEST"
+      ]
+    },
+    {
+      "id": "CW-PRIVACY-004",
+      "line": 46,
+      "revision": "CW-PRIVACY-1-DRAFT-2026-09-06",
+      "source": "spec/12-privacy-considerations.md",
+      "terms": [
+        "MAY"
+      ],
+      "tests": [
+        "TRACEABILITY-SELFTEST"
       ]
     },
     {

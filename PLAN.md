@@ -143,9 +143,10 @@ silently expanding queue v1.
 - exact cryptographic suites and algorithm-agility limits;
 - deterministic encoding rules and extension mechanism;
 - per-recipient queue model and multi-device behavior;
-- relay persistence, quota and abuse-control contract;
+- relay persistence and quota contract beyond the rate-limiting resolved by
+  `CW-THREAT-015`/`spec/11-security-considerations.md`;
 - concrete freshness windows beyond durable replay records;
-- abuse-control policy and deployment-specific quotas.
+- proof-of-work or other non-rate-based abuse controls.
 
 ## Definition of done
 

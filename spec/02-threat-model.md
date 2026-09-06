@@ -69,6 +69,19 @@ The initial profile does not hide IP addresses, queue access, timing, message le
 - **CW-THREAT-013:** Documentation and user-facing claims MUST distinguish payload confidentiality from metadata privacy and anonymity.
 - **CW-THREAT-014:** Implementations MUST NOT claim sender anonymity, relationship anonymity or traffic-analysis resistance solely because payloads and queue identifiers are opaque.
 
+`12-privacy-considerations.md` gives the concrete, per-profile metadata
+catalog these two requirements refer to in the abstract.
+
+## Abuse and rate-limiting
+
+- **CW-THREAT-015:** An implementation MUST bound the rate of accepted
+  requests per authenticated credential and MUST fail closed once its
+  distinct-credential tracking capacity is reached, so that neither a single
+  compromised or misbehaving credential nor a flood of one-off credentials
+  can consume unbounded relay resources. `11-security-considerations.md`
+  gives the concrete per-credential window, budget and capacity contract
+  (`CW-SECURITY-002`–`CW-SECURITY-004`).
+
 ## Availability limits
 
 No protocol can force a malicious relay or network to deliver data. Cofferwire can detect invalid authenticated content and make retries safe, but omission and permanent denial of service require relay replacement or another transport.
@@ -88,6 +101,7 @@ No protocol can force a malicious relay or network to deliver data. Cofferwire c
 
 - a future post-quantum or post-compromise-secure profile and recovery mechanism;
 - padding buckets and metadata-reduction targets;
-- rate limits and proof-of-work or other abuse controls;
+- proof-of-work or other non-rate-based abuse controls (rate limiting itself
+  is resolved by `CW-THREAT-015`);
 - transport authentication and credential presentation;
 - clock-skew and expiry-race policy.

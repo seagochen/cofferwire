@@ -70,13 +70,29 @@ not production-ready security claims.
 - [spec/03-architecture.md](spec/03-architecture.md) — component responsibilities and message flows
 - [spec/04-cryptographic-profile.md](spec/04-cryptographic-profile.md) — fixed relay-authentication and end-to-end encryption profile
 - [spec/05-wire-format.md](spec/05-wire-format.md) — canonical envelope, framing and version negotiation
+- [spec/07-blobs.md](spec/07-blobs.md) — independent encrypted blob/1 profile
+- [spec/08-receipts.md](spec/08-receipts.md) — end-to-end signed application receipts
 - [spec/09-transport-bindings.md](spec/09-transport-bindings.md) — baseline
   HTTPS/WebSocket mappings and resource bounds
 - [spec/10-versioning.md](spec/10-versioning.md) — profile scopes, identifier
   registry and compatibility policy
-- [spec/07-blobs.md](spec/07-blobs.md) — independent encrypted blob/1 profile
+- [spec/11-security-considerations.md](spec/11-security-considerations.md) —
+  bounded-work-before-authentication, per-credential rate limiting and
+  secret-redaction contract
+- [spec/12-privacy-considerations.md](spec/12-privacy-considerations.md) —
+  per-profile relay-observable metadata catalog
+- [spec/13-offline-bundles.md](spec/13-offline-bundles.md) — offline
+  bootstrap/recovery bundle profile
+- [profiles/family-tree-v1.md](profiles/family-tree-v1.md) — application
+  profile built on top of the core protocol, receipts and offline bundles
 - [docs/adr/0001-version-1-scope.md](docs/adr/0001-version-1-scope.md) — accepted
   queue-v1 scope decision (`CW-SCOPE-QUEUE-V1-2026-09-06`)
+- [docs/conformance/operational-limits-v1.json](docs/conformance/operational-limits-v1.json) —
+  reference-daemon operational limits, cross-checked against the implementation
+- [docs/runbooks/backup-restore.md](docs/runbooks/backup-restore.md),
+  [docs/runbooks/retention-and-deletion.md](docs/runbooks/retention-and-deletion.md),
+  [docs/runbooks/reverse-proxy-and-dual-stack.md](docs/runbooks/reverse-proxy-and-dual-stack.md) —
+  operational runbooks
 
 ## License
 

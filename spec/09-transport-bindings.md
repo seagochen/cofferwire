@@ -52,3 +52,10 @@ writer-lock waiting remains independently bounded at 250 milliseconds by
 
 The daemon samples Unix time in whole seconds once for each authenticated
 command and supplies that immutable value to the durable queue transaction.
+
+Beyond these connection- and body-level bounds, the daemon also bounds the
+rate of accepted requests per authenticated queue principal or blob
+capability. `11-security-considerations.md` gives the ordering guarantee
+and the concrete window/budget/capacity contract; the numeric values
+themselves are published in `docs/conformance/operational-limits-v1.json`
+and cross-checked against the implementation by an automated test.
