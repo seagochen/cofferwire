@@ -2,7 +2,6 @@
 
 #![forbid(unsafe_code)]
 
-use std::collections::HashMap;
 use std::convert::Infallible;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
@@ -23,7 +22,7 @@ use cofferwire_crypto::blob::verify_blob_request;
 use cofferwire_crypto::verify_request;
 use cofferwire_relay as relay;
 use cofferwire_types::blob::{
-    BlobRequest, BlobResponse, BlobResponseBody, BlobResponseFrame, BlobStatus, CapabilityId,
+    BlobRequest, BlobResponse, BlobResponseBody, BlobResponseFrame, BlobStatus,
     MAX_BLOB_FRAME_BYTES,
 };
 use cofferwire_types::{
@@ -153,8 +152,6 @@ where
 #[derive(Clone, Debug)]
 pub struct RelayService {
     relay: Arc<Mutex<relay::DurableRelay>>,
-    replays: Arc<Mutex<HashMap<(Principal, RequestId), ReplayEntry>>>,
-    blob_replays: Arc<Mutex<HashMap<(CapabilityId, RequestId), ReplayEntry>>>,
     commands: Arc<Semaphore>,
     websocket_connections: Arc<Semaphore>,
 }
@@ -174,8 +171,6 @@ impl RelayService {
     pub fn new(relay: relay::DurableRelay) -> Self {
         Self {
             relay: Arc::new(Mutex::new(relay)),
-            replays: Arc::new(Mutex::new(HashMap::new())),
-            blob_replays: Arc::new(Mutex::new(HashMap::new())),
             commands: Arc::new(Semaphore::new(MAX_CONCURRENT_COMMANDS)),
             websocket_connections: Arc::new(Semaphore::new(MAX_WEBSOCKET_CONNECTIONS)),
         }
@@ -250,11 +245,17 @@ impl RelayService {
             ));
         }
 
-        let replay_key = (principal, request_id);
-        let mut replays = self.replays.lock().map_err(|_| ExchangeError::Storage)?;
-        if let Some(existing) = replays.get(&replay_key) {
-            return if existing.request == bytes {
-                Ok(existing.response.clone())
+        if let Err(status) = validate_queue_request(request) {
+            return Ok(error_response(request_id, Some(command), status));
+        }
+
+        let mut durable = self.relay.lock().map_err(|_| ExchangeError::Storage)?;
+        if let Some((stored_request, stored_response)) = durable
+            .queue_replay(principal, request_id)
+            .map_err(|_| ExchangeError::Storage)?
+        {
+            return if stored_request == bytes {
+                Ok(stored_response)
             } else {
                 Ok(error_response(
                     request_id,
@@ -263,101 +264,21 @@ impl RelayService {
                 ))
             };
         }
-
-        let response = match self.execute(request, now) {
-            Ok(response) => response,
-            Err(ExecuteError::Protocol(status)) => Response::Error(
-                ErrorResponse::new(Some(command), status).expect("status is always an error"),
-            ),
-            Err(ExecuteError::Storage) => return Err(ExchangeError::Storage),
-        };
-        let response = encode_response(&ResponseFrame::new(request_id, response));
-        replays.insert(
-            replay_key,
-            ReplayEntry {
-                request: bytes.to_vec(),
-                response: response.clone(),
-            },
-        );
-        Ok(response)
-    }
-
-    fn execute(&self, request: &Request, now: relay::Timestamp) -> Result<Response, ExecuteError> {
-        let mut durable = self.relay.lock().map_err(|_| ExecuteError::Storage)?;
-        let result = match request {
-            Request::CreateQueue(create) => {
-                let limits = relay::QueueLimits::new(
-                    usize::try_from(create.limits().max_messages())
-                        .map_err(|_| ExecuteError::Protocol(Status::LimitOutOfRange))?,
-                    usize::try_from(create.limits().max_message_bytes())
-                        .map_err(|_| ExecuteError::Protocol(Status::LimitOutOfRange))?,
-                )
-                .ok_or(ExecuteError::Protocol(Status::LimitOutOfRange))?;
-                durable
-                    .create_queue(
-                        relay_queue(create.queue_id()),
-                        relay::QueueConfig::new(
-                            relay_principal(create.sender()),
-                            relay_principal(create.recipient()),
-                            limits,
-                        ),
-                    )
-                    .map(|outcome| {
-                        ResponseBody::CreateQueue(match outcome {
-                            relay::CreateQueueOutcome::Created => {
-                                cofferwire_types::CreateQueueOutcome::Created
-                            }
-                            relay::CreateQueueOutcome::AlreadyExists => {
-                                cofferwire_types::CreateQueueOutcome::AlreadyExists
-                            }
-                        })
-                    })
-            }
-            Request::Send(send) => {
-                let ttl = relay::Ttl::from_secs(send.ttl().as_secs())
-                    .ok_or(ExecuteError::Protocol(Status::LimitOutOfRange))?;
-                durable
-                    .send(
-                        relay_queue(send.queue_id()),
-                        relay_principal(send.sender()),
-                        relay::MessageId::from_bytes(*send.message_id().as_bytes()),
-                        send.payload().as_bytes(),
-                        now,
-                        ttl,
-                    )
-                    .map(|outcome| {
-                        ResponseBody::Send(match outcome {
-                            relay::SendOutcome::Accepted => cofferwire_types::SendOutcome::Accepted,
-                            relay::SendOutcome::Duplicate => {
-                                cofferwire_types::SendOutcome::Duplicate
-                            }
-                        })
-                    })
-            }
-            Request::Fetch(fetch) => durable
-                .fetch(
-                    relay_queue(fetch.queue_id()),
-                    relay_principal(fetch.recipient()),
-                    now,
-                )
-                .and_then(|delivery| delivery.as_ref().map_or(Ok(None), wire_delivery))
-                .map(ResponseBody::Fetch),
-            Request::Ack(ack) => durable
-                .acknowledge(
-                    relay_queue(ack.queue_id()),
-                    relay_principal(ack.recipient()),
-                    relay::MessageId::from_bytes(*ack.message_id().as_bytes()),
-                    now,
-                )
-                .map(|()| ResponseBody::Ack),
-            Request::DeleteQueue(delete) => durable
-                .delete_queue(
-                    relay_queue(delete.queue_id()),
-                    relay_principal(delete.recipient()),
-                )
-                .map(|()| ResponseBody::DeleteQueue),
-        };
-        result.map(Response::Success).map_err(ExecuteError::from)
+        match durable.queue_exchange(
+            principal,
+            request_id,
+            bytes,
+            |transaction| execute_queue_tx(transaction, request, now),
+            |result| encode_queue_outcome(request_id, command, result),
+        ) {
+            Ok(relay::QueueExchange::Respond(response)) => Ok(response),
+            Ok(relay::QueueExchange::Conflict) => Ok(error_response(
+                request_id,
+                Some(command),
+                Status::AuthReplay,
+            )),
+            Err(_) => Err(ExchangeError::Storage),
+        }
     }
 
     async fn exchange_blob(&self, bytes: Vec<u8>) -> Result<Vec<u8>, ExchangeError> {
@@ -395,14 +316,13 @@ impl RelayService {
                 BlobStatus::AuthInvalid,
             ));
         }
-        let replay_key = (capability, request_id);
-        let mut replays = self
-            .blob_replays
-            .lock()
-            .map_err(|_| ExchangeError::Storage)?;
-        if let Some(existing) = replays.get(&replay_key) {
-            return if existing.request == bytes {
-                Ok(existing.response.clone())
+        let mut durable = self.relay.lock().map_err(|_| ExchangeError::Storage)?;
+        if let Some((stored_request, stored_response)) = durable
+            .blob_replay(capability, request_id)
+            .map_err(|_| ExchangeError::Storage)?
+        {
+            return if stored_request == bytes {
+                Ok(stored_response)
             } else {
                 Ok(blob_error_response(
                     request_id,
@@ -411,98 +331,232 @@ impl RelayService {
                 ))
             };
         }
-        let response = match self.execute_blob(request, now) {
-            Ok(body) => BlobResponse {
-                command: Some(command),
-                status: BlobStatus::Ok,
-                body: Some(body),
-            },
-            Err(BlobExecuteError::Protocol(status)) => BlobResponse {
-                command: Some(command),
-                status,
-                body: None,
-            },
-            Err(BlobExecuteError::Storage) => return Err(ExchangeError::Storage),
-        };
-        let response = encode_blob_response(&BlobResponseFrame {
+        match durable.blob_exchange(
+            capability,
             request_id,
-            response,
-        });
-        replays.insert(
-            replay_key,
-            ReplayEntry {
-                request: bytes.to_vec(),
-                response: response.clone(),
-            },
-        );
-        Ok(response)
-    }
-
-    fn execute_blob(
-        &self,
-        request: &BlobRequest,
-        now: relay::Timestamp,
-    ) -> Result<BlobResponseBody, BlobExecuteError> {
-        let mut durable = self.relay.lock().map_err(|_| BlobExecuteError::Storage)?;
-        match request {
-            BlobRequest::BeginUpload {
-                upload_id,
-                capabilities,
-                manifest,
-                ttl,
-            } => durable
-                .begin_blob_upload(*upload_id, *capabilities, manifest, now, *ttl)
-                .map(BlobResponseBody::BeginUpload),
-            BlobRequest::PutChunk {
-                upload_id,
-                upload_cap,
-                index,
-                ciphertext,
-            } => durable
-                .put_blob_chunk(*upload_id, *upload_cap, *index, ciphertext, now)
-                .map(BlobResponseBody::PutChunk),
-            BlobRequest::Commit {
-                upload_id,
-                upload_cap,
-                blob_id,
-            } => durable
-                .commit_blob(*upload_id, *upload_cap, *blob_id, now)
-                .map(BlobResponseBody::Commit),
-            BlobRequest::GetManifest {
-                blob_id,
-                download_cap,
-            } => durable
-                .get_blob_manifest(*blob_id, *download_cap, now)
-                .map(|(manifest, expiry)| BlobResponseBody::GetManifest(manifest, expiry)),
-            BlobRequest::GetChunk {
-                blob_id,
-                download_cap,
-                index,
-            } => durable
-                .get_blob_chunk(*blob_id, *download_cap, *index, now)
-                .map(|(chunk, expiry)| BlobResponseBody::GetChunk(chunk, expiry)),
-            BlobRequest::Renew {
-                blob_id,
-                renew_cap,
-                ttl,
-            } => durable
-                .renew_blob(*blob_id, *renew_cap, now, *ttl)
-                .map(BlobResponseBody::Renew),
-            BlobRequest::Delete {
-                blob_id,
-                delete_cap,
-            } => durable
-                .delete_blob(*blob_id, *delete_cap, now)
-                .map(|()| BlobResponseBody::Delete),
+            bytes,
+            |transaction| execute_blob_tx(transaction, request, now),
+            |result| encode_blob_outcome(request_id, command, result),
+        ) {
+            Ok(relay::BlobExchange::Respond(response)) => Ok(response),
+            Ok(relay::BlobExchange::Conflict) => Ok(blob_error_response(
+                request_id,
+                Some(command),
+                BlobStatus::AuthReplay,
+            )),
+            Err(_) => Err(ExchangeError::Storage),
         }
-        .map_err(BlobExecuteError::from)
     }
 }
 
-#[derive(Clone, Debug)]
-struct ReplayEntry {
-    request: Vec<u8>,
-    response: Vec<u8>,
+/// Rejects a request whose numeric fields cannot be represented locally.
+///
+/// This check is a pure function of the request's own bytes: it never
+/// depends on mutable stored state, so a byte-identical retry always
+/// re-derives the same verdict and does not need a durable replay record.
+fn validate_queue_request(request: &Request) -> Result<(), Status> {
+    match request {
+        Request::CreateQueue(create) => {
+            usize::try_from(create.limits().max_messages()).map_err(|_| Status::LimitOutOfRange)?;
+            usize::try_from(create.limits().max_message_bytes())
+                .map_err(|_| Status::LimitOutOfRange)?;
+            Ok(())
+        }
+        Request::Send(send) => {
+            relay::Ttl::from_secs(send.ttl().as_secs()).ok_or(Status::LimitOutOfRange)?;
+            Ok(())
+        }
+        Request::Fetch(_) | Request::Ack(_) | Request::DeleteQueue(_) => Ok(()),
+    }
+}
+
+fn execute_queue_tx(
+    transaction: &rusqlite::Transaction<'_>,
+    request: &Request,
+    now: relay::Timestamp,
+) -> Result<ResponseBody, relay::DurableRelayError> {
+    match request {
+        Request::CreateQueue(create) => {
+            let limits = relay::QueueLimits::new(
+                usize::try_from(create.limits().max_messages())
+                    .expect("validated by validate_queue_request"),
+                usize::try_from(create.limits().max_message_bytes())
+                    .expect("validated by validate_queue_request"),
+            )
+            .expect("wire limits are checked non-zero at decode");
+            relay::DurableRelay::create_queue_tx(
+                transaction,
+                relay_queue(create.queue_id()),
+                relay::QueueConfig::new(
+                    relay_principal(create.sender()),
+                    relay_principal(create.recipient()),
+                    limits,
+                ),
+            )
+            .map(|outcome| {
+                ResponseBody::CreateQueue(match outcome {
+                    relay::CreateQueueOutcome::Created => {
+                        cofferwire_types::CreateQueueOutcome::Created
+                    }
+                    relay::CreateQueueOutcome::AlreadyExists => {
+                        cofferwire_types::CreateQueueOutcome::AlreadyExists
+                    }
+                })
+            })
+        }
+        Request::Send(send) => {
+            let ttl = relay::Ttl::from_secs(send.ttl().as_secs())
+                .expect("validated by validate_queue_request");
+            relay::DurableRelay::send_tx(
+                transaction,
+                relay_queue(send.queue_id()),
+                relay_principal(send.sender()),
+                relay::MessageId::from_bytes(*send.message_id().as_bytes()),
+                send.payload().as_bytes(),
+                now,
+                ttl,
+            )
+            .map(|outcome| {
+                ResponseBody::Send(match outcome {
+                    relay::SendOutcome::Accepted => cofferwire_types::SendOutcome::Accepted,
+                    relay::SendOutcome::Duplicate => cofferwire_types::SendOutcome::Duplicate,
+                })
+            })
+        }
+        Request::Fetch(fetch) => relay::DurableRelay::fetch_tx(
+            transaction,
+            relay_queue(fetch.queue_id()),
+            relay_principal(fetch.recipient()),
+            now,
+        )
+        .and_then(|delivery| delivery.as_ref().map_or(Ok(None), wire_delivery))
+        .map(ResponseBody::Fetch),
+        Request::Ack(ack) => relay::DurableRelay::acknowledge_tx(
+            transaction,
+            relay_queue(ack.queue_id()),
+            relay_principal(ack.recipient()),
+            relay::MessageId::from_bytes(*ack.message_id().as_bytes()),
+            now,
+        )
+        .map(|()| ResponseBody::Ack),
+        Request::DeleteQueue(delete) => relay::DurableRelay::delete_queue_tx(
+            transaction,
+            relay_queue(delete.queue_id()),
+            relay_principal(delete.recipient()),
+        )
+        .map(|()| ResponseBody::DeleteQueue),
+    }
+}
+
+fn encode_queue_outcome(
+    request_id: RequestId,
+    command: Command,
+    result: Result<ResponseBody, relay::RelayError>,
+) -> Vec<u8> {
+    let response = match result {
+        Ok(body) => Response::Success(body),
+        Err(error) => Response::Error(
+            ErrorResponse::new(Some(command), relay_status(error))
+                .expect("status is always an error"),
+        ),
+    };
+    encode_response(&ResponseFrame::new(request_id, response))
+}
+
+fn execute_blob_tx(
+    transaction: &rusqlite::Transaction<'_>,
+    request: &BlobRequest,
+    now: relay::Timestamp,
+) -> Result<BlobResponseBody, relay::BlobRelayResult> {
+    match request {
+        BlobRequest::BeginUpload {
+            upload_id,
+            capabilities,
+            manifest,
+            ttl,
+        } => relay::DurableRelay::begin_blob_upload_tx(
+            transaction,
+            *upload_id,
+            *capabilities,
+            manifest,
+            now,
+            *ttl,
+        )
+        .map(BlobResponseBody::BeginUpload),
+        BlobRequest::PutChunk {
+            upload_id,
+            upload_cap,
+            index,
+            ciphertext,
+        } => relay::DurableRelay::put_blob_chunk_tx(
+            transaction,
+            *upload_id,
+            *upload_cap,
+            *index,
+            ciphertext,
+            now,
+        )
+        .map(BlobResponseBody::PutChunk),
+        BlobRequest::Commit {
+            upload_id,
+            upload_cap,
+            blob_id,
+        } => {
+            relay::DurableRelay::commit_blob_tx(transaction, *upload_id, *upload_cap, *blob_id, now)
+                .map(BlobResponseBody::Commit)
+        }
+        BlobRequest::GetManifest {
+            blob_id,
+            download_cap,
+        } => relay::DurableRelay::get_blob_manifest_tx(transaction, *blob_id, *download_cap, now)
+            .map(|(manifest, expiry)| BlobResponseBody::GetManifest(manifest, expiry)),
+        BlobRequest::GetChunk {
+            blob_id,
+            download_cap,
+            index,
+        } => relay::DurableRelay::get_blob_chunk_tx(
+            transaction,
+            *blob_id,
+            *download_cap,
+            *index,
+            now,
+        )
+        .map(|(chunk, expiry)| BlobResponseBody::GetChunk(chunk, expiry)),
+        BlobRequest::Renew {
+            blob_id,
+            renew_cap,
+            ttl,
+        } => relay::DurableRelay::renew_blob_tx(transaction, *blob_id, *renew_cap, now, *ttl)
+            .map(BlobResponseBody::Renew),
+        BlobRequest::Delete {
+            blob_id,
+            delete_cap,
+        } => relay::DurableRelay::delete_blob_tx(transaction, *blob_id, *delete_cap, now)
+            .map(|()| BlobResponseBody::Delete),
+    }
+}
+
+fn encode_blob_outcome(
+    request_id: RequestId,
+    command: cofferwire_types::blob::BlobCommand,
+    result: Result<BlobResponseBody, relay::BlobRelayError>,
+) -> Vec<u8> {
+    let response = match result {
+        Ok(body) => BlobResponse {
+            command: Some(command),
+            status: BlobStatus::Ok,
+            body: Some(body),
+        },
+        Err(error) => BlobResponse {
+            command: Some(command),
+            status: blob_status(error),
+            body: None,
+        },
+    };
+    encode_blob_response(&BlobResponseFrame {
+        request_id,
+        response,
+    })
 }
 
 /// Builds the bounded HTTPS/WebSocket application router.
@@ -667,43 +721,16 @@ impl std::fmt::Display for FrameExchangeError {
 
 impl std::error::Error for FrameExchangeError {}
 
-#[derive(Debug)]
-enum ExecuteError {
-    Protocol(Status),
-    Storage,
-}
-
-#[derive(Debug)]
-enum BlobExecuteError {
-    Protocol(BlobStatus),
-    Storage,
-}
-
-impl From<relay::BlobRelayResult> for BlobExecuteError {
-    fn from(error: relay::BlobRelayResult) -> Self {
-        match error {
-            relay::BlobRelayResult::Protocol(error) => Self::Protocol(match error {
-                relay::BlobRelayError::NotFound => BlobStatus::NotFound,
-                relay::BlobRelayError::Unauthorized => BlobStatus::Unauthorized,
-                relay::BlobRelayError::IdConflict => BlobStatus::IdConflict,
-                relay::BlobRelayError::LimitOutOfRange => BlobStatus::LimitOutOfRange,
-                relay::BlobRelayError::ChunkConflict => BlobStatus::ChunkConflict,
-                relay::BlobRelayError::Incomplete => BlobStatus::Incomplete,
-                relay::BlobRelayError::IdentityMismatch => BlobStatus::IdentityMismatch,
-                relay::BlobRelayError::Expired => BlobStatus::Expired,
-            }),
-            relay::BlobRelayResult::Storage(_) => Self::Storage,
-        }
-    }
-}
-
-impl From<relay::DurableRelayError> for ExecuteError {
-    fn from(error: relay::DurableRelayError) -> Self {
-        match error {
-            relay::DurableRelayError::Relay(error) => Self::Protocol(relay_status(error)),
-            relay::DurableRelayError::Storage { .. }
-            | relay::DurableRelayError::UnsupportedSchemaVersion { .. } => Self::Storage,
-        }
+fn blob_status(error: relay::BlobRelayError) -> BlobStatus {
+    match error {
+        relay::BlobRelayError::NotFound => BlobStatus::NotFound,
+        relay::BlobRelayError::Unauthorized => BlobStatus::Unauthorized,
+        relay::BlobRelayError::IdConflict => BlobStatus::IdConflict,
+        relay::BlobRelayError::LimitOutOfRange => BlobStatus::LimitOutOfRange,
+        relay::BlobRelayError::ChunkConflict => BlobStatus::ChunkConflict,
+        relay::BlobRelayError::Incomplete => BlobStatus::Incomplete,
+        relay::BlobRelayError::IdentityMismatch => BlobStatus::IdentityMismatch,
+        relay::BlobRelayError::Expired => BlobStatus::Expired,
     }
 }
 

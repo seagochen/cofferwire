@@ -18,6 +18,7 @@ futures-util = "=0.3.31"
 # Cargo newer than the workspace's Rust 1.84 baseline.
 indexmap = "=2.7.1"
 jobserver = "=0.1.32"
+rusqlite = "=0.32.1"
 tokio = { version = "=1.43.0", features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
 tower-http = { version = "=0.6.2", features = ["limit", "timeout"] }
 tower-service = "=0.3.3"

@@ -3,6 +3,7 @@
 use std::path::Path;
 use std::time::Duration;
 
+use cofferwire_types::{Principal as AuthenticatedPrincipal, RequestId};
 use rusqlite::{
     params, Connection, ErrorCode, OptionalExtension, Transaction, TransactionBehavior,
 };
@@ -74,8 +75,22 @@ CREATE TABLE IF NOT EXISTS blob_grants (
 CREATE INDEX IF NOT EXISTS blob_grants_download ON blob_grants(blob_id, download_cap);
 CREATE INDEX IF NOT EXISTS blob_grants_renew ON blob_grants(blob_id, renew_cap);
 CREATE INDEX IF NOT EXISTS blob_grants_delete ON blob_grants(blob_id, delete_cap);
+CREATE TABLE IF NOT EXISTS blob_replays (
+    capability_id BLOB NOT NULL CHECK (length(capability_id) = 32),
+    request_id BLOB NOT NULL CHECK (length(request_id) = 16),
+    request BLOB NOT NULL,
+    response BLOB NOT NULL,
+    PRIMARY KEY (capability_id, request_id)
+) STRICT;
+CREATE TABLE IF NOT EXISTS queue_replays (
+    principal  BLOB NOT NULL CHECK (length(principal) = 32),
+    request_id BLOB NOT NULL CHECK (length(request_id) = 16),
+    request    BLOB NOT NULL,
+    response   BLOB NOT NULL,
+    PRIMARY KEY (principal, request_id)
+) STRICT;
 ";
-const SCHEMA_VERSION: i64 = 1;
+const SCHEMA_VERSION: i64 = 3;
 
 /// Maximum time a command waits to acquire `SQLite`'s writer lock.
 pub const DEFAULT_BUSY_TIMEOUT: Duration = Duration::from_millis(250);
@@ -200,7 +215,7 @@ impl DurableRelay {
         connection.busy_timeout(DEFAULT_BUSY_TIMEOUT)?;
         let version =
             connection.query_row("PRAGMA user_version", [], |row| row.get::<_, i64>(0))?;
-        if version != 0 && version != SCHEMA_VERSION {
+        if version > SCHEMA_VERSION {
             return Err(DurableRelayError::UnsupportedSchemaVersion {
                 found: version,
                 supported: SCHEMA_VERSION,
@@ -213,7 +228,7 @@ impl DurableRelay {
         )?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         transaction.execute_batch(SCHEMA)?;
-        if version == 0 {
+        if version != SCHEMA_VERSION {
             transaction.pragma_update(None, "user_version", SCHEMA_VERSION)?;
         }
         commit(transaction)?;
@@ -233,6 +248,21 @@ impl DurableRelay {
         let transaction = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let outcome = Self::create_queue_tx(&transaction, id, config)?;
+        commit(transaction)?;
+        Ok(outcome)
+    }
+
+    /// Transaction-scoped variant of [`Self::create_queue`].
+    ///
+    /// # Errors
+    ///
+    /// Returns a semantic conflict or storage error.
+    pub fn create_queue_tx(
+        transaction: &Transaction<'_>,
+        id: QueueId,
+        config: QueueConfig,
+    ) -> Result<CreateQueueOutcome, DurableRelayError> {
         let existing = transaction
             .query_row(
                 "SELECT sender, recipient, max_messages, max_message_bytes
@@ -277,7 +307,6 @@ impl DurableRelay {
                     .as_slice(),
             ],
         )?;
-        commit(transaction)?;
         Ok(CreateQueueOutcome::Created)
     }
 
@@ -300,11 +329,42 @@ impl DurableRelay {
         let transaction = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let config = read_queue(&transaction, queue_id)?.ok_or(RelayError::QueueNotFound)?;
+        let outcome = Self::send_tx(
+            &transaction,
+            queue_id,
+            sender,
+            message_id,
+            payload,
+            now,
+            ttl,
+        )?;
+        #[cfg(test)]
+        crash_point("send_before_commit");
+        commit(transaction)?;
+        #[cfg(test)]
+        crash_point("send_after_commit");
+        Ok(outcome)
+    }
+
+    /// Transaction-scoped variant of [`Self::send`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an authorization, limit, conflict, expiry, or storage error.
+    pub fn send_tx(
+        transaction: &Transaction<'_>,
+        queue_id: QueueId,
+        sender: Principal,
+        message_id: MessageId,
+        payload: &[u8],
+        now: Timestamp,
+        ttl: Ttl,
+    ) -> Result<SendOutcome, DurableRelayError> {
+        let config = read_queue(transaction, queue_id)?.ok_or(RelayError::QueueNotFound)?;
         if config.sender() != sender {
             return Err(RelayError::Unauthorized.into());
         }
-        discard_expired(&transaction, queue_id, now)?;
+        discard_expired(transaction, queue_id, now)?;
 
         let existing = transaction
             .query_row(
@@ -345,11 +405,6 @@ impl DurableRelay {
                 expires_at.as_secs().to_be_bytes().as_slice(),
             ],
         )?;
-        #[cfg(test)]
-        crash_point("send_before_commit");
-        commit(transaction)?;
-        #[cfg(test)]
-        crash_point("send_after_commit");
         Ok(SendOutcome::Accepted)
     }
 
@@ -367,8 +422,32 @@ impl DurableRelay {
         let transaction = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        authorize_recipient(&transaction, queue_id, recipient)?;
-        discard_expired(&transaction, queue_id, now)?;
+        let delivery = Self::fetch_tx(&transaction, queue_id, recipient, now)?;
+        if delivery.is_some() {
+            #[cfg(test)]
+            crash_point("fetch_before_commit");
+        }
+        commit(transaction)?;
+        if delivery.is_some() {
+            #[cfg(test)]
+            crash_point("fetch_after_commit");
+        }
+        Ok(delivery)
+    }
+
+    /// Transaction-scoped variant of [`Self::fetch`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an authorization or storage error.
+    pub fn fetch_tx(
+        transaction: &Transaction<'_>,
+        queue_id: QueueId,
+        recipient: Principal,
+        now: Timestamp,
+    ) -> Result<Option<Delivery>, DurableRelayError> {
+        authorize_recipient(transaction, queue_id, recipient)?;
+        discard_expired(transaction, queue_id, now)?;
         let message = transaction
             .query_row(
                 "SELECT sequence, message_id, payload, expires_at
@@ -385,18 +464,12 @@ impl DurableRelay {
             )
             .optional()?;
         let Some((sequence, message_id, payload, expires_at)) = message else {
-            commit(transaction)?;
             return Ok(None);
         };
         transaction.execute(
             "UPDATE messages SET delivered = 1 WHERE sequence = ?1",
             [sequence],
         )?;
-        #[cfg(test)]
-        crash_point("fetch_before_commit");
-        commit(transaction)?;
-        #[cfg(test)]
-        crash_point("fetch_after_commit");
         Ok(Some(Delivery {
             id: MessageId::from_bytes(message_id),
             payload,
@@ -419,8 +492,29 @@ impl DurableRelay {
         let transaction = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        authorize_recipient(&transaction, queue_id, recipient)?;
-        discard_expired(&transaction, queue_id, now)?;
+        Self::acknowledge_tx(&transaction, queue_id, recipient, message_id, now)?;
+        #[cfg(test)]
+        crash_point("ack_before_commit");
+        commit(transaction)?;
+        #[cfg(test)]
+        crash_point("ack_after_commit");
+        Ok(())
+    }
+
+    /// Transaction-scoped variant of [`Self::acknowledge`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an authorization, mismatch, delivery-state, or storage error.
+    pub fn acknowledge_tx(
+        transaction: &Transaction<'_>,
+        queue_id: QueueId,
+        recipient: Principal,
+        message_id: MessageId,
+        now: Timestamp,
+    ) -> Result<(), DurableRelayError> {
+        authorize_recipient(transaction, queue_id, recipient)?;
+        discard_expired(transaction, queue_id, now)?;
         let current = transaction
             .query_row(
                 "SELECT sequence, message_id, delivered
@@ -443,11 +537,6 @@ impl DurableRelay {
             return Err(RelayError::NotDelivered.into());
         }
         transaction.execute("DELETE FROM messages WHERE sequence = ?1", [current.0])?;
-        #[cfg(test)]
-        crash_point("ack_before_commit");
-        commit(transaction)?;
-        #[cfg(test)]
-        crash_point("ack_after_commit");
         Ok(())
     }
 
@@ -464,13 +553,148 @@ impl DurableRelay {
         let transaction = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        authorize_recipient(&transaction, queue_id, recipient)?;
+        Self::delete_queue_tx(&transaction, queue_id, recipient)?;
+        commit(transaction)?;
+        Ok(())
+    }
+
+    /// Transaction-scoped variant of [`Self::delete_queue`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an authorization or storage error.
+    pub fn delete_queue_tx(
+        transaction: &Transaction<'_>,
+        queue_id: QueueId,
+        recipient: Principal,
+    ) -> Result<(), DurableRelayError> {
+        authorize_recipient(transaction, queue_id, recipient)?;
         transaction.execute(
             "DELETE FROM queues WHERE queue_id = ?1",
             [queue_id.as_bytes().as_slice()],
         )?;
-        commit(transaction)?;
         Ok(())
+    }
+
+    /// Returns the stored replay record for `(principal, request_id)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a storage error if the lookup cannot be completed.
+    pub fn queue_replay(
+        &self,
+        principal: AuthenticatedPrincipal,
+        request_id: RequestId,
+    ) -> Result<Option<QueueReplayRecord>, DurableRelayError> {
+        self.connection
+            .query_row(
+                "SELECT request, response FROM queue_replays
+                 WHERE principal=?1 AND request_id=?2",
+                params![
+                    principal.as_bytes().as_slice(),
+                    request_id.as_bytes().as_slice()
+                ],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .optional()
+            .map_err(DurableRelayError::from)
+    }
+
+    /// Runs a queue command and records its replay entry in one transaction.
+    ///
+    /// `effect` executes the command inside the supplied transaction and
+    /// `encode` renders the final response bytes from its outcome. On success
+    /// the command effect and the `(principal, request_id)` replay record
+    /// commit atomically; on a protocol rejection the effect rolls back and
+    /// only the replay record commits. A concurrent duplicate that commits
+    /// first resolves to the stored response for an exact retry, or to
+    /// [`QueueExchange::Conflict`] for differing request bytes.
+    ///
+    /// # Errors
+    ///
+    /// Returns a storage error; protocol rejections are encoded responses.
+    pub fn queue_exchange<T>(
+        &mut self,
+        principal: AuthenticatedPrincipal,
+        request_id: RequestId,
+        request: &[u8],
+        effect: impl FnOnce(&Transaction<'_>) -> Result<T, DurableRelayError>,
+        encode: impl FnOnce(Result<T, RelayError>) -> Vec<u8>,
+    ) -> Result<QueueExchange, DurableRelayError> {
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let (response, committed_effect) = match effect(&transaction) {
+            Ok(value) => (encode(Ok(value)), true),
+            Err(DurableRelayError::Relay(error)) => (encode(Err(error)), false),
+            Err(other) => return Err(other),
+        };
+        // A rejected command rolls back with its transaction; only the replay
+        // record for the encoded rejection commits in a fresh transaction.
+        let transaction = if committed_effect {
+            transaction
+        } else {
+            drop(transaction);
+            self.connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)?
+        };
+        if insert_queue_replay(&transaction, principal, request_id, request, &response)? {
+            commit(transaction)?;
+            return Ok(QueueExchange::Respond(response));
+        }
+        drop(transaction);
+        match self.queue_replay(principal, request_id)? {
+            Some((stored_request, stored_response)) if stored_request == request => {
+                Ok(QueueExchange::Respond(stored_response))
+            }
+            Some(_) => Ok(QueueExchange::Conflict),
+            None => Err(DurableRelayError::Storage {
+                kind: StorageErrorKind::Other,
+                source: rusqlite::Error::InvalidParameterName(
+                    "replay insert conflicted without a stored record".to_owned(),
+                ),
+            }),
+        }
+    }
+}
+
+/// Stored replay record: exact request bytes and the recorded response bytes.
+pub type QueueReplayRecord = (Vec<u8>, Vec<u8>);
+
+/// Outcome of a replay-checked durable queue command.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum QueueExchange {
+    /// Response bytes to return to the caller, freshly produced or replayed.
+    Respond(Vec<u8>),
+    /// The request identifier was reused with different request bytes.
+    Conflict,
+}
+
+/// Inserts the replay record, returning `false` when the primary key already
+/// exists (a concurrent duplicate committed first).
+fn insert_queue_replay(
+    transaction: &Transaction<'_>,
+    principal: AuthenticatedPrincipal,
+    request_id: RequestId,
+    request: &[u8],
+    response: &[u8],
+) -> Result<bool, DurableRelayError> {
+    match transaction.execute(
+        "INSERT INTO queue_replays(principal,request_id,request,response) VALUES(?1,?2,?3,?4)",
+        params![
+            principal.as_bytes().as_slice(),
+            request_id.as_bytes().as_slice(),
+            request,
+            response
+        ],
+    ) {
+        Ok(_) => Ok(true),
+        Err(rusqlite::Error::SqliteFailure(failure, _))
+            if failure.code == ErrorCode::ConstraintViolation =>
+        {
+            Ok(false)
+        }
+        Err(error) => Err(error.into()),
     }
 }
 
@@ -564,7 +788,7 @@ fn classify_storage_error(error: &rusqlite::Error) -> StorageErrorKind {
     }
 }
 
-fn commit(transaction: Transaction<'_>) -> rusqlite::Result<()> {
+pub(crate) fn commit(transaction: Transaction<'_>) -> rusqlite::Result<()> {
     #[cfg(test)]
     if FAIL_NEXT_COMMIT.with(std::cell::Cell::take) {
         drop(transaction);
@@ -578,7 +802,7 @@ fn commit(transaction: Transaction<'_>) -> rusqlite::Result<()> {
 
 #[cfg(test)]
 thread_local! {
-    static FAIL_NEXT_COMMIT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    pub(crate) static FAIL_NEXT_COMMIT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
 
 #[cfg(test)]
@@ -809,16 +1033,56 @@ mod tests {
 
         assert!(matches!(
             DurableRelay::open(database.path()),
-            Err(DurableRelayError::UnsupportedSchemaVersion {
-                found: 2,
-                supported: 1
-            })
+            Err(DurableRelayError::UnsupportedSchemaVersion { found, supported })
+                if found == SCHEMA_VERSION + 1 && supported == SCHEMA_VERSION
         ));
         let connection = Connection::open(database.path()).expect("database still opens directly");
         let version: i64 = connection
             .query_row("PRAGMA user_version", [], |row| row.get(0))
             .expect("schema version remains readable");
         assert_eq!(version, SCHEMA_VERSION + 1);
+    }
+
+    #[test]
+    fn v2_databases_migrate_to_version_3_adding_queue_replays() {
+        let database = TestDatabase::new();
+        {
+            let mut relay = open_with_queue(&database);
+            relay
+                .send(QUEUE, SENDER, MESSAGE, b"ciphertext", NOW, TTL)
+                .expect("send commits");
+        }
+        // Downgrade to the version 2 layout: no queue_replays table, stamp 2.
+        let connection = Connection::open(database.path()).expect("database opens directly");
+        connection
+            .execute_batch("DROP TABLE queue_replays;")
+            .expect("queue replay table drops");
+        connection
+            .pragma_update(None, "user_version", 2)
+            .expect("version downgrades");
+        drop(connection);
+
+        let mut relay = DurableRelay::open(database.path()).expect("v2 database migrates");
+        let version: i64 = relay
+            .connection
+            .query_row("PRAGMA user_version", [], |row| row.get(0))
+            .expect("version reads");
+        assert_eq!(version, 3);
+        let delivery = relay
+            .fetch(QUEUE, RECIPIENT, NOW)
+            .expect("fetch succeeds after migration")
+            .expect("pre-existing message survives migration");
+        assert_eq!(delivery.payload(), b"ciphertext");
+        assert_eq!(
+            relay
+                .queue_replay(
+                    AuthenticatedPrincipal::from_bytes([0; 32]),
+                    RequestId::from_bytes([0; 16])
+                )
+                .expect("lookup succeeds on the newly created table"),
+            None
+        );
+        assert_database_integrity(&relay);
     }
 
     #[test]

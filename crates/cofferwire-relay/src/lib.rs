@@ -11,8 +11,11 @@ use std::num::NonZeroUsize;
 mod durable;
 mod durable_blob;
 
-pub use durable::{DurableRelay, DurableRelayError, StorageErrorKind, DEFAULT_BUSY_TIMEOUT};
-pub use durable_blob::{BlobRelayError, BlobRelayResult};
+pub use durable::{
+    DurableRelay, DurableRelayError, QueueExchange, QueueReplayRecord, StorageErrorKind,
+    DEFAULT_BUSY_TIMEOUT,
+};
+pub use durable_blob::{BlobExchange, BlobRelayError, BlobRelayResult, BlobReplayRecord};
 
 macro_rules! opaque_id {
     ($name:ident, $description:literal) => {
