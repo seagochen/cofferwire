@@ -35,6 +35,45 @@ CREATE INDEX IF NOT EXISTS messages_queue_order
     ON messages(queue_id, sequence);
 CREATE INDEX IF NOT EXISTS messages_expiry
     ON messages(queue_id, expires_at);
+
+CREATE TABLE IF NOT EXISTS blob_uploads (
+    upload_id BLOB PRIMARY KEY CHECK (length(upload_id) = 32),
+    upload_cap BLOB NOT NULL CHECK (length(upload_cap) = 32),
+    download_cap BLOB NOT NULL CHECK (length(download_cap) = 32),
+    renew_cap BLOB NOT NULL CHECK (length(renew_cap) = 32),
+    delete_cap BLOB NOT NULL CHECK (length(delete_cap) = 32),
+    manifest BLOB NOT NULL,
+    expires_at BLOB NOT NULL CHECK (length(expires_at) = 8),
+    committed_blob BLOB CHECK (committed_blob IS NULL OR length(committed_blob) = 32)
+) STRICT;
+CREATE TABLE IF NOT EXISTS blob_upload_chunks (
+    upload_id BLOB NOT NULL REFERENCES blob_uploads(upload_id) ON DELETE CASCADE,
+    chunk_index INTEGER NOT NULL,
+    ciphertext BLOB NOT NULL,
+    PRIMARY KEY (upload_id, chunk_index)
+) STRICT;
+CREATE TABLE IF NOT EXISTS blob_objects (
+    blob_id BLOB PRIMARY KEY CHECK (length(blob_id) = 32),
+    manifest BLOB NOT NULL
+) STRICT;
+CREATE TABLE IF NOT EXISTS blob_chunks (
+    blob_id BLOB NOT NULL REFERENCES blob_objects(blob_id) ON DELETE CASCADE,
+    chunk_index INTEGER NOT NULL,
+    ciphertext BLOB NOT NULL,
+    PRIMARY KEY (blob_id, chunk_index)
+) STRICT;
+CREATE TABLE IF NOT EXISTS blob_grants (
+    grant_id BLOB PRIMARY KEY CHECK (length(grant_id) = 32),
+    blob_id BLOB NOT NULL REFERENCES blob_objects(blob_id),
+    download_cap BLOB NOT NULL CHECK (length(download_cap) = 32),
+    renew_cap BLOB NOT NULL CHECK (length(renew_cap) = 32),
+    delete_cap BLOB NOT NULL CHECK (length(delete_cap) = 32),
+    expires_at BLOB NOT NULL CHECK (length(expires_at) = 8),
+    deleted INTEGER NOT NULL DEFAULT 0 CHECK (deleted IN (0, 1))
+) STRICT;
+CREATE INDEX IF NOT EXISTS blob_grants_download ON blob_grants(blob_id, download_cap);
+CREATE INDEX IF NOT EXISTS blob_grants_renew ON blob_grants(blob_id, renew_cap);
+CREATE INDEX IF NOT EXISTS blob_grants_delete ON blob_grants(blob_id, delete_cap);
 ";
 const SCHEMA_VERSION: i64 = 1;
 
@@ -142,7 +181,7 @@ impl DurableRelayError {
 /// queue operation.
 #[derive(Debug)]
 pub struct DurableRelay {
-    connection: Connection,
+    pub(crate) connection: Connection,
 }
 
 impl DurableRelay {

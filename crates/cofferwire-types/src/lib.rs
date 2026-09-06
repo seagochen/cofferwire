@@ -12,6 +12,7 @@
 #![forbid(unsafe_code)]
 
 mod auth;
+pub mod blob;
 mod body;
 mod command;
 mod error;

@@ -9,8 +9,10 @@ use std::collections::{HashMap, VecDeque};
 use std::num::NonZeroUsize;
 
 mod durable;
+mod durable_blob;
 
 pub use durable::{DurableRelay, DurableRelayError, StorageErrorKind, DEFAULT_BUSY_TIMEOUT};
+pub use durable_blob::{BlobRelayError, BlobRelayResult};
 
 macro_rules! opaque_id {
     ($name:ident, $description:literal) => {

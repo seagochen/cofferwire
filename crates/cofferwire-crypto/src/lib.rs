@@ -6,6 +6,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod blob;
 mod error;
 
 use cofferwire_types::{Auth, MessageId, Payload, Principal, QueueId, MAX_MESSAGE_BYTES};

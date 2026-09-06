@@ -2,6 +2,8 @@
 
 #![forbid(unsafe_code)]
 
+pub mod blob;
+
 use cofferwire_codec::{
     decode_request, decode_response, encode_authenticated_request, encode_request, DecodeError,
     RequestFrame,

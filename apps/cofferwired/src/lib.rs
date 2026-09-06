@@ -17,9 +17,15 @@ use axum::http::{header, HeaderMap, StatusCode as HttpStatus};
 use axum::response::{IntoResponse, Response as HttpResponse};
 use axum::routing::{get, post};
 use axum::Router;
+use cofferwire_codec::blob::{decode_blob_request, encode_blob_response};
 use cofferwire_codec::{decode_request, encode_response, DecodeError, ResponseFrame};
+use cofferwire_crypto::blob::verify_blob_request;
 use cofferwire_crypto::verify_request;
 use cofferwire_relay as relay;
+use cofferwire_types::blob::{
+    BlobRequest, BlobResponse, BlobResponseBody, BlobResponseFrame, BlobStatus, CapabilityId,
+    MAX_BLOB_FRAME_BYTES,
+};
 use cofferwire_types::{
     Command, Delivery, ErrorResponse, Principal, Request, RequestId, Response, ResponseBody,
     Status, Timestamp, MAX_FRAME_BYTES,
@@ -34,6 +40,10 @@ use tower_service::Service;
 pub const FRAME_MEDIA_TYPE: &str = "application/cofferwire";
 /// WebSocket subprotocol for exact v1 frames.
 pub const WEBSOCKET_PROTOCOL: &str = "cofferwire.v1";
+/// Media type for a blob/1 frame.
+pub const BLOB_FRAME_MEDIA_TYPE: &str = "application/cofferwire-blob";
+/// WebSocket subprotocol for blob/1 frames.
+pub const BLOB_WEBSOCKET_PROTOCOL: &str = "cofferwire.blob.v1";
 /// Maximum concurrent commands across both bindings.
 pub const MAX_CONCURRENT_COMMANDS: usize = 64;
 /// Maximum accepted TLS connections, including HTTP keep-alive and WebSocket.
@@ -144,6 +154,7 @@ where
 pub struct RelayService {
     relay: Arc<Mutex<relay::DurableRelay>>,
     replays: Arc<Mutex<HashMap<(Principal, RequestId), ReplayEntry>>>,
+    blob_replays: Arc<Mutex<HashMap<(CapabilityId, RequestId), ReplayEntry>>>,
     commands: Arc<Semaphore>,
     websocket_connections: Arc<Semaphore>,
 }
@@ -164,6 +175,7 @@ impl RelayService {
         Self {
             relay: Arc::new(Mutex::new(relay)),
             replays: Arc::new(Mutex::new(HashMap::new())),
+            blob_replays: Arc::new(Mutex::new(HashMap::new())),
             commands: Arc::new(Semaphore::new(MAX_CONCURRENT_COMMANDS)),
             websocket_connections: Arc::new(Semaphore::new(MAX_WEBSOCKET_CONNECTIONS)),
         }
@@ -185,6 +197,20 @@ impl RelayService {
         now_seconds: u64,
     ) -> Result<Vec<u8>, FrameExchangeError> {
         self.exchange_at(bytes, relay::Timestamp::from_secs(now_seconds))
+            .map_err(|_| FrameExchangeError)
+    }
+
+    /// Exchanges one blob/1 frame at a caller-supplied relay time.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`FrameExchangeError`] when durable storage cannot complete the command.
+    pub fn exchange_blob_frame_at(
+        &self,
+        bytes: &[u8],
+        now_seconds: u64,
+    ) -> Result<Vec<u8>, FrameExchangeError> {
+        self.exchange_blob_at(bytes, relay::Timestamp::from_secs(now_seconds))
             .map_err(|_| FrameExchangeError)
     }
 
@@ -333,6 +359,144 @@ impl RelayService {
         };
         result.map(Response::Success).map_err(ExecuteError::from)
     }
+
+    async fn exchange_blob(&self, bytes: Vec<u8>) -> Result<Vec<u8>, ExchangeError> {
+        let permit = Arc::clone(&self.commands)
+            .try_acquire_owned()
+            .map_err(|_| ExchangeError::Overloaded)?;
+        let service = self.clone();
+        tokio::task::spawn_blocking(move || {
+            let _permit = permit;
+            service.exchange_blob_at(&bytes, relay_time())
+        })
+        .await
+        .map_err(|_| ExchangeError::Internal)?
+    }
+
+    fn exchange_blob_at(
+        &self,
+        bytes: &[u8],
+        now: relay::Timestamp,
+    ) -> Result<Vec<u8>, ExchangeError> {
+        let decoded = match decode_blob_request(bytes) {
+            Ok(decoded) => decoded,
+            Err(error) => return Ok(blob_decode_error_response(bytes, &error)),
+        };
+        let request_id = decoded.frame.request_id;
+        let request = &decoded.frame.request;
+        let command = request.command();
+        let capability = request.capability();
+        if verify_blob_request(capability, decoded.authenticated_bytes, &decoded.frame.auth)
+            .is_err()
+        {
+            return Ok(blob_error_response(
+                request_id,
+                Some(command),
+                BlobStatus::AuthInvalid,
+            ));
+        }
+        let replay_key = (capability, request_id);
+        let mut replays = self
+            .blob_replays
+            .lock()
+            .map_err(|_| ExchangeError::Storage)?;
+        if let Some(existing) = replays.get(&replay_key) {
+            return if existing.request == bytes {
+                Ok(existing.response.clone())
+            } else {
+                Ok(blob_error_response(
+                    request_id,
+                    Some(command),
+                    BlobStatus::AuthReplay,
+                ))
+            };
+        }
+        let response = match self.execute_blob(request, now) {
+            Ok(body) => BlobResponse {
+                command: Some(command),
+                status: BlobStatus::Ok,
+                body: Some(body),
+            },
+            Err(BlobExecuteError::Protocol(status)) => BlobResponse {
+                command: Some(command),
+                status,
+                body: None,
+            },
+            Err(BlobExecuteError::Storage) => return Err(ExchangeError::Storage),
+        };
+        let response = encode_blob_response(&BlobResponseFrame {
+            request_id,
+            response,
+        });
+        replays.insert(
+            replay_key,
+            ReplayEntry {
+                request: bytes.to_vec(),
+                response: response.clone(),
+            },
+        );
+        Ok(response)
+    }
+
+    fn execute_blob(
+        &self,
+        request: &BlobRequest,
+        now: relay::Timestamp,
+    ) -> Result<BlobResponseBody, BlobExecuteError> {
+        let mut durable = self.relay.lock().map_err(|_| BlobExecuteError::Storage)?;
+        match request {
+            BlobRequest::BeginUpload {
+                upload_id,
+                capabilities,
+                manifest,
+                ttl,
+            } => durable
+                .begin_blob_upload(*upload_id, *capabilities, manifest, now, *ttl)
+                .map(BlobResponseBody::BeginUpload),
+            BlobRequest::PutChunk {
+                upload_id,
+                upload_cap,
+                index,
+                ciphertext,
+            } => durable
+                .put_blob_chunk(*upload_id, *upload_cap, *index, ciphertext, now)
+                .map(BlobResponseBody::PutChunk),
+            BlobRequest::Commit {
+                upload_id,
+                upload_cap,
+                blob_id,
+            } => durable
+                .commit_blob(*upload_id, *upload_cap, *blob_id, now)
+                .map(BlobResponseBody::Commit),
+            BlobRequest::GetManifest {
+                blob_id,
+                download_cap,
+            } => durable
+                .get_blob_manifest(*blob_id, *download_cap, now)
+                .map(|(manifest, expiry)| BlobResponseBody::GetManifest(manifest, expiry)),
+            BlobRequest::GetChunk {
+                blob_id,
+                download_cap,
+                index,
+            } => durable
+                .get_blob_chunk(*blob_id, *download_cap, *index, now)
+                .map(|(chunk, expiry)| BlobResponseBody::GetChunk(chunk, expiry)),
+            BlobRequest::Renew {
+                blob_id,
+                renew_cap,
+                ttl,
+            } => durable
+                .renew_blob(*blob_id, *renew_cap, now, *ttl)
+                .map(BlobResponseBody::Renew),
+            BlobRequest::Delete {
+                blob_id,
+                delete_cap,
+            } => durable
+                .delete_blob(*blob_id, *delete_cap, now)
+                .map(|()| BlobResponseBody::Delete),
+        }
+        .map_err(BlobExecuteError::from)
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -343,14 +507,84 @@ struct ReplayEntry {
 
 /// Builds the bounded HTTPS/WebSocket application router.
 pub fn router(service: RelayService) -> Router {
-    Router::new()
-        .route("/healthz", get(|| async { HttpStatus::NO_CONTENT }))
+    let queue_routes = Router::new()
         .route("/v1/frame", post(post_frame))
         .route("/v1/ws", get(upgrade_websocket))
+        .layer(RequestBodyLimitLayer::new(MAX_FRAME_BYTES));
+    let blob_routes = Router::new()
+        .route("/blob/v1/frame", post(post_blob_frame))
+        .route("/blob/v1/ws", get(upgrade_blob_websocket))
+        .layer(RequestBodyLimitLayer::new(MAX_BLOB_FRAME_BYTES));
+    Router::new()
+        .route("/healthz", get(|| async { HttpStatus::NO_CONTENT }))
+        .merge(queue_routes)
+        .merge(blob_routes)
         .layer(DefaultBodyLimit::disable())
-        .layer(RequestBodyLimitLayer::new(MAX_FRAME_BYTES))
         .layer(TimeoutLayer::new(REQUEST_TIMEOUT))
         .with_state(service)
+}
+
+async fn post_blob_frame(
+    State(service): State<RelayService>,
+    headers: HeaderMap,
+    body: Bytes,
+) -> HttpResponse {
+    if headers
+        .get(header::CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        != Some(BLOB_FRAME_MEDIA_TYPE)
+    {
+        return HttpStatus::UNSUPPORTED_MEDIA_TYPE.into_response();
+    }
+    match service.exchange_blob(body.to_vec()).await {
+        Ok(response) => ([(header::CONTENT_TYPE, BLOB_FRAME_MEDIA_TYPE)], response).into_response(),
+        Err(_) => HttpStatus::SERVICE_UNAVAILABLE.into_response(),
+    }
+}
+
+async fn upgrade_blob_websocket(
+    State(service): State<RelayService>,
+    OptionalConnectionPermit(connection_permit): OptionalConnectionPermit,
+    upgrade: WebSocketUpgrade,
+) -> HttpResponse {
+    let Ok(permit) = Arc::clone(&service.websocket_connections).try_acquire_owned() else {
+        return HttpStatus::SERVICE_UNAVAILABLE.into_response();
+    };
+    upgrade
+        .protocols([BLOB_WEBSOCKET_PROTOCOL])
+        .max_message_size(MAX_BLOB_FRAME_BYTES)
+        .max_frame_size(MAX_BLOB_FRAME_BYTES)
+        .on_upgrade(move |socket| {
+            blob_websocket_session(socket, service, permit, connection_permit)
+        })
+        .into_response()
+}
+
+async fn blob_websocket_session(
+    mut socket: WebSocket,
+    service: RelayService,
+    _permit: OwnedSemaphorePermit,
+    _connection_permit: Option<ConnectionPermit>,
+) {
+    loop {
+        let Ok(Some(Ok(message))) =
+            tokio::time::timeout(WEBSOCKET_IDLE_TIMEOUT, socket.next()).await
+        else {
+            break;
+        };
+        match message {
+            Message::Binary(bytes) => {
+                let Ok(response) = service.exchange_blob(bytes.to_vec()).await else {
+                    break;
+                };
+                if socket.send(Message::Binary(response.into())).await.is_err() {
+                    break;
+                }
+            }
+            Message::Close(_) | Message::Text(_) => break,
+            Message::Ping(_) | Message::Pong(_) => {}
+        }
+    }
 }
 
 async fn post_frame(
@@ -439,6 +673,30 @@ enum ExecuteError {
     Storage,
 }
 
+#[derive(Debug)]
+enum BlobExecuteError {
+    Protocol(BlobStatus),
+    Storage,
+}
+
+impl From<relay::BlobRelayResult> for BlobExecuteError {
+    fn from(error: relay::BlobRelayResult) -> Self {
+        match error {
+            relay::BlobRelayResult::Protocol(error) => Self::Protocol(match error {
+                relay::BlobRelayError::NotFound => BlobStatus::NotFound,
+                relay::BlobRelayError::Unauthorized => BlobStatus::Unauthorized,
+                relay::BlobRelayError::IdConflict => BlobStatus::IdConflict,
+                relay::BlobRelayError::LimitOutOfRange => BlobStatus::LimitOutOfRange,
+                relay::BlobRelayError::ChunkConflict => BlobStatus::ChunkConflict,
+                relay::BlobRelayError::Incomplete => BlobStatus::Incomplete,
+                relay::BlobRelayError::IdentityMismatch => BlobStatus::IdentityMismatch,
+                relay::BlobRelayError::Expired => BlobStatus::Expired,
+            }),
+            relay::BlobRelayResult::Storage(_) => Self::Storage,
+        }
+    }
+}
+
 impl From<relay::DurableRelayError> for ExecuteError {
     fn from(error: relay::DurableRelayError) -> Self {
         match error {
@@ -460,6 +718,38 @@ fn decode_error_response(bytes: &[u8], error: &DecodeError) -> Vec<u8> {
         _ => Status::MalformedFrame,
     };
     error_response(request_id, None, status)
+}
+
+fn blob_decode_error_response(bytes: &[u8], error: &DecodeError) -> Vec<u8> {
+    let request_id = match error {
+        DecodeError::UnsupportedVersion { request_id, .. } => *request_id,
+        _ => request_id_from_prefix(bytes),
+    };
+    let status = match error {
+        DecodeError::UnsupportedVersion { .. } => BlobStatus::UnsupportedVersion,
+        DecodeError::FrameTooLarge { .. } => BlobStatus::FrameTooLarge,
+        DecodeError::InvalidValue {
+            field: "blob command",
+            ..
+        } => BlobStatus::UnknownCommand,
+        _ => BlobStatus::MalformedFrame,
+    };
+    blob_error_response(request_id, None, status)
+}
+
+fn blob_error_response(
+    request_id: RequestId,
+    command: Option<cofferwire_types::blob::BlobCommand>,
+    status: BlobStatus,
+) -> Vec<u8> {
+    encode_blob_response(&BlobResponseFrame {
+        request_id,
+        response: BlobResponse {
+            command,
+            status,
+            body: None,
+        },
+    })
 }
 
 fn request_id_from_prefix(bytes: &[u8]) -> RequestId {

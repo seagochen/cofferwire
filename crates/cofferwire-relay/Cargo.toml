@@ -7,7 +7,9 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+cofferwire-types = { path = "../cofferwire-types" }
 rusqlite = { version = "0.32.1", features = ["bundled"] }
+sha2 = "=0.10.9"
 
 [lints]
 workspace = true

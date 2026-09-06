@@ -6,6 +6,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod blob;
 mod cbor;
 mod error;
 
