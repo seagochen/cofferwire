@@ -53,6 +53,15 @@ impl ObjectKey {
         rng.fill_bytes(&mut bytes);
         Self(bytes)
     }
+
+    /// Returns the secret bytes for protected local persistence.
+    ///
+    /// Callers must treat the returned value as key material and must never
+    /// log it or place it in an unprotected transport or public artifact.
+    #[must_use]
+    pub const fn to_bytes(&self) -> [u8; 32] {
+        self.0
+    }
 }
 impl std::fmt::Debug for ObjectKey {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -72,6 +81,14 @@ impl BlobSigningKey {
     /// Generates an independent capability.
     pub fn generate<R: CryptoRng + RngCore>(rng: &mut R) -> Self {
         Self(SigningKey::generate(rng))
+    }
+    /// Returns the secret seed for protected local persistence.
+    ///
+    /// Callers must treat the returned value as capability authority and must
+    /// never log it or include it in public evidence.
+    #[must_use]
+    pub fn to_seed(&self) -> [u8; 32] {
+        self.0.to_bytes()
     }
     /// Returns the public capability identifier.
     #[must_use]
