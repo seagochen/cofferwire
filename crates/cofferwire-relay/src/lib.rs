@@ -8,71 +8,20 @@
 use std::collections::{HashMap, VecDeque};
 use std::num::NonZeroUsize;
 
+pub use cofferwire_types::{
+    CreateQueueOutcome, MessageId, Principal, QueueId, SendOutcome, Timestamp,
+};
+
 mod durable;
 mod durable_blob;
+mod replay;
 
 pub use durable::{
     DurableRelay, DurableRelayError, QueueExchange, QueueReplayRecord, StorageErrorKind,
     DEFAULT_BUSY_TIMEOUT,
 };
-pub use durable_blob::{BlobExchange, BlobRelayError, BlobRelayResult, BlobReplayRecord};
-
-macro_rules! opaque_id {
-    ($name:ident, $description:literal) => {
-        #[doc = $description]
-        #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-        pub struct $name([u8; 32]);
-
-        impl $name {
-            /// Constructs an identifier from its exact byte representation.
-            #[must_use]
-            pub const fn from_bytes(bytes: [u8; 32]) -> Self {
-                Self(bytes)
-            }
-
-            /// Returns the exact byte representation.
-            #[must_use]
-            pub const fn as_bytes(&self) -> &[u8; 32] {
-                &self.0
-            }
-        }
-    };
-}
-
-opaque_id!(QueueId, "An opaque identifier for one relay-local queue.");
-opaque_id!(
-    MessageId,
-    "A sender-chosen idempotency identifier for one message."
-);
-opaque_id!(
-    Principal,
-    "A queue-scoped authenticated actor, not a global user identity."
-);
-
-/// Relay time in whole seconds from an implementation-defined epoch.
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub struct Timestamp(u64);
-
-impl Timestamp {
-    /// Constructs a timestamp from seconds.
-    #[must_use]
-    pub const fn from_secs(seconds: u64) -> Self {
-        Self(seconds)
-    }
-
-    /// Returns the timestamp as seconds.
-    #[must_use]
-    pub const fn as_secs(self) -> u64 {
-        self.0
-    }
-
-    const fn checked_add(self, ttl: Ttl) -> Option<Self> {
-        match self.0.checked_add(ttl.0) {
-            Some(value) => Some(Self(value)),
-            None => None,
-        }
-    }
-}
+pub use durable_blob::{BlobDurableError, BlobExchange, BlobRelayError, BlobReplayRecord};
+pub use replay::{ReplayExchange, ReplayRecord};
 
 /// A message lifetime in seconds.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -170,24 +119,6 @@ impl QueueConfig {
     }
 }
 
-/// Result of an idempotent queue-creation request.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum CreateQueueOutcome {
-    /// A new queue was created.
-    Created,
-    /// The same identifier and configuration already existed.
-    AlreadyExists,
-}
-
-/// Result of an idempotent send request.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum SendOutcome {
-    /// A new message was accepted.
-    Accepted,
-    /// The same message identifier and payload were already accepted.
-    Duplicate,
-}
-
 /// An opaque message returned to the authenticated recipient.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Delivery {
@@ -233,6 +164,8 @@ pub enum RelayError {
     QueueFull,
     /// Adding the requested TTL would overflow the timestamp representation.
     ExpiryOverflow,
+    /// A wire value cannot be represented by the relay's bounded local policy.
+    LimitOutOfRange,
     /// The acknowledged identifier is not the queue's current message.
     AckMismatch,
     /// The current message has not been fetched and cannot be acknowledged.
@@ -249,6 +182,7 @@ impl std::fmt::Display for RelayError {
             Self::MessageTooLarge => "message exceeds queue byte limit",
             Self::QueueFull => "queue is full",
             Self::ExpiryOverflow => "message expiry overflows timestamp representation",
+            Self::LimitOutOfRange => "queue limit is outside the relay representation",
             Self::AckMismatch => "acknowledgement does not match current message",
             Self::NotDelivered => "message has not been delivered",
         })
@@ -367,7 +301,11 @@ impl Relay {
             return Err(RelayError::QueueFull);
         }
 
-        let expires_at = now.checked_add(ttl).ok_or(RelayError::ExpiryOverflow)?;
+        let expires_at = now
+            .as_secs()
+            .checked_add(ttl.as_secs())
+            .map(Timestamp::from_secs)
+            .ok_or(RelayError::ExpiryOverflow)?;
         queue.messages.push_back(QueuedMessage {
             id: message_id,
             payload,

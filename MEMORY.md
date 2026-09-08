@@ -19,6 +19,10 @@ GitHub Issues；本文件不保存凭证或临时进度。
   最外层组合 codec、crypto、relay 和网络资源控制。
 - `cofferwire-relay` 同时包含内存语义参考 `Relay` 和 SQLite 事务实现 `DurableRelay`；
   queue/blob effect 与 replay response 需要原子提交。
+- queue/blob 的 exact replay 事务由 `cofferwire-relay/src/replay.rs` 统一拥有；daemon 不依赖
+  `rusqlite`，只向 relay 传入已认证 protocol values 和 response encoder。
+- Blob 上传状态在每次网络 exchange 前后通过 `BlobUploadStore` 持久提交；恢复 snapshot
+  必须同时核对独立保存的非秘密 `BlobUploadIdentity`。snapshot 含 secret key material。
 - 工程设计 SSoT 位于 `docs/detailed_design/`；规范性 wire 契约位于 `docs/spec/`。
 
 ## 存储与安全边界

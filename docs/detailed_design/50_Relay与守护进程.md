@@ -15,7 +15,8 @@ relay library 实现 queue/blob 语义和持久化，不进行网络解析或密
 - [`Relay`](../../crates/cofferwire-relay/src/lib.rs) 是传输无关的内存语义参考，用于快速
   状态和 model comparison。
 - [`DurableRelay`](../../crates/cofferwire-relay/src/durable.rs) 是 SQLite 事务实现；queue
-  与 blob transaction-scoped 方法供 daemon 把 effect 和 replay response 原子提交。
+  与 blob 通过 storage-owned request exchange 把 effect 和 replay response 原子提交。
+  daemon 只传入已认证的 protocol value 和 response encoder，不接触 `rusqlite::Transaction`。
 
 两者必须对相同已认证命令产生一致语义结果；SQLite 错误不能伪装成业务成功。
 
@@ -57,16 +58,18 @@ ciphertext，运营表述必须遵守 [`90_部署与运维.md`](90_部署与运�
 
 schema 和迁移的一次信息源是 [`SCHEMA`/`SCHEMA_VERSION`](../../crates/cofferwire-relay/src/durable.rs)。
 初始化开启 foreign keys，使用 rollback journal 和 full synchronous durability；未知未来
-schema 无修改拒绝。queue/blob replay 与业务 effect 共用 SQLite，daemon 重启后仍保持
+schema 无修改拒绝。queue/blob replay 共用 [`replay.rs`](../../crates/cofferwire-relay/src/replay.rs)
+中的一套原子事务机制，业务 effect 与 exact response 同事务提交，daemon 重启后仍保持
 exact retry 语义。
 
 ## 7. 网络与资源控制
 
-[`router`](../../apps/cofferwired/src/lib.rs) 提供 queue/blob HTTPS 和 WebSocket routes；
-[`ConnectionLimit`](../../apps/cofferwired/src/lib.rs)、semaphore、Tower body/timeout layer 和
+[`router`](../../apps/cofferwired/src/transport.rs) 提供 queue/blob HTTPS 和 WebSocket routes；
+[`ConnectionLimit`](../../apps/cofferwired/src/connection_limit.rs)、semaphore、Tower body/timeout layer 和
 [`RateLimiter`](../../apps/cofferwired/src/rate_limit.rs) 共同限制资源。具体值不在本设计书
 复制，见机器校验的
 [`operational-limits-v1.json`](../../conformance/evidence/operational-limits-v1.json)。
+大型 white-box 测试分别放在各生产模块的 `tests.rs` 子模块中，不与运行时实现混排。
 
 ## 8. 非职责
 

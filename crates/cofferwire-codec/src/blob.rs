@@ -4,8 +4,8 @@ use crate::cbor::{encode_array, encode_bytes, encode_unsigned, Decoder};
 use crate::DecodeError;
 use cofferwire_types::blob::{
     BlobCapabilities, BlobCommand, BlobId, BlobManifest, BlobRequest, BlobRequestFrame,
-    BlobResponse, BlobResponseBody, BlobResponseFrame, BlobStatus, CapabilityId, UploadId,
-    MAX_BLOB_FRAME_BYTES, MAX_CHUNK_BYTES,
+    BlobResponse, BlobResponseBody, BlobResponseFrame, BlobStatus, BlobWriteOutcome, CapabilityId,
+    UploadId, MAX_BLOB_FRAME_BYTES, MAX_CHUNK_BYTES,
 };
 use cofferwire_types::{Auth, RequestId};
 
@@ -368,19 +368,15 @@ fn decode_response_body(
     })
 }
 
-fn outcome(decoder: &mut Decoder<'_>) -> Result<u8, DecodeError> {
+fn outcome(decoder: &mut Decoder<'_>) -> Result<BlobWriteOutcome, DecodeError> {
     let value = decoder.unsigned("blob outcome")?;
-    if value <= 1 {
-        u8::try_from(value).map_err(|_| DecodeError::InvalidValue {
+    u8::try_from(value)
+        .ok()
+        .and_then(|value| BlobWriteOutcome::try_from(value).ok())
+        .ok_or(DecodeError::InvalidValue {
             field: "blob outcome",
             value,
         })
-    } else {
-        Err(DecodeError::InvalidValue {
-            field: "blob outcome",
-            value,
-        })
-    }
 }
 
 fn encode_request_body(output: &mut Vec<u8>, request: &BlobRequest) {
@@ -465,7 +461,7 @@ fn encode_response_body(output: &mut Vec<u8>, body: &BlobResponseBody) {
     match body {
         BlobResponseBody::BeginUpload(value) | BlobResponseBody::PutChunk(value) => {
             encode_array(output, 1);
-            encode_unsigned(output, u64::from(*value));
+            encode_unsigned(output, u64::from(value.as_u8()));
         }
         BlobResponseBody::Commit(expiry) | BlobResponseBody::Renew(expiry) => {
             encode_array(output, 1);

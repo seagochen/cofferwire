@@ -367,11 +367,43 @@ pub struct BlobRequestFrame {
     pub auth: Auth,
 }
 
+/// Result of an idempotent blob staging write.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum BlobWriteOutcome {
+    /// New staging state or ciphertext was stored.
+    Stored,
+    /// The exact same state or ciphertext was already stored.
+    Duplicate,
+}
+
+impl BlobWriteOutcome {
+    /// Returns the registered wire outcome.
+    #[must_use]
+    pub const fn as_u8(self) -> u8 {
+        match self {
+            Self::Stored => 0,
+            Self::Duplicate => 1,
+        }
+    }
+}
+
+impl TryFrom<u8> for BlobWriteOutcome {
+    type Error = BlobTypeError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::Stored),
+            1 => Ok(Self::Duplicate),
+            _ => Err(BlobTypeError::InvalidManifest),
+        }
+    }
+}
+
 /// Successful blob response bodies.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum BlobResponseBody {
-    BeginUpload(u8),
-    PutChunk(u8),
+    BeginUpload(BlobWriteOutcome),
+    PutChunk(BlobWriteOutcome),
     Commit(u64),
     GetManifest(BlobManifest, u64),
     GetChunk(Vec<u8>, u64),

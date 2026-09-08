@@ -5,13 +5,15 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib.util
 import json
 import re
 import subprocess
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from cofferwire_tools.archive import QUEUE_SCOPE_REVISION, RELEASE_VERSION
+from validate_external_review import validate as validate_external_review
+from validate_family_tree_pilot import validate as validate_family_tree_pilot
+
 HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 ARTIFACTS = {"source", "binaries", "spec", "vectors", "conformance", "sbom"}
@@ -20,15 +22,6 @@ GATES = set(range(1, 11))
 
 class ReleaseError(ValueError):
     """The candidate does not satisfy the version 1 release contract."""
-
-
-def load_script(name: str):
-    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
-    module = importlib.util.module_from_spec(spec)
-    if spec.loader is None:
-        raise ReleaseError(f"cannot load {name}")
-    spec.loader.exec_module(module)
-    return module
 
 
 def require(condition: bool, message: str) -> None:
@@ -72,10 +65,10 @@ def validate(directory: Path, allowed_signers: Path, signer: str) -> None:
     require(manifest_path.is_file(), "release manifest is missing")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     require(manifest.get("format") == "cofferwire-release-manifest-v1", "invalid release manifest")
-    require(manifest.get("version") == "1.0.0", "release version is not 1.0.0")
+    require(manifest.get("version") == RELEASE_VERSION, "release version is not 1.0.0")
     revision = manifest.get("candidate_revision")
     require(isinstance(revision, str) and HEX40.fullmatch(revision) is not None, "invalid candidate revision")
-    require(manifest.get("queue_scope_revision") == "CW-SCOPE-QUEUE-V1-2026-09-06", "queue scope revision mismatch")
+    require(manifest.get("queue_scope_revision") == QUEUE_SCOPE_REVISION, "queue scope revision mismatch")
     artifacts = manifest.get("artifacts")
     require(isinstance(artifacts, dict) and set(artifacts) == ARTIFACTS, "required artifact set is incomplete")
     for name, entry in artifacts.items():
@@ -95,8 +88,8 @@ def validate(directory: Path, allowed_signers: Path, signer: str) -> None:
     validate_gates(gates, revision)
     require(pilot.get("candidate_revision") == revision, "pilot evidence revision mismatch")
     require(review.get("reviewed_revision") == revision, "external review revision mismatch")
-    load_script("validate_family_tree_pilot").validate(pilot)
-    load_script("validate_external_review").validate(review)
+    validate_family_tree_pilot(pilot)
+    validate_external_review(review)
     checked = validate_checksums(directory)
     required_checksums = {
         "release-manifest-v1.json",

@@ -5,28 +5,21 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import io
 import json
 import shutil
-import subprocess
 import tarfile
 import tomllib
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-
-
-def git(*arguments: str) -> bytes:
-    return subprocess.run(["git", *arguments], cwd=ROOT, check=True, capture_output=True).stdout
-
-
-def resolve_revision(revision: str) -> str:
-    return git("rev-parse", "--verify", f"{revision}^{{commit}}").decode().strip()
-
-
-def tracked_paths(revision: str) -> list[str]:
-    paths = git("ls-tree", "-r", "-z", "--name-only", revision).decode().split("\0")
-    return sorted(path for path in paths if path)
+from cofferwire_tools.archive import (
+    QUEUE_SCOPE_REVISION,
+    RELEASE_VERSION,
+    add_bytes,
+    git,
+    git_mode,
+    resolve_revision,
+    tracked_paths,
+)
 
 
 def selected(path: str, kind: str) -> bool:
@@ -41,21 +34,6 @@ def selected(path: str, kind: str) -> bool:
     if kind == "conformance":
         return path.startswith("conformance/evidence/") or path in {"conformance/coverage.json", "conformance/registry.json", "TESTING.md"}
     raise ValueError(f"unknown artifact kind {kind}")
-
-
-def git_mode(revision: str, path: str) -> int:
-    raw = git("ls-tree", revision, "--", path).decode().split()[0]
-    return 0o755 if raw == "100755" else 0o644
-
-
-def add_bytes(archive: tarfile.TarFile, name: str, content: bytes, mode: int = 0o644) -> None:
-    info = tarfile.TarInfo(name)
-    info.size = len(content)
-    info.mode = mode
-    info.mtime = 0
-    info.uid = info.gid = 0
-    info.uname = info.gname = ""
-    archive.addfile(info, io.BytesIO(content))
 
 
 def build_git_tar(revision: str, output: Path, kind: str) -> None:
@@ -90,7 +68,7 @@ def build_sbom(revision: str, output: Path) -> None:
         "bomFormat": "CycloneDX",
         "specVersion": "1.5",
         "version": 1,
-        "metadata": {"component": {"type": "application", "name": "cofferwire", "version": "1.0.0", "properties": [{"name": "cofferwire:git-revision", "value": revision}]}},
+        "metadata": {"component": {"type": "application", "name": "cofferwire", "version": RELEASE_VERSION, "properties": [{"name": "cofferwire:git-revision", "value": revision}]}},
         "components": components,
     }
     output.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -135,9 +113,9 @@ def build(args: argparse.Namespace) -> dict[str, object]:
             evidence[name] = destination.name
     manifest = {
         "format": "cofferwire-release-manifest-v1",
-        "version": "1.0.0",
+        "version": RELEASE_VERSION,
         "candidate_revision": revision,
-        "queue_scope_revision": "CW-SCOPE-QUEUE-V1-2026-09-06",
+        "queue_scope_revision": QUEUE_SCOPE_REVISION,
         "artifacts": {name: {"file": path.name, "sha256": sha256(path)} for name, path in sorted(artifacts.items())},
         "evidence": evidence,
     }
